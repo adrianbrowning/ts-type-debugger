@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(DEBUG=1 node:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm generate-video:*)",
+      "Bash(npm info:*)",
+      "Bash(timeout 10 pnpm remotion:preview:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

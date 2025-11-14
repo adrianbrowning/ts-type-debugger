@@ -1,0 +1,30 @@
+{
+  "name": "ts-ast-parser-eval",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-video": "node src/generateVideo.ts",
+    "remotion:preview": "pnpm remotion preview src/Root.tsx --fps 30",
+    "remotion:render": "pnpm remotion render src/Root.tsx TypeEvalVideo output.mp4 --fps 30"
+  },
+  "keywords": [],
+  "author": "Adrian Elton-Browning",
+  "license": "ISC",
+  "packageManager": "pnpm@10.20.0",
+  "type": "module",
+  "devDependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@types/node": "^24.10.1",
+    "@types/react": "^18.2.0",
+    "remotion": "^4.0.0"
+  },
+  "dependencies": {
+    "@typescript/vfs": "^1.6.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "shiki": "^3.15.0",
+    "typescript": "^5.9.3"
+  }
+}

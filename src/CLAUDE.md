@@ -1,0 +1,2 @@
+- you don't need tsx or ts-node to run .ts files just use node file.ts
+- This project is pnpm
