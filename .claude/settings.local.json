@@ -5,7 +5,10 @@
       "Bash(cat:*)",
       "Bash(pnpm generate-video:*)",
       "Bash(npm info:*)",
-      "Bash(timeout 10 pnpm remotion:preview:*)"
+      "Bash(timeout 10 pnpm remotion:preview:*)",
+      "Bash(test:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": [],
     "ask": []

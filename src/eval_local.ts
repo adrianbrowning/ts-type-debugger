@@ -1,10 +1,23 @@
+// @vite-ignore
 import { createSystem, createVirtualTypeScriptEnvironment } from "@typescript/vfs";
 import * as ts from "typescript";
 import {libFiles} from "./services/typescript/lib-bundle.ts"
 
+// function getLocalLibFile(name: string) {
+//     // Assumes you have "typescript" installed locally
+//     return readFileSync(resolve(`node_modules/typescript/lib/${name}`), "utf8");
+// }
+
 
 function loadLibs() {
-    return new Map<string, string>(Object.entries(libFiles));
+    return  new Map<string, string>(Object.entries(libFiles));
+    // const fsMap = new Map<string, string>();
+    // for (const libName of readdirSync('./node_modules/typescript/lib')) {
+    //     if (libName.startsWith("lib.") && libName.endsWith(".d.ts")) {
+    //         fsMap.set("/" + libName, getLocalLibFile(libName));
+    //     }
+    // }
+    // return fsMap;
 }
 
 export function checkTypeCondition(typeBody: string, checker: string, context?: string): boolean {
