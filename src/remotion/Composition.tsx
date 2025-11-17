@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { AbsoluteFill, useCurrentFrame } from 'remotion';
+import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import { LAYOUT, COLORS } from './config';
 import { CodePanel } from './CodePanel';
 import { ResultsPanel } from './ResultsPanel';
@@ -12,7 +12,8 @@ interface CompositionProps {
 /**
  * Main composition: layout with code and results panels
  */
-export const MyVideoComposition: React.FC<CompositionProps> = ({ videoData }) => {
+
+export const MyVideoComposition: React.FC<VideoData> = (videoData ) => {
   const frame = useCurrentFrame();
 
   // Find current step based on frame

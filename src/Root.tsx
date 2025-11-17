@@ -25,7 +25,7 @@ const RemotionRoot: React.FC = () => {
       fps={videoData.fps}
       width={LAYOUT.width}
       height={LAYOUT.height}
-      defaultProps={{ videoData }}
+      defaultProps={ videoData }
     />
   );
 };
