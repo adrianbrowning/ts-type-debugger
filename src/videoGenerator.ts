@@ -32,7 +32,7 @@ export const TRACE_TYPE_COLORS: Record<TraceEntry['type'], string> = {
 /**
  * Type info for display including relevant source code
  */
-export interface TypeInfo {
+export type TypeInfo = {
   name: string;
   text: string;
   lines: string[];
@@ -44,7 +44,7 @@ export interface TypeInfo {
 /**
  * Enhanced trace entry with timing and visual data
  */
-export interface VideoTraceStep {
+export type VideoTraceStep = {
   original: TraceEntry;
   stepIndex: number;
   startFrame: number;
@@ -62,7 +62,7 @@ export interface VideoTraceStep {
 /**
  * Complete video data structure
  */
-export interface VideoData {
+export type VideoData = {
   totalFrames: number;
   fps: number;
   steps: VideoTraceStep[];
@@ -74,7 +74,7 @@ export interface VideoData {
 /**
  * Configuration for video generation
  */
-export interface VideoConfig {
+export type VideoConfig = {
   fps: number; // frames per second
   secondsPerStep: number; // duration for each step
 }

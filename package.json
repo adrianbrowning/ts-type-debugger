@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "fullRun": "pnpm generate-video && pnpm remotion:preview",
     "generate-video": "node src/generateVideo.ts",
     "remotion:preview": "pnpm remotion preview src/Root.tsx --fps 30",
     "remotion:render": "pnpm remotion render src/Root.tsx TypeEvalVideo output.mp4 --fps 30"

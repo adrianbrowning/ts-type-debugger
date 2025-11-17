@@ -124,8 +124,8 @@ function main() {
     process.exit(1);
   }
 }
-
-main().catch((err) => {
+try {
+    main()
+} catch(err) {
   console.error('Validation error:', err);
-  process.exit(1);
-});
+}

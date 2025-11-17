@@ -85,7 +85,8 @@ function formatVideoDataForExport(videoData: VideoData): object {
  * Main execution
  */
 async function main() {
-  const code = 'type _result = getter<"">;\n' + CustomTypes;
+  const code = 'type _result = "a" extends string ?\n true :\n false;';
+  // const code = 'type _result = getter<"Post">;\n' + CustomTypes;
 
   console.log('Generating type evaluation video...\n');
 

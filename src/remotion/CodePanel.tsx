@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useCurrentFrame, interpolate, Easing } from 'remotion';
-import { LAYOUT, COLORS, ANIMATIONS } from './config';
+import { LAYOUT, COLORS } from './config';
 import { VideoTraceStep, TypeInfo } from '../videoGenerator';
 
 interface CodePanelProps {
@@ -48,7 +48,7 @@ export const CodePanel: React.FC<CodePanelProps> = ({
     }
   }, [currentStep?.stepIndex, steps]);
 
-  // Calculate highlight position with smooth animation
+  /*// Calculate highlight position with smooth animation
   const highlightTop = currentStep?.highlightLines
     ? interpolate(
         frame % (currentStep.duration || 30),
@@ -60,7 +60,7 @@ export const CodePanel: React.FC<CodePanelProps> = ({
           extrapolateRight: 'clamp',
         }
       )
-    : 0;
+    : 0;*/
 
   return (
     <div

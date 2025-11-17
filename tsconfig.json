@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "erasableSyntaxOnly": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom", "node"]
+    "types": [ "node"]
   },
   "include": ["src", "tests", "*.ts", "*.tsx", "remotion", "video-data.json"]
 }

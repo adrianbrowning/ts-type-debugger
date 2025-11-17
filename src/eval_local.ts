@@ -1,23 +1,10 @@
 import { createSystem, createVirtualTypeScriptEnvironment } from "@typescript/vfs";
 import * as ts from "typescript";
-import { readFileSync,readdirSync } from "fs";
-import { resolve } from "path";
-import { CustomTypes } from "./base.ts";
-
-function getLocalLibFile(name: string) {
-    // Assumes you have "typescript" installed locally
-    return readFileSync(resolve(`node_modules/typescript/lib/${name}`), "utf8");
-}
+import {libFiles} from "./services/typescript/lib-bundle.ts"
 
 
 function loadLibs() {
-    const fsMap = new Map<string, string>();
-    for (const libName of readdirSync('./node_modules/typescript/lib')) {
-        if (libName.startsWith("lib.") && libName.endsWith(".d.ts")) {
-            fsMap.set("/" + libName, getLocalLibFile(libName));
-        }
-    }
-    return fsMap;
+    return new Map<string, string>(Object.entries(libFiles));
 }
 
 export function checkTypeCondition(typeBody: string, checker: string, context?: string): boolean {

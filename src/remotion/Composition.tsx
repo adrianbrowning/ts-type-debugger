@@ -3,7 +3,7 @@ import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import { LAYOUT, COLORS } from './config';
 import { CodePanel } from './CodePanel';
 import { ResultsPanel } from './ResultsPanel';
-import { VideoData } from '../videoGenerator';
+import type { VideoData } from '../videoGenerator';
 
 interface CompositionProps {
   videoData: VideoData;
@@ -13,26 +13,26 @@ interface CompositionProps {
  * Main composition: layout with code and results panels
  */
 
-export const MyVideoComposition: React.FC<VideoData> = (videoData ) => {
+export const TypeEvalVideo: React.FC<VideoData> = ({steps, activeTypeMap, typeAliases, sourceCode,totalFrames} ) => {
   const frame = useCurrentFrame();
 
   // Find current step based on frame
   const currentStep = useMemo(() => {
-    return videoData.steps.find(
+    return steps.find(
       (step) => frame >= step.startFrame && frame < step.endFrame
     );
-  }, [frame, videoData.steps]);
+  }, [frame, steps]);
 
   // Get active type from precomputed map (handles both Map and plain object)
   const activeType = useMemo(() => {
     if (!currentStep) return null;
-    const mapOrObj = videoData.activeTypeMap;
+    const mapOrObj = activeTypeMap;
     if (mapOrObj instanceof Map) {
       return mapOrObj.get(currentStep.stepIndex) ?? null;
     }
     // Handle JSON deserialized object
     return (mapOrObj as Record<number, any>)[currentStep.stepIndex] ?? null;
-  }, [currentStep, videoData.activeTypeMap]);
+  }, [currentStep, activeTypeMap]);
 
   return (
     <AbsoluteFill
@@ -55,11 +55,11 @@ export const MyVideoComposition: React.FC<VideoData> = (videoData ) => {
       >
         {/* Code Panel */}
         <CodePanel
-          steps={videoData.steps}
-          typeAliases={videoData.typeAliases}
+          steps={steps}
+          typeAliases={typeAliases}
           currentStep={currentStep ?? null}
           activeType={activeType ?? null}
-          sourceCode={videoData.sourceCode}
+          sourceCode={sourceCode}
         />
 
         {/* Results Panel */}
@@ -84,7 +84,7 @@ export const MyVideoComposition: React.FC<VideoData> = (videoData ) => {
             color: COLORS.textSecondary,
           }}
         >
-          {currentStep ? `Step ${currentStep.original.step} of ${videoData.steps.length}` : 'Ready'}
+          {currentStep ? `Step ${currentStep.original.step} of ${steps.length}` : 'Ready'}
         </div>
 
         {/* Progress bar */}
@@ -101,7 +101,7 @@ export const MyVideoComposition: React.FC<VideoData> = (videoData ) => {
           <div
             style={{
               height: '100%',
-              width: `${(frame / videoData.totalFrames) * 100}%`,
+              width: `${(frame / totalFrames) * 100}%`,
               backgroundColor: COLORS.info,
               transition: 'width 0.1s linear',
             }}
@@ -116,7 +116,7 @@ export const MyVideoComposition: React.FC<VideoData> = (videoData ) => {
             textAlign: 'right',
           }}
         >
-          Frame {frame} / {videoData.totalFrames}
+          Frame {frame} / {totalFrames}
         </div>
       </div>
     </AbsoluteFill>
