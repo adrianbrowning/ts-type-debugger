@@ -17,9 +17,8 @@ import { CustomTypes } from '../base.ts';
 const TYPE_KEYWORD_PATTERN = /^\s*type\s+\w+\s*=/i;
 
 export const App: React.FC = () => {
-  const [code, setCode] = useState<string>(`type _result = getter<"">;
-` + CustomTypes);
-  const [typeName, setTypeName] = useState<string>('_result');
+  const [code, setCode] = useState<string>(CustomTypes);
+  const [typeName, setTypeName] = useState<string>('getter<"">');
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

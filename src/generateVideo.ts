@@ -3,20 +3,19 @@
  * Usage: node generateVideo.ts
  */
 
-import { CustomTypes } from './base.ts';
 import {
   generateTypeVideo,
   formatVideoDataForExport,
 } from './core/typeDebugger.ts';
 import * as process from 'node:process';
-import * as fs from 'node:fs';
+import {CustomTypes} from "./base.ts";
 
 /**
  * Main execution
  */
-async function main() {
-  const code = 'type _result = "a" extends string ?\n true :\n false;';
-  // const code = 'type _result = getter<"Post">;\n' + CustomTypes;
+export async function generateVideoData() {
+  // const code = 'type _result = "a" extends string ?\n true :\n false;';
+  const code = 'type _result = getter<"Post">;\n' + CustomTypes;
 
   console.log('Generating type evaluation video...\n');
 
@@ -44,23 +43,23 @@ async function main() {
     console.log(`Type Aliases: ${videoData.typeAliases.length}`);
 
     // Export full data as JSON for use in Remotion
-    const exportPath = './video-data.json';
+    // const exportPath = './video-data.json';
     // Custom replacer to handle Map serialization
-    const replacer = (key: string, value: unknown) => {
-      if (value instanceof Map) {
-        return Object.fromEntries(value);
-      }
-      return value;
-    };
-    fs.writeFileSync(exportPath, JSON.stringify(videoData, replacer, 2));
-    console.log(`\n✓ Video data exported to: ${exportPath}`);
-    console.log(`\nNext steps:`);
-    console.log(`  1. pnpm remotion:preview  (opens browser)`);
-    console.log(`  2. pnpm remotion:render   (renders to MP4)`);
+    // const replacer = (key: string, value: unknown) => {
+    //   if (value instanceof Map) {
+    //     return Object.fromEntries(value);
+    //   }
+    //   return value;
+    // };
+    // fs.writeFileSync(exportPath, JSON.stringify(videoData, replacer, 2));
+    // console.log(`\n✓ Video data exported to: ${exportPath}`);
+    // console.log(`\nNext steps:`);
+    // console.log(`  1. pnpm remotion:preview  (opens browser)`);
+    // console.log(`  2. pnpm remotion:render   (renders to MP4)`);
+      return videoData;
   } catch (err) {
     console.error('Error:', err);
     process.exit(1);
   }
 }
 
-main();
