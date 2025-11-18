@@ -4,12 +4,13 @@ import { THEME } from '../theme.ts';
 interface HeaderProps {
   onToggleEditor: () => void;
   editorVisible: boolean;
+  hasGenerated: boolean;
 }
 
 /**
  * Header with title and Hide/Show Editor button
  */
-export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible }) => {
+export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, hasGenerated }) => {
   return (
     <header
       style={{
@@ -35,28 +36,30 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible })
         TypeScript Type Visualizer
       </h1>
 
-      <button
-        onClick={onToggleEditor}
-        style={{
-          padding: `${THEME.spacing.md} ${THEME.spacing.lg}`,
-          backgroundColor: THEME.accent.primary,
-          color: THEME.text.primary,
-          border: 'none',
-          borderRadius: THEME.radius.md,
-          fontSize: THEME.fontSize.md,
-          fontWeight: THEME.fontWeight.semibold,
-          cursor: 'pointer',
-          transition: 'background-color 0.2s ease',
-        }}
-        onMouseOver={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = THEME.accent.primaryAlt;
-        }}
-        onMouseOut={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = THEME.accent.primary;
-        }}
-      >
-        {editorVisible ? 'Hide Editor' : 'Show Editor'}
-      </button>
+      {hasGenerated && (
+        <button
+          onClick={onToggleEditor}
+          style={{
+            padding: `${THEME.spacing.md} ${THEME.spacing.lg}`,
+            backgroundColor: THEME.accent.primary,
+            color: THEME.text.primary,
+            border: 'none',
+            borderRadius: THEME.radius.md,
+            fontSize: THEME.fontSize.md,
+            fontWeight: THEME.fontWeight.semibold,
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseOver={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = THEME.accent.primaryAlt;
+          }}
+          onMouseOut={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = THEME.accent.primary;
+          }}
+        >
+          {editorVisible ? 'Hide Editor' : 'Show Editor'}
+        </button>
+      )}
     </header>
   );
 };

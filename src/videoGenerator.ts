@@ -172,10 +172,14 @@ function traceToVideoSteps(
       highlightLines = {
         start: entry.position.start.line - 1, // Convert from 1-indexed to 0-indexed
         end: entry.position.end.line - 1,
-        chars: {
-          start: entry.position.start.character,
-          end: entry.position.end.character,
-        },
+        // Only include char-level positioning for single-line highlights
+        // Multi-line highlights use full-width box
+        ...(entry.position.start.line === entry.position.end.line && {
+          chars: {
+            start: entry.position.start.character,
+            end: entry.position.end.character,
+          },
+        }),
       };
     }
 

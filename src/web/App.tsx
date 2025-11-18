@@ -24,6 +24,7 @@ export const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [editorVisible, setEditorVisible] = useState(true);
   const [typeNameError, setTypeNameError] = useState<string | null>(null);
+  const [hasGenerated, setHasGenerated] = useState(false);
 
   const playback = usePlayback(videoData);
 
@@ -41,6 +42,7 @@ export const App: React.FC = () => {
   const handleGenerate = async () => {
     setIsLoading(true);
     setError(null);
+    setVideoData(null);
 
     try {
       const data = await generateTypeVideo(code, typeName, {
@@ -54,6 +56,7 @@ export const App: React.FC = () => {
       }
 
       setVideoData(data);
+      setHasGenerated(true);
       setError(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -80,6 +83,7 @@ export const App: React.FC = () => {
       <Header
         onToggleEditor={() => setEditorVisible(!editorVisible)}
         editorVisible={editorVisible}
+        hasGenerated={hasGenerated}
       />
 
       {/* Main Content Area */}
@@ -95,43 +99,31 @@ export const App: React.FC = () => {
         {editorVisible && (
           <div
             style={{
-              width: THEME.size.editorWidth,
+              width: hasGenerated ? THEME.size.editorWidth : undefined,
+              flex: hasGenerated ? undefined : 1,
               display: 'flex',
               flexDirection: 'column',
               minWidth: 0,
             }}
           >
-            <MonacoCodeEditor
-              code={code}
-              onChange={setCode}
-              isLoading={isLoading}
-            />
-
-            {/* Type Input Section */}
+            {/* Type Input Section - Top with horizontal layout */}
             <div
               style={{
                 padding: THEME.spacing.lg,
                 backgroundColor: THEME.bg.primary,
-                borderTop: `1px solid ${THEME.border.subtle}`,
+                borderBottom: `1px solid ${THEME.border.subtle}`,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: THEME.spacing.md,
               }}
             >
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    color: THEME.text.secondary,
-                    fontSize: THEME.fontSize.xs,
-                    fontWeight: THEME.fontWeight.semibold,
-                    marginBottom: THEME.spacing.sm,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                  }}
-                >
-                  Type to Evaluate
-                </label>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: THEME.spacing.md,
+                  alignItems: 'flex-start',
+                }}
+              >
                 <input
                   type="text"
                   value={typeName}
@@ -148,7 +140,7 @@ export const App: React.FC = () => {
                   disabled={isLoading}
                   placeholder='e.g., _result or "a" extends string ? true : false'
                   style={{
-                    width: '100%',
+                    flex: 1,
                     padding: THEME.spacing.md,
                     backgroundColor: THEME.bg.editor,
                     color: THEME.text.primary,
@@ -161,6 +153,44 @@ export const App: React.FC = () => {
                     cursor: isLoading ? 'not-allowed' : 'text',
                   }}
                 />
+                <button
+                  onClick={handleGenerate}
+                  disabled={isLoading || !typeName.trim() || !!typeNameError}
+                  style={{
+                    padding: `${THEME.spacing.md} ${THEME.spacing.lg}`,
+                    backgroundColor:
+                      isLoading || !typeName.trim() || typeNameError
+                        ? THEME.text.disabled
+                        : THEME.accent.primary,
+                    color: THEME.text.primary,
+                    border: 'none',
+                    borderRadius: THEME.radius.md,
+                    fontSize: THEME.fontSize.md,
+                    fontWeight: THEME.fontWeight.semibold,
+                    cursor:
+                      isLoading || !typeName.trim() || typeNameError
+                        ? 'not-allowed'
+                        : 'pointer',
+                    opacity: isLoading || !typeName.trim() || typeNameError ? 0.6 : 1,
+                    transition: 'background-color 0.2s ease',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isLoading && typeName.trim() && !typeNameError) {
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                        THEME.accent.primaryAlt;
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isLoading && typeName.trim() && !typeNameError) {
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                        THEME.accent.primary;
+                    }
+                  }}
+                >
+                  {isLoading ? 'Generating...' : 'Generate'}
+                </button>
               </div>
 
               {typeNameError && (
@@ -192,109 +222,82 @@ export const App: React.FC = () => {
                   {error}
                 </div>
               )}
-
-              <button
-                onClick={handleGenerate}
-                disabled={isLoading || !code.trim() || !typeName.trim() || !!typeNameError}
-                style={{
-                  padding: THEME.spacing.md,
-                  backgroundColor:
-                    isLoading || !code.trim() || !typeName.trim() || typeNameError
-                      ? THEME.text.disabled
-                      : THEME.accent.primary,
-                  color: THEME.text.primary,
-                  border: 'none',
-                  borderRadius: THEME.radius.md,
-                  fontSize: THEME.fontSize.md,
-                  fontWeight: THEME.fontWeight.semibold,
-                  cursor:
-                    isLoading || !code.trim() || !typeName.trim() || typeNameError
-                      ? 'not-allowed'
-                      : 'pointer',
-                  opacity: isLoading || !code.trim() || !typeName.trim() || typeNameError ? 0.6 : 1,
-                  transition: 'background-color 0.2s ease',
-                }}
-                onMouseOver={(e) => {
-                  if (!isLoading && code.trim() && typeName.trim() && !typeNameError) {
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                      THEME.accent.primaryAlt;
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (!isLoading && code.trim() && typeName.trim() && !typeNameError) {
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                      THEME.accent.primary;
-                  }
-                }}
-              >
-                {isLoading ? 'Generating...' : 'Generate'}
-              </button>
             </div>
+
+            <MonacoCodeEditor
+              code={code}
+              onChange={setCode}
+              isLoading={isLoading}
+            />
           </div>
         )}
 
         {/* Type Definition Panel */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0,
-            borderRight: `1px solid ${THEME.border.subtle}`,
-          }}
-        >
-          {videoData ? (
-            <CodePanel
-              currentStep={playback.currentStep}
-              activeType={activeType}
-              sourceCode={videoData.sourceCode}
-            />
-          ) : (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-                backgroundColor: THEME.bg.secondary,
-              }}
-            >
+        {hasGenerated && (
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minWidth: 0,
+              borderRight: `1px solid ${THEME.border.subtle}`,
+            }}
+          >
+            {videoData ? (
+              <CodePanel
+                currentStep={playback.currentStep}
+                activeType={activeType}
+                sourceCode={videoData.sourceCode}
+              />
+            ) : (
               <div
                 style={{
-                  padding: `${THEME.spacing.lg} ${THEME.spacing.xl}`,
-                  borderBottom: `1px solid ${THEME.border.subtle}`,
-                  backgroundColor: THEME.bg.primary,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                  backgroundColor: THEME.bg.secondary,
                 }}
               >
-                <h3
+                <div
                   style={{
-                    margin: 0,
-                    color: THEME.text.primary,
-                    fontSize: THEME.fontSize.xl,
-                    fontWeight: THEME.fontWeight.semibold,
+                    padding: `${THEME.spacing.lg} ${THEME.spacing.xl}`,
+                    borderBottom: `1px solid ${THEME.border.subtle}`,
+                    backgroundColor: THEME.bg.primary,
                   }}
                 >
-                  Type Definition
-                </h3>
+                  <h3
+                    style={{
+                      margin: 0,
+                      color: THEME.text.primary,
+                      fontSize: THEME.fontSize.xl,
+                      fontWeight: THEME.fontWeight.semibold,
+                    }}
+                  >
+                    Type Definition
+                  </h3>
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: THEME.text.secondary,
+                  }}
+                >
+                  Generate video to see type definition
+                </div>
               </div>
-              <div
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: THEME.text.secondary,
-                }}
-              >
-                Generate video to see type definition
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* Step Details Panel */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          <StepDetailsPanel currentStep={playback.currentStep} />
-        </div>
+        {hasGenerated && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+            <StepDetailsPanel currentStep={playback.currentStep} />
+          </div>
+        )}
       </div>
 
       {/* Footer Navigation */}

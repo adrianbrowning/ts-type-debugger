@@ -21,6 +21,15 @@ export function usePlayback(videoData: VideoData | null) {
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(Date.now());
 
+  // Reset playback state when videoData changes
+  useEffect(() => {
+    setState({
+      currentStepIndex: 0,
+      isPlaying: false,
+      speed: 1,
+    });
+  }, [videoData]);
+
   // Calculate frame progress (0-1) within current step
   const getCurrentStepFrameProgress = useCallback((): number => {
     if (!videoData || videoData.steps.length === 0) return 0;

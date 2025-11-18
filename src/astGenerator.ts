@@ -8,7 +8,7 @@ import {checkTypeCondition, evalTypeString} from "./eval_local.ts";
  */
 export interface TraceEntry {
   step: number;
-  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'template_literal' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result';
+  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result';
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
@@ -339,6 +339,12 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   });
   context.level--;
 
+  // Log comparison operation (check extends extends)
+  addTrace(context, 'conditional_comparison', `${checkStr} extends ${extendsStr}`,
+      {
+        position: getNodePosition(condType.checkType, context.sourceFile),
+    });
+
   // For now, we'll evaluate both branches and make a simple decision
   // In a full implementation, this would need proper type checking
   // const isTruthy = isTypeCompatible(checkStr, extendsStr);
@@ -364,6 +370,13 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
     ? evaluateTypeNode(condType.trueType, context)
     : evaluateTypeNode(condType.falseType, context);
   context.level--;
+
+  // Log final result assignment (highlight the type alias name)
+  if (context.currentNode) {
+    addTrace(context, 'result_assignment', result, {
+      position: getNodePosition(context.currentNode, context.sourceFile),
+    });
+  }
 
   return result;
 }

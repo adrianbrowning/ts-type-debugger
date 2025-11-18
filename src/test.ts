@@ -71,7 +71,8 @@ import {generateAST, traceTypeResolution} from "./astGenerator.ts";
 export {};
 
     function buildTrace(expression: string, options?: { customTypes: string }) {
-        const ast = generateAST(`type _result = ${expression};\n` + options?.customTypes || "");
+        const cleanExpression = expression.trim().replace(/;+$/, '').trim();
+        const ast = generateAST(`type _result = ${cleanExpression};\n` + options?.customTypes || "");
 
         return traceTypeResolution(ast, '_result');
     }

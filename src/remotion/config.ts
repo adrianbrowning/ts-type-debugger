@@ -91,9 +91,11 @@ export const TRACE_TYPE_COLORS: Record<string, string> = {
   condition: '#F59E0B', // amber
   conditional_evaluate_left: '#EC4899', // pink
   conditional_evaluate_right: '#EC4899', // pink
+  conditional_comparison: '#F59E0B', // amber
   conditional_evaluation: '#F59E0B', // amber
   branch_true: '#10B981', // green
   branch_false: '#EF4444', // red
+  result_assignment: '#10B981', // green
   template_literal: '#06B6D4', // cyan
   alias_reference: '#6366F1', // indigo
   substitution: '#14B8A6', // teal

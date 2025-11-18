@@ -126,14 +126,48 @@ export const CodePanel: React.FC<CodePanelProps> = ({
                 fontSize: LAYOUT.code.fontSize,
                 lineHeight: LAYOUT.code.lineHeight,
                 color: COLORS.text,
-                whiteSpace: 'pre-wrap',
-                wordWrap: 'break-word',
+                whiteSpace: 'pre',
                 position: 'relative',
                 zIndex: 1,
                 display: 'inline-block',
                 minWidth: '100%',
               }}
             >
+              {/* Animated highlight box - positioned inside pre */}
+              {currentStep?.highlightLines && activeType && (
+                <div
+                  ref={highlightRef}
+                  style={{
+                    position: 'absolute',
+                    top: `${
+                      (currentStep.highlightLines.start - activeType.startLine) *
+                        (LAYOUT.code.lineHeight * LAYOUT.code.fontSize)
+                    }px`,
+                    left: currentStep.highlightLines.chars
+                      ? `${40 + 12 + currentStep.highlightLines.chars.start * (LAYOUT.code.fontSize * 0.6)}px`
+                      : `${40 + 12}px`,
+                    ...(currentStep.highlightLines.chars
+                      ? {
+                          // width: `${(currentStep.highlightLines.chars.end - currentStep.highlightLines.chars.start) * (LAYOUT.code.fontSize * 0.6)}px`,
+                            width: `${(currentStep.highlightLines.chars.end - currentStep.highlightLines.chars.start) + 1}ch`,
+                        }
+                      : {
+                          right: '0px',
+                        }),
+                    height: `${
+                      (currentStep.highlightLines.end - currentStep.highlightLines.start + 1) *
+                      LAYOUT.code.lineHeight * LAYOUT.code.fontSize
+                    }px`,
+                    border: `${LAYOUT.highlight.borderWidth}px solid ${LAYOUT.highlight.borderColor}`,
+                    backgroundColor: LAYOUT.highlight.backgroundColor,
+                    borderRadius: LAYOUT.highlight.borderRadius,
+                    zIndex: 0,
+                    transition: `all 0.1s ease-out`,
+                    pointerEvents: 'none',
+                  }}
+                />
+              )}
+
               {/* Show line numbers with absolute positions + code for active type */}
               {activeType.lines.map((line, idx) => {
                 const absoluteLineNum = activeType.startLine + idx + 1;
@@ -166,33 +200,6 @@ export const CodePanel: React.FC<CodePanelProps> = ({
                 );
               })}
             </pre>
-
-            {/* Animated highlight box - adjusted for relative positioning */}
-            {currentStep?.highlightLines && activeType && (
-              <div
-                ref={highlightRef}
-                style={{
-                  position: 'absolute',
-                  top: `${
-                    (currentStep.highlightLines.start - activeType.startLine) *
-                      (LAYOUT.code.lineHeight * LAYOUT.code.fontSize) +
-                    LAYOUT.code.padding
-                  }px`,
-                  left: LAYOUT.code.padding,
-                  right: LAYOUT.code.padding,
-                  height: `${
-                    (currentStep.highlightLines.end - currentStep.highlightLines.start + 1) *
-                    LAYOUT.code.lineHeight * LAYOUT.code.fontSize
-                  }px`,
-                  border: `${LAYOUT.highlight.borderWidth}px solid ${LAYOUT.highlight.borderColor}`,
-                  backgroundColor: LAYOUT.highlight.backgroundColor,
-                  borderRadius: LAYOUT.highlight.borderRadius,
-                  zIndex: 0,
-                  transition: `all 0.1s ease-out`,
-                  pointerEvents: 'none',
-                }}
-              />
-            )}
           </>
         ) : (
           <div

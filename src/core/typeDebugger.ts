@@ -30,7 +30,8 @@ export async function generateTypeVideo(
 
     // Always wrap the user input in a temporary type alias for evaluation
     const actualTypeName = '__EvalTarget__';
-    const modifiedCode = `type ${actualTypeName} = ${typeName};\n${code}`;
+    const cleanTypeName = typeName.trim().replace(/;+$/, '').trim();
+    const modifiedCode = `type ${actualTypeName} = ${cleanTypeName};\n${code}`;
 
     // Generate AST
     const ast = generateAST(modifiedCode);
