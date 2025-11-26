@@ -8,7 +8,7 @@ import {checkTypeCondition, evalTypeString} from "./eval_local.ts";
  */
 export interface TraceEntry {
   step: number;
-  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member';
+  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce';
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
@@ -19,6 +19,7 @@ export interface TraceEntry {
     end: { line: number; character: number };
   };
   currentUnionMember?: string;
+  currentUnionResults?: string;
 }
 
 /**
@@ -157,6 +158,7 @@ interface EvalContext {
   allTypeAliases: Map<string, ts.TypeAliasDeclaration>;
   currentNode?: ts.Node; // Track the node being evaluated for result steps
   currentUnionMember?: string; // Track which union member is being evaluated
+  currentUnionResults?: string; // Track accumulating union results
 }
 
 /**
@@ -199,6 +201,8 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
     position: isSemanticStep ? undefined : (shouldUseContextNode && context.currentNode ? getNodePosition(context.currentNode, context.sourceFile) : undefined),
     // Track which union member is currently being evaluated
     currentUnionMember: context.currentUnionMember,
+    // Track accumulated union results
+    currentUnionResults: context.currentUnionResults,
     ...opts,
   };
   context.trace.push(entry);
@@ -349,6 +353,7 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
       // Evaluate conditional for each union member
       const results: string[] = [];
       const oldUnionMember = context.currentUnionMember;
+      const oldUnionResults = context.currentUnionResults;
 
       for (const member of unionMembers) {
         // Set the union member context
@@ -362,6 +367,7 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
         addTrace(context, 'conditional_union_member', `Evaluating for ${discriminativeParam} = ${member}`, {
           position: getNodePosition(condType.checkType, context.sourceFile),
           currentUnionMember: member,
+          currentUnionResults: results.length > 0 ? results.join(' | ') : undefined,
         });
 
         // Check if this member satisfies the condition
@@ -374,6 +380,7 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
         addTrace(context, memberIsTruthy ? 'branch_true' : 'branch_false', memberIsTruthy ? trueStr : falseStr, {
           position: getNodePosition(branchNode, context.sourceFile),
           currentUnionMember: member,
+          currentUnionResults: results.length > 0 ? results.join(' | ') : undefined,
         });
 
         // Evaluate the appropriate branch for this member
@@ -385,12 +392,39 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
 
         results.push(memberResult);
 
+        // Update accumulated results for visualization
+        const accumulatedUnion = results.join(' | ');
+        context.currentUnionResults = accumulatedUnion;
+
+        // Reduce the union (remove never, simplify) after each member
+        let reducedUnion = accumulatedUnion;
+        try {
+          reducedUnion = evalTypeString(context.sourceFile.text, accumulatedUnion);
+        } catch {
+          // If reduction fails, keep the unreduced version
+          reducedUnion = accumulatedUnion;
+        }
+
+        // Log reduction if it changed
+        if (reducedUnion !== accumulatedUnion) {
+          addTrace(context, 'union_reduce', `${accumulatedUnion} => ${reducedUnion}`, {
+            position: getNodePosition(branchNode, context.sourceFile),
+            currentUnionMember: member,
+            currentUnionResults: reducedUnion,
+            result: reducedUnion,
+          });
+          context.currentUnionResults = reducedUnion;
+        }
+
         // Restore the parameter
         context.parameters.set(discriminativeParam, oldValue);
       }
 
+      // Final reduced result
+      const finalResult = context.currentUnionResults || results.join(' | ');
       context.currentUnionMember = oldUnionMember;
-      return results.join(' | ');
+      context.currentUnionResults = oldUnionResults;
+      return finalResult;
     }
   }
 
