@@ -12,3 +12,19 @@
 
 
 ### CLAUDE LEARNINGS ###
+
+## Union Stepping Implementation
+- **Key insight**: TypeScript only distributes unions over conditionals in specific cases:
+  - NOT at top level (unions are treated as single type)
+  - ONLY inside generics with discriminative conditionals
+  - ONLY when extends clause is restrictive (like `"a"`, not `string`)
+
+- **Implementation**: `astGenerator.ts:324-446`
+  - `evaluateConditional()` detects discriminative conditionals via `getDiscriminativeParameter()`
+  - For each union member, sets `context.currentUnionMember` to track which member is evaluated
+  - Trace entries include `currentUnionMember` field for visualization
+  - New trace types: `conditional_union_distribute`, `conditional_union_member`
+
+- **Visualization**: Right-hand panel should show `currentUnionMember` from trace entries to indicate which union member is being stepped through at each trace point.
+
+- **Test file**: `test-union-stepping.ts` verifies all 4 cases work correctly
