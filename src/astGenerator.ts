@@ -184,7 +184,7 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
   // For result steps without explicit position, use current node context
   // Exclude semantic steps that don't correspond to specific code locations
   const resultTypes = new Set(['mapped_type_constraint_result', 'mapped_type_result', 'mapped_type_end', 'indexed_access_result', 'template_literal']);
-  const semanticSteps = new Set(['condition', 'conditional_evaluation']); // No auto-position for these
+  const semanticSteps = new Set(['conditional_evaluation']); // No auto-position for these
 
   const shouldUseContextNode = resultTypes.has(type) && !opts.position && context.currentNode;
   const isSemanticStep = semanticSteps.has(type);
