@@ -375,8 +375,41 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
         const memberExtendsStr = substituteParameters(extendsStr, context.parameters);
         const memberIsTruthy = checkTypeCondition(memberCheckStr, memberExtendsStr, context.sourceFile.text);
 
-        // Log which branch is taken for this member
+        // Log detailed comparison steps for this member (same as non-union case)
+        context.level++;
+        addTrace(context, 'conditional_evaluate_left', memberCheckStr, {
+          position: getNodePosition(condType.checkType, context.sourceFile),
+          currentUnionMember: member,
+        });
+
+        addTrace(context, 'conditional_evaluate_right', memberExtendsStr, {
+          position: getNodePosition(condType.extendsType, context.sourceFile),
+          currentUnionMember: member,
+        });
+        context.level--;
+
+        // Highlight only the comparison part for this member
+        const memberComparisonStart = condType.checkType.getStart(context.sourceFile);
+        const memberComparisonEnd = condType.extendsType.getEnd();
+        const memberComparisonPosStart = context.sourceFile.getLineAndCharacterOfPosition(memberComparisonStart);
+        const memberComparisonPosEnd = context.sourceFile.getLineAndCharacterOfPosition(memberComparisonEnd);
+        addTrace(context, 'conditional_comparison', `${memberCheckStr} extends ${memberExtendsStr}`, {
+          position: {
+            start: { line: memberComparisonPosStart.line + 1, character: memberComparisonPosStart.character },
+            end: { line: memberComparisonPosEnd.line + 1, character: memberComparisonPosEnd.character },
+          },
+          currentUnionMember: member,
+        });
+
+        // Log evaluation result for this member
         const branchNode = memberIsTruthy ? condType.trueType : condType.falseType;
+        addTrace(context, 'conditional_evaluation', `${memberIsTruthy}`, {
+          position: getNodePosition(branchNode, context.sourceFile),
+          currentUnionMember: member,
+          result: memberIsTruthy ? 'true' : 'false',
+        });
+
+        // Log which branch is taken for this member
         addTrace(context, memberIsTruthy ? 'branch_true' : 'branch_false', memberIsTruthy ? trueStr : falseStr, {
           position: getNodePosition(branchNode, context.sourceFile),
           currentUnionMember: member,
