@@ -90,12 +90,26 @@ export function evalTypeString(context: string, expr: string): string {
     // Get the type
     const type = checker.getTypeAtLocation(node);
 
-    // Helper: expand union of string literals into "A" | "B"
+    // Helper: expand union of literals into "A" | "B"
     function typeString(type: ts.Type): string {
         if (type.isUnion()) {
             const parts = (type as ts.UnionType).types;
             if (parts.every(t => t.isStringLiteral())) {
                 return parts.map(t => JSON.stringify(t.value)).join(" | ");
+            }
+            // Handle numeric and other literal unions
+            const allLiterals = parts.every(t => {
+                return (t as any).isNumberLiteral?.() || t.isStringLiteral() ||
+                       checker.typeToString(t) === "never";
+            });
+            if (allLiterals) {
+                return parts.map(t => {
+                    if ((t as any).isNumberLiteral?.()) {
+                        return (t as any).value.toString();
+                    }
+                    if (t.isStringLiteral()) return JSON.stringify(t.value);
+                    return checker.typeToString(t);
+                }).join(" | ");
             }
         }
         if (type.isStringLiteral()) return JSON.stringify(type.value);

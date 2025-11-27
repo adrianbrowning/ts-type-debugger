@@ -81,4 +81,7 @@ export const TRACE_TYPE_COLORS: Record<TraceEntry['type'], string> = {
   mapped_type_end: '#8B5CF6', // purple
   indexed_access: '#06B6D4', // cyan
   indexed_access_result: '#10B981', // green
+  conditional_union_distribute: '#A855F7', // violet
+  conditional_union_member: '#06B6D4', // cyan
+  union_reduce: '#FBBF24', // amber (highlight for reduction)
 };

@@ -8,7 +8,7 @@ import {checkTypeCondition, evalTypeString} from "./eval_local.ts";
  */
 export interface TraceEntry {
   step: number;
-  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result';
+  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce';
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
@@ -18,6 +18,8 @@ export interface TraceEntry {
     start: { line: number; character: number };
     end: { line: number; character: number };
   };
+  currentUnionMember?: string;
+  currentUnionResults?: string;
 }
 
 /**
@@ -155,6 +157,8 @@ interface EvalContext {
   parameters: Map<string, string>;
   allTypeAliases: Map<string, ts.TypeAliasDeclaration>;
   currentNode?: ts.Node; // Track the node being evaluated for result steps
+  currentUnionMember?: string; // Track which union member is being evaluated
+  currentUnionResults?: string; // Track accumulating union results
 }
 
 /**
@@ -180,7 +184,7 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
   // For result steps without explicit position, use current node context
   // Exclude semantic steps that don't correspond to specific code locations
   const resultTypes = new Set(['mapped_type_constraint_result', 'mapped_type_result', 'mapped_type_end', 'indexed_access_result', 'template_literal']);
-  const semanticSteps = new Set(['condition', 'conditional_evaluation']); // No auto-position for these
+  const semanticSteps = new Set(['conditional_evaluation']); // No auto-position for these
 
   const shouldUseContextNode = resultTypes.has(type) && !opts.position && context.currentNode;
   const isSemanticStep = semanticSteps.has(type);
@@ -195,6 +199,10 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
     // For result steps, use current node position if no explicit position provided
     // Semantic steps don't get auto-positioned
     position: isSemanticStep ? undefined : (shouldUseContextNode && context.currentNode ? getNodePosition(context.currentNode, context.sourceFile) : undefined),
+    // Track which union member is currently being evaluated
+    currentUnionMember: context.currentUnionMember,
+    // Track accumulated union results
+    currentUnionResults: context.currentUnionResults,
     ...opts,
   };
   context.trace.push(entry);
@@ -312,6 +320,7 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
 
 /**
  * Evaluates a conditional type and traces the branch taken
+ * Handles union distribution for discriminative conditionals
  * @param condType Conditional type node
  * @param context Evaluation context
  * @returns The resolved type from the taken branch
@@ -322,11 +331,137 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   const trueStr = condType.trueType.getText(context.sourceFile);
   const falseStr = condType.falseType.getText(context.sourceFile);
 
-  // Log condition entry (semantic step - no specific position)
-  addTrace(context, 'condition', `${checkStr} extends ${extendsStr} ? ${trueStr} : ${falseStr}`,context.currentNode ? {
-      position: getNodePosition(context.currentNode, context.sourceFile),
-  } : undefined);
+  // Log condition entry with position of the entire conditional expression
+  addTrace(context, 'condition', `${checkStr} extends ${extendsStr} ? ${trueStr} : ${falseStr}`, {
+    position: getNodePosition(condType, context.sourceFile),
+  });
 
+  // Check if this is a discriminative conditional with a union
+  const discriminativeParam = getDiscriminativeParameter(condType.checkType, condType.extendsType, context.sourceFile);
+
+  if (discriminativeParam && context.parameters.has(discriminativeParam)) {
+    const paramValue = context.parameters.get(discriminativeParam)!;
+    const unionMembers = parseUnionType(paramValue);
+
+    // Only distribute if we have a union (multiple members)
+    if (unionMembers.length > 1) {
+      // Log union distribution
+      addTrace(context, 'conditional_union_distribute', `Union ${discriminativeParam} = ${paramValue}`, {
+        position: getNodePosition(condType.checkType, context.sourceFile),
+      });
+
+      // Evaluate conditional for each union member
+      const results: string[] = [];
+      const oldUnionMember = context.currentUnionMember;
+      const oldUnionResults = context.currentUnionResults;
+
+      for (const member of unionMembers) {
+        // Set the union member context
+        context.currentUnionMember = member;
+
+        // Temporarily bind the parameter to this member
+        const oldValue = context.parameters.get(discriminativeParam)!;
+        context.parameters.set(discriminativeParam, member);
+
+        // Log which member we're evaluating
+        addTrace(context, 'conditional_union_member', `Evaluating for ${discriminativeParam} = ${member}`, {
+          position: getNodePosition(condType.checkType, context.sourceFile),
+          currentUnionMember: member,
+          currentUnionResults: results.length > 0 ? results.join(' | ') : undefined,
+        });
+
+        // Check if this member satisfies the condition
+        const memberCheckStr = substituteParameters(checkStr, context.parameters);
+        const memberExtendsStr = substituteParameters(extendsStr, context.parameters);
+        const memberIsTruthy = checkTypeCondition(memberCheckStr, memberExtendsStr, context.sourceFile.text);
+
+        // Log detailed comparison steps for this member (same as non-union case)
+        context.level++;
+        addTrace(context, 'conditional_evaluate_left', memberCheckStr, {
+          position: getNodePosition(condType.checkType, context.sourceFile),
+          currentUnionMember: member,
+        });
+
+        addTrace(context, 'conditional_evaluate_right', memberExtendsStr, {
+          position: getNodePosition(condType.extendsType, context.sourceFile),
+          currentUnionMember: member,
+        });
+        context.level--;
+
+        // Highlight only the comparison part for this member
+        const memberComparisonStart = condType.checkType.getStart(context.sourceFile);
+        const memberComparisonEnd = condType.extendsType.getEnd();
+        const memberComparisonPosStart = context.sourceFile.getLineAndCharacterOfPosition(memberComparisonStart);
+        const memberComparisonPosEnd = context.sourceFile.getLineAndCharacterOfPosition(memberComparisonEnd);
+        addTrace(context, 'conditional_comparison', `${memberCheckStr} extends ${memberExtendsStr}`, {
+          position: {
+            start: { line: memberComparisonPosStart.line + 1, character: memberComparisonPosStart.character },
+            end: { line: memberComparisonPosEnd.line + 1, character: memberComparisonPosEnd.character },
+          },
+          currentUnionMember: member,
+        });
+
+        // Log evaluation result for this member
+        const branchNode = memberIsTruthy ? condType.trueType : condType.falseType;
+        addTrace(context, 'conditional_evaluation', `${memberIsTruthy}`, {
+          position: getNodePosition(branchNode, context.sourceFile),
+          currentUnionMember: member,
+          result: memberIsTruthy ? 'true' : 'false',
+        });
+
+        // Log which branch is taken for this member
+        addTrace(context, memberIsTruthy ? 'branch_true' : 'branch_false', memberIsTruthy ? trueStr : falseStr, {
+          position: getNodePosition(branchNode, context.sourceFile),
+          currentUnionMember: member,
+          currentUnionResults: results.length > 0 ? results.join(' | ') : undefined,
+        });
+
+        // Evaluate the appropriate branch for this member
+        context.level++;
+        const memberResult = memberIsTruthy
+          ? evaluateTypeNode(condType.trueType, context)
+          : evaluateTypeNode(condType.falseType, context);
+        context.level--;
+
+        results.push(memberResult);
+
+        // Update accumulated results for visualization
+        const accumulatedUnion = results.join(' | ');
+        context.currentUnionResults = accumulatedUnion;
+
+        // Reduce the union (remove never, simplify) after each member
+        let reducedUnion = accumulatedUnion;
+        try {
+          reducedUnion = evalTypeString(context.sourceFile.text, accumulatedUnion);
+        } catch {
+          // If reduction fails, keep the unreduced version
+          reducedUnion = accumulatedUnion;
+        }
+
+        // Log reduction if it changed
+        if (reducedUnion !== accumulatedUnion) {
+          addTrace(context, 'union_reduce', `${accumulatedUnion} => ${reducedUnion}`, {
+            position: getNodePosition(branchNode, context.sourceFile),
+            currentUnionMember: member,
+            currentUnionResults: reducedUnion,
+            result: reducedUnion,
+          });
+          context.currentUnionResults = reducedUnion;
+        }
+
+        // Restore the parameter
+        context.parameters.set(discriminativeParam, oldValue);
+      }
+
+      // Final reduced result
+      const finalResult = context.currentUnionResults || results.join(' | ');
+      context.currentUnionMember = oldUnionMember;
+      context.currentUnionResults = oldUnionResults;
+      return finalResult;
+    }
+  }
+
+  // Non-discriminative or non-union case: standard evaluation
   // Log left side (check type)
   context.level++;
   addTrace(context, 'conditional_evaluate_left', checkStr, {
@@ -340,14 +475,17 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   context.level--;
 
   // Log comparison operation (check extends extends)
-  addTrace(context, 'conditional_comparison', `${checkStr} extends ${extendsStr}`,
-      {
-        position: getNodePosition(condType.checkType, context.sourceFile),
-    });
-
-  // For now, we'll evaluate both branches and make a simple decision
-  // In a full implementation, this would need proper type checking
-  // const isTruthy = isTypeCompatible(checkStr, extendsStr);
+  // Highlight only the comparison part: checkType extends extendsType (without branches)
+  const comparisonStart = condType.checkType.getStart(context.sourceFile);
+  const comparisonEnd = condType.extendsType.getEnd();
+  const comparisonPosStart = context.sourceFile.getLineAndCharacterOfPosition(comparisonStart);
+  const comparisonPosEnd = context.sourceFile.getLineAndCharacterOfPosition(comparisonEnd);
+  addTrace(context, 'conditional_comparison', `${checkStr} extends ${extendsStr}`, {
+    position: {
+      start: { line: comparisonPosStart.line + 1, character: comparisonPosStart.character },
+      end: { line: comparisonPosEnd.line + 1, character: comparisonPosEnd.character },
+    },
+  });
 
   const isTruthy = checkTypeCondition(substituteParameters(checkStr, context.parameters ), substituteParameters(extendsStr, context.parameters ), context.sourceFile.text)
 
@@ -399,6 +537,54 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
 }
 
 /**
+ * Check if a conditional is discriminative (parameter in check type varies based on extends type)
+ * Discriminative means: the check type is a parameter and the extends type restricts that parameter
+ * For example: T extends "a" ? ... : ... is discriminative
+ * But: T extends string ? ... : ... is NOT discriminative (all strings match equally)
+ */
+function getDiscriminativeParameter(checkNode: ts.TypeNode, extendsNode: ts.TypeNode, sourceFile: ts.SourceFile): string | null {
+  // Check if checkType is a simple type reference (identifier, not a generic call)
+  if (!ts.isTypeReferenceNode(checkNode) || checkNode.typeArguments?.length) {
+    return null;
+  }
+
+  const checkStr = checkNode.getText(sourceFile);
+  const extendsStr = extendsNode.getText(sourceFile);
+
+  // For discriminative: the extends type should be more restrictive than just a broad type
+  // Examples of discriminative:
+  //   str extends "a" ? ...  (checks against specific literal)
+  //   str extends { x: any } ? ... (checks against specific structure)
+  //   str extends readonly any[] ? ... (checks against specific shape)
+  // Not discriminative:
+  //   str extends string ? ... (string includes all string literals)
+  //   str extends any ? ... (any matches everything)
+
+  // Broad types that are non-discriminative
+  const nonDiscriminativeTypes = new Set(['string', 'number', 'boolean', 'any', 'unknown', 'symbol', 'bigint', 'never', '{}', 'object', 'string | number', 'PropertyKey']);
+
+  if (nonDiscriminativeTypes.has(extendsStr)) {
+    return null;
+  }
+
+  // If extends type starts with a quote (string literal) or has specific structure, it's discriminative
+  if (extendsStr.startsWith('"') || extendsStr.startsWith("'") || extendsStr.startsWith('{') || extendsStr.startsWith('[')) {
+    return checkStr;
+  }
+
+  return null;
+}
+
+/**
+ * Parse a union type string into its component types
+ * Handles "A | B | C" format
+ */
+function parseUnionType(typeStr: string): string[] {
+  const parts = typeStr.split(' | ').map(p => p.trim());
+  return parts.filter(p => p.length > 0);
+}
+
+/**
  * Simple type compatibility check (simplified - real TS would do full type checking)
  */
 function isTypeCompatible(check: string, extendsType: string): boolean {
@@ -409,19 +595,6 @@ function isTypeCompatible(check: string, extendsType: string): boolean {
   if (check === extendsType) return true;
   if (extendsType === 'any') return true;
   return false;
-}
-
-
-
-/**
- * Parse a union type string into its component types
- * Simple parser that handles "A | B | C" format
- */
-function parseUnionType(typeStr: string): string[] {
-  // Simple split on " | " for now - doesn't handle nested unions perfectly
-  // but works for most cases
-  const parts = typeStr.split(' | ').map(p => p.trim());
-  return parts.filter(p => p.length > 0);
 }
 
 /**

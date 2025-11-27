@@ -177,6 +177,86 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({ currentStep 
           </pre>
         </div>
 
+        {/* Running Results (Union Stepping) */}
+        {step.currentUnionMember && (
+          <div>
+            <h4
+              style={{
+                margin: `0 0 ${THEME.spacing.md} 0`,
+                color: THEME.text.secondary,
+                fontSize: THEME.fontSize.xs,
+                fontWeight: THEME.fontWeight.semibold,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}
+            >
+              Running Results
+            </h4>
+            <div
+              style={{
+                padding: THEME.spacing.md,
+                backgroundColor: THEME.bg.editor,
+                borderRadius: THEME.radius.md,
+                border: `1px solid ${THEME.border.subtle}`,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  gap: THEME.spacing.md,
+                  marginBottom: THEME.spacing.sm,
+                  fontSize: THEME.fontSize.sm,
+                }}
+              >
+                <span
+                  style={{
+                    color: THEME.accent.highlight,
+                    fontWeight: THEME.fontWeight.semibold,
+                  }}
+                >
+                  Current Member:
+                </span>
+                <span
+                  style={{
+                    color: THEME.text.primary,
+                    fontFamily: '"Fira Code", monospace',
+                    flex: 1,
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  {step.currentUnionMember}
+                </span>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: THEME.spacing.md,
+                  fontSize: THEME.fontSize.sm,
+                }}
+              >
+                <span
+                  style={{
+                    color: THEME.accent.highlight,
+                    fontWeight: THEME.fontWeight.semibold,
+                  }}
+                >
+                  Accumulated:
+                </span>
+                <span
+                  style={{
+                    color: THEME.text.primary,
+                    fontFamily: '"Fira Code", monospace',
+                    flex: 1,
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  {step.currentUnionResults}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Parameters */}
         {Object.keys(params).length > 0 && (
           <div>
