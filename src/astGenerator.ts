@@ -442,10 +442,17 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   context.level--;
 
   // Log comparison operation (check extends extends)
-  addTrace(context, 'conditional_comparison', `${checkStr} extends ${extendsStr}`,
-      {
-        position: getNodePosition(condType.checkType, context.sourceFile),
-    });
+  // Highlight only the comparison part: checkType extends extendsType (without branches)
+  const comparisonStart = condType.checkType.getStart(context.sourceFile);
+  const comparisonEnd = condType.extendsType.getEnd();
+  const comparisonPosStart = context.sourceFile.getLineAndCharacterOfPosition(comparisonStart);
+  const comparisonPosEnd = context.sourceFile.getLineAndCharacterOfPosition(comparisonEnd);
+  addTrace(context, 'conditional_comparison', `${checkStr} extends ${extendsStr}`, {
+    position: {
+      start: { line: comparisonPosStart.line + 1, character: comparisonPosStart.character },
+      end: { line: comparisonPosEnd.line + 1, character: comparisonPosEnd.character },
+    },
+  });
 
   const isTruthy = checkTypeCondition(substituteParameters(checkStr, context.parameters ), substituteParameters(extendsStr, context.parameters ), context.sourceFile.text)
 
