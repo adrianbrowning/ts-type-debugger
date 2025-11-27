@@ -331,10 +331,10 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   const trueStr = condType.trueType.getText(context.sourceFile);
   const falseStr = condType.falseType.getText(context.sourceFile);
 
-  // Log condition entry (semantic step - no specific position)
-  addTrace(context, 'condition', `${checkStr} extends ${extendsStr} ? ${trueStr} : ${falseStr}`,context.currentNode ? {
-      position: getNodePosition(context.currentNode, context.sourceFile),
-  } : undefined);
+  // Log condition entry with position of the entire conditional expression
+  addTrace(context, 'condition', `${checkStr} extends ${extendsStr} ? ${trueStr} : ${falseStr}`, {
+    position: getNodePosition(condType, context.sourceFile),
+  });
 
   // Check if this is a discriminative conditional with a union
   const discriminativeParam = getDiscriminativeParameter(condType.checkType, condType.extendsType, context.sourceFile);
