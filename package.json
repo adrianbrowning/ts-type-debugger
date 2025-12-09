@@ -35,6 +35,7 @@
     "@types/react": "^18.2.0",
     "@vitejs/plugin-react": "^4.2.0",
     "@vitest/browser": "^4.0.15",
+    "@vitest/browser-playwright": "^4.0.15",
     "@vitest/ui": "^4.0.15",
     "playwright": "^1.57.0",
     "remotion": "^4.0.0",
