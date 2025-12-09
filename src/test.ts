@@ -1,6 +1,7 @@
 import {CustomTypes} from "./base.ts";
 // import {buildTrace} from "./buildTrace.ts";
 import {generateAST, traceTypeResolution} from "./astGenerator.ts";
+import {generateTypeVideo} from "./core/typeDebugger.ts";
 
 
 // Type is defined by implementation - keeping this for reference
@@ -17,6 +18,9 @@ import {generateAST, traceTypeResolution} from "./astGenerator.ts";
 //AST Test
 {
 
+    const data = await generateTypeVideo("type T<t extends string> = t;", "`${'a' | 'b'} - ${1 | 2} - ${T<\"c\" | \"d\">}`")
+    console.dir(data, {depth: null});
+    process.exit(0);
 }
 
 

@@ -71,6 +71,12 @@ export const TRACE_TYPE_COLORS: Record<TraceEntry['type'], string> = {
   branch_false: '#EF4444', // red
   result_assignment: '#10B981', // green
   template_literal: '#06B6D4', // cyan
+  template_literal_start: '#06B6D4', // cyan
+  template_union_distribute: '#A855F7', // violet
+  template_union_member: '#06B6D4', // cyan
+  template_union_member_result: '#10B981', // green (result)
+  template_span_eval: '#EC4899', // pink
+  template_result: '#10B981', // green
   alias_reference: '#6366F1', // indigo
   substitution: '#14B8A6', // teal
   mapped_type_start: '#8B5CF6', // purple

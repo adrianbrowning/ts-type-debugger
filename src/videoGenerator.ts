@@ -360,15 +360,7 @@ export function findActiveTypeAlias(
  * Format result for display
  */
 export function formatResult(step: VideoTraceStep): string {
-  if (!step.original.result) return '';
-
-  // Truncate very long results
-  const maxLen = 100;
-  if (step.original.result.length > maxLen) {
-    return step.original.result.substring(0, maxLen) + '...';
-  }
-
-  return step.original.result;
+  return step.original.result || '';
 }
 
 /**

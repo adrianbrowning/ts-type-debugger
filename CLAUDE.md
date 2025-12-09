@@ -1,5 +1,3 @@
-- Prefer `const` over `let` unless you need to reassign a variable.
-- Prefer function declarations over arrow functions unless you need to reassign a variable.
 - ALWAYS prefer types to interfaces unless otherwise told
 - Be extremely concise. Sacrifice grammar for the sake of concision.
 - list any unresolved questions at the end, if any
@@ -7,11 +5,6 @@
 - Node supports running .ts file directly. Never use `tsx` or `node-ts` unless told to. Always make sure the tsconfig includes `allowImportingTsExtensions:true` and `erasableSyntaxOnly:true`
 - ALWAYS use pnpm instead of npn. Unless I say otherwise
 - Always use todo lists. In memory and on the file system + context to keep track of current tasks. List all taks, break them down into small atoms
-- Always update CLAUDE.md with any learnings to help you in the future under `### CLAUDE LEARNINGS ###`
-  - This could be critical files of components or how this work
-
-
-### CLAUDE LEARNINGS ###
 
 ## Union Stepping Implementation
 - **Key insight**: TypeScript only distributes unions over conditionals in specific cases:
@@ -42,3 +35,34 @@
   - Shows `"a" => 1`, `"b" => 2`, `"x" => never`
   - Auto-reduces: `1 | 2 | never => 1 | 2`
   - Final result: `1 | 2`
+
+## Template Literal Implementation
+- **Key insight**: Template literals with `${}` interpolations distribute over unions
+  - `\`Prop ${"a" | "b"}\`` => `"Prop a" | "Prop b"`
+  - Multiple interpolations create cartesian product: `\`${A|B}-${1|2}\`` => 4 results
+
+- **Implementation**: `astGenerator.ts:530-689`
+  - `evaluateTemplateLiteral()` parses template structure via TS API:
+    - `head`: text before first `${}`
+    - `templateSpans[]`: array of `{type, literal}` pairs
+  - Each span's type is evaluated (can call generics, conditionals, etc.)
+  - Results parsed as unions, cartesian product generated recursively
+  - Final union reduced via `evalTypeString()` using real TS type checker
+
+- **Trace types**:
+  - `template_literal_start` - Begin template evaluation
+  - `template_span_eval` - Evaluating a `${...}` interpolation
+  - `template_union_distribute` - Union detected in interpolation(s)
+  - `template_union_member` - Evaluating for specific union member
+  - `template_union_member_result` - Result of evaluating member (shows accumulated)
+  - `template_result` - Final string literal union result
+
+- **Context tracking** (same as conditional union stepping):
+  - `currentUnionMember`: Which member is being evaluated
+  - `currentUnionResults`: Accumulated union so far
+
+- **Examples**:
+  - `\`Prop ${"a" | "b"}\`` => `"Prop a" | "Prop b"`
+  - `\`Prop ${"c"}\`` => `"Prop c"`
+  - `\`Prop ${"a" | "b"} - ${1 | 2}\`` => `"Prop a - 1" | "Prop a - 2" | "Prop b - 1" | "Prop b - 2"`
+  - `Run<"a" | "b">` where `type Run<str> = \`Prop ${str}\`` => `"Prop a" | "Prop b"`
