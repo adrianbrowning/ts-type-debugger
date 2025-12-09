@@ -12,7 +12,8 @@
       "Bash(pnpm lint:ts:*)",
       "Bash(pnpm add:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\ntest: Add eval_local and typeDebugger unit tests\n\n- Add 8 tests for checkTypeCondition and evalTypeString\n- Add 5 tests for generateTypeVideo API\n- Test union reduction, never removal, type checking\n- Test VideoData structure and error handling\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\ntest: Add eval_local and typeDebugger unit tests\n\n- Add 8 tests for checkTypeCondition and evalTypeString\n- Add 5 tests for generateTypeVideo API\n- Test union reduction, never removal, type checking\n- Test VideoData structure and error handling\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
