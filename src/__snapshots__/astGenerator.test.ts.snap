@@ -1,0 +1,90 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Type Resolution Tracing > captures complete trace with snapshots 1`] = `
+[
+  {
+    "currentUnionMember": undefined,
+    "currentUnionResults": undefined,
+    "expression": "type Result = Identity<number>;",
+    "level": 0,
+    "parameters": undefined,
+    "position": {
+      "end": {
+        "character": 31,
+        "line": 2,
+      },
+      "start": {
+        "character": 0,
+        "line": 2,
+      },
+    },
+    "step": 1,
+    "type": "type_alias_start",
+  },
+  {
+    "args": {
+      "arg0": "number",
+    },
+    "currentUnionMember": undefined,
+    "currentUnionResults": undefined,
+    "expression": "Identity<number>",
+    "level": 0,
+    "parameters": undefined,
+    "position": {
+      "end": {
+        "character": 30,
+        "line": 2,
+      },
+      "start": {
+        "character": 14,
+        "line": 2,
+      },
+    },
+    "step": 2,
+    "type": "generic_call",
+  },
+  {
+    "currentUnionMember": undefined,
+    "currentUnionResults": undefined,
+    "expression": "type Identity<T> = T;",
+    "level": 0,
+    "parameters": {
+      "T": "number",
+    },
+    "position": {
+      "end": {
+        "character": 21,
+        "line": 1,
+      },
+      "start": {
+        "character": 0,
+        "line": 1,
+      },
+    },
+    "step": 3,
+    "type": "generic_def",
+  },
+  {
+    "currentUnionMember": undefined,
+    "currentUnionResults": undefined,
+    "expression": "Identity => number",
+    "level": 0,
+    "parameters": {
+      "T": "number",
+    },
+    "position": {
+      "end": {
+        "character": 21,
+        "line": 1,
+      },
+      "start": {
+        "character": 0,
+        "line": 1,
+      },
+    },
+    "result": "number",
+    "step": 4,
+    "type": "generic_result",
+  },
+]
+`;
