@@ -8,7 +8,7 @@ import {checkTypeCondition, evalTypeString} from "./eval_local.ts";
  */
 export interface TraceEntry {
   step: number;
-  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce';
+  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'template_literal_start' | 'template_union_distribute' | 'template_union_member' | 'template_union_member_result' | 'template_span_eval' | 'template_result' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce';
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
@@ -183,7 +183,7 @@ function getNodePosition(node: ts.Node, sourceFile: ts.SourceFile): { start: { l
 function addTrace(context: EvalContext, type: TraceEntry['type'], expression: string, opts: Partial<TraceEntry> = {}): void {
   // For result steps without explicit position, use current node context
   // Exclude semantic steps that don't correspond to specific code locations
-  const resultTypes = new Set(['mapped_type_constraint_result', 'mapped_type_result', 'mapped_type_end', 'indexed_access_result', 'template_literal']);
+  const resultTypes = new Set(['mapped_type_constraint_result', 'mapped_type_result', 'mapped_type_end', 'indexed_access_result', 'template_literal', 'template_result']);
   const semanticSteps = new Set(['conditional_evaluation']); // No auto-position for these
 
   const shouldUseContextNode = resultTypes.has(type) && !opts.position && context.currentNode;
@@ -217,6 +217,12 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
 export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: EvalContext): string {
   const typeName = typeRef.typeName.getText(context.sourceFile);
   const typeArgs = typeRef.typeArguments?.map(arg => arg.getText(context.sourceFile)) || [];
+
+  // First check if typeName is a parameter (e.g., `t` when inside `type T<t> = t`)
+  // Only if no type arguments - a parameter with args would be invalid
+  if (!typeArgs.length && context.parameters.has(typeName)) {
+    return context.parameters.get(typeName)!;
+  }
 
   // Substitute any parameters in the type arguments
   const substitutedArgs = typeArgs.map(arg => {
@@ -278,7 +284,7 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
     }
   });
 
-  addTrace(context, 'generic_def', `type ${typeName}<${paramList}> = ...`, {
+  addTrace(context, 'generic_def', aliasDecl.getText(context.sourceFile), {
     position: getNodePosition(aliasDecl, context.sourceFile),
     parameters: Object.keys(genericParams).length > 0 ? genericParams : undefined,
   });
@@ -289,7 +295,7 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   context.level--;
 
   // Log the result of this generic call
-  addTrace(context, 'generic_result', `${typeName} => ${result.slice(0, 60)}${result.length > 60 ? '...' : ''}`, {
+  addTrace(context, 'generic_result', `${typeName} => ${result}`, {
     result: result,
     parameters: Object.keys(genericParams).length > 0 ? genericParams : undefined,
     position: getNodePosition(aliasDecl, context.sourceFile),
@@ -520,20 +526,188 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
 }
 
 /**
- * Evaluates a template literal type with pattern matching
+ * Evaluates a template literal type with union distribution
+ * Template literals like `Prop ${A | B}` become "Prop A" | "Prop B"
+ * Multiple interpolations create cartesian product: `${A|B}-${1|2}` => 4 results
  * @param templateType Template literal type node
  * @param context Evaluation context
- * @returns The resolved type
+ * @returns The resolved type (union of string literals)
  */
 export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode, context: EvalContext): string {
   const text = templateType.getText(context.sourceFile);
 
-  addTrace(context, 'template_literal', text, {
+  // Log template literal start
+  addTrace(context, 'template_literal_start', text, {
     position: getNodePosition(templateType, context.sourceFile),
-    result: text,
   });
 
-  return text;
+  // Parse template structure: head + spans
+  // Template: `prefix${T}middle${U}suffix`
+  // head = "prefix", spans = [{type: T, literal: "middle"}, {type: U, literal: "suffix"}]
+  const head = templateType.head.text; // text before first ${}
+  const spans = templateType.templateSpans;
+
+  // If no interpolations, return as simple string literal
+  if (spans.length === 0) {
+    const result = `"${head}"`;
+    addTrace(context, 'template_result', result, {
+      position: getNodePosition(templateType, context.sourceFile),
+      result,
+    });
+    return result;
+  }
+
+  // Evaluate each span's type and collect results
+  // Each span can resolve to a union, so we need cartesian product
+  type SpanResult = {
+    values: string[];       // evaluated values (could be union members)
+    followingText: string;  // literal text after this span
+  };
+
+  const spanResults: SpanResult[] = [];
+
+  context.level++;
+  for (const span of spans) {
+    // Evaluate the type inside ${}
+    const spanTypeStr = span.type.getText(context.sourceFile);
+
+    // Substitute parameters first
+    const substitutedStr = substituteParameters(spanTypeStr, context.parameters);
+
+    // Log span evaluation
+    addTrace(context, 'template_span_eval', `\${${spanTypeStr}}`, {
+      position: getNodePosition(span.type, context.sourceFile),
+    });
+
+    // Evaluate the span type (could call generics, conditionals, etc)
+    let evaluatedType: string;
+    if (ts.isTypeReferenceNode(span.type) && context.allTypeAliases.has(span.type.typeName.getText(context.sourceFile))) {
+      // It's a reference to a generic/type alias - evaluate it
+      evaluatedType = evaluateTypeNode(span.type, context);
+    } else {
+      // Simple type or parameter reference - use substituted value
+      evaluatedType = substitutedStr;
+    }
+
+    // Use real TS type checker to get accurate result
+    let resolvedType: string;
+    try {
+      resolvedType = evalTypeString(context.sourceFile.text, evaluatedType);
+    } catch {
+      resolvedType = evaluatedType;
+    }
+
+    // Parse as union (could be single value or union)
+    const values = parseUnionType(resolvedType);
+
+    // Get the text following this span
+    const followingText = span.literal.text;
+
+    spanResults.push({ values, followingText });
+  }
+  context.level--;
+
+  // Check if any span has multiple values (union)
+  const hasUnion = spanResults.some(sr => sr.values.length > 1);
+
+  if (hasUnion) {
+    // Log union distribution
+    const unionSpans = spanResults
+      .map((sr, i) => sr.values.length > 1 ? `\${${spans[i].type.getText(context.sourceFile)}} = ${sr.values.join(' | ')}` : null)
+      .filter(Boolean)
+      .join(', ');
+
+    addTrace(context, 'template_union_distribute', `Union in ${unionSpans}`, {
+      position: getNodePosition(templateType, context.sourceFile),
+    });
+  }
+
+  // Generate cartesian product of all combinations
+  // Track all final results separately from trace accumulation
+  const allResults: string[] = [];
+
+  // Recursive function to generate all combinations
+  const generateCombinations = (
+    prefix: string,
+    spanIndex: number
+  ): void => {
+    if (spanIndex >= spanResults.length) {
+      // Base case: we've processed all spans - add final result
+      allResults.push(`"${prefix}"`);
+      return;
+    }
+
+    const span = spanResults[spanIndex];
+
+    for (const value of span.values) {
+      // Clean value (remove quotes if present for string literals)
+      let cleanValue = value;
+      if ((value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))) {
+        cleanValue = value.slice(1, -1);
+      }
+
+      const newPrefix = prefix + cleanValue + span.followingText;
+
+      // If union and tracking, log member evaluation
+      if (hasUnion && span.values.length > 1) {
+        const oldUnionMember = context.currentUnionMember;
+        const oldUnionResults = context.currentUnionResults;
+        const resultsBefore = allResults.length;
+
+        context.currentUnionMember = value;
+        context.currentUnionResults = allResults.length > 0 ? allResults.join(' | ') : undefined;
+
+        addTrace(context, 'template_union_member', `Evaluating for ${value}`, {
+          position: getNodePosition(spans[spanIndex].type, context.sourceFile),
+          currentUnionMember: value,
+          currentUnionResults: allResults.length > 0 ? allResults.join(' | ') : undefined,
+        });
+
+        generateCombinations(newPrefix, spanIndex + 1);
+
+        // After recursion completes, log the result(s) that were added
+        const newResults = allResults.slice(resultsBefore);
+        if (newResults.length > 0) {
+          const newAccumulated = allResults.join(' | ');
+          context.currentUnionMember = value;
+          context.currentUnionResults = newAccumulated;
+
+          addTrace(context, 'template_union_member_result', `=> ${newResults.join(' | ')}`, {
+            position: getNodePosition(spans[spanIndex].type, context.sourceFile),
+            currentUnionMember: value,
+            currentUnionResults: newAccumulated,
+            result: newResults.join(' | '),
+          });
+        }
+
+        context.currentUnionMember = oldUnionMember;
+        context.currentUnionResults = oldUnionResults;
+      } else {
+        generateCombinations(newPrefix, spanIndex + 1);
+      }
+    }
+  };
+
+  generateCombinations(head, 0);
+
+  // Join as union
+  let finalResult = allResults.join(' | ');
+
+  // Reduce the union using real TS type checker
+  try {
+    finalResult = evalTypeString(context.sourceFile.text, finalResult);
+  } catch {
+    // Keep unreduced if evaluation fails
+  }
+
+  // Log final result
+  addTrace(context, 'template_result', finalResult, {
+    position: getNodePosition(templateType, context.sourceFile),
+    result: finalResult,
+  });
+
+  return finalResult;
 }
 
 /**
@@ -602,7 +776,7 @@ function isTypeCompatible(check: string, extendsType: string): boolean {
  */
 function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext): string {
   const mappedStr = mappedType.getText(context.sourceFile);
-  addTrace(context, 'mapped_type_start', `mapped type: ${mappedStr.slice(0, 60)}...`, {
+  addTrace(context, 'mapped_type_start', mappedStr, {
     position: getNodePosition(mappedType, context.sourceFile),
   });
 
@@ -673,13 +847,13 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
 
   // Log the constructed object type
   const objStr = JSON.stringify(mappedEntries);
-  addTrace(context, 'mapped_type_result', `Constructed object: ${objStr.slice(0, 60)}${objStr.length > 60 ? '...' : ''}`, {
+  addTrace(context, 'mapped_type_result', `Constructed object: ${objStr}`, {
     result: objStr,
   });
 
   // Return union of all mapped values
   const resultStr = mappedResults.join(' | ');
-  addTrace(context, 'mapped_type_end', `mapped type union: ${resultStr.slice(0, 60)}${resultStr.length > 60 ? '...' : ''}`, {
+  addTrace(context, 'mapped_type_end', `mapped type union: ${resultStr}`, {
     result: resultStr,
   });
 
@@ -720,7 +894,7 @@ function evaluateIndexedAccess(indexedType: ts.IndexedAccessTypeNode, context: E
   }
 
   // Log the result of indexing
-  addTrace(context, 'indexed_access_result', `Extracted: ${finalResult.slice(0, 60)}${finalResult.length > 60 ? '...' : ''}`, {
+  addTrace(context, 'indexed_access_result', `Extracted: ${finalResult}`, {
     result: finalResult,
   });
 
@@ -797,7 +971,7 @@ export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Trace
   };
 
   // Add initial trace entry for the type alias definition
-  addTrace(context, 'type_alias_start', `type ${typeName} = ...`, {
+  addTrace(context, 'type_alias_start', targetAlias.getText(ast), {
     position: getNodePosition(targetAlias, ast),
   });
 

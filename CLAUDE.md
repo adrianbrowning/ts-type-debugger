@@ -35,3 +35,34 @@
   - Shows `"a" => 1`, `"b" => 2`, `"x" => never`
   - Auto-reduces: `1 | 2 | never => 1 | 2`
   - Final result: `1 | 2`
+
+## Template Literal Implementation
+- **Key insight**: Template literals with `${}` interpolations distribute over unions
+  - `\`Prop ${"a" | "b"}\`` => `"Prop a" | "Prop b"`
+  - Multiple interpolations create cartesian product: `\`${A|B}-${1|2}\`` => 4 results
+
+- **Implementation**: `astGenerator.ts:530-689`
+  - `evaluateTemplateLiteral()` parses template structure via TS API:
+    - `head`: text before first `${}`
+    - `templateSpans[]`: array of `{type, literal}` pairs
+  - Each span's type is evaluated (can call generics, conditionals, etc.)
+  - Results parsed as unions, cartesian product generated recursively
+  - Final union reduced via `evalTypeString()` using real TS type checker
+
+- **Trace types**:
+  - `template_literal_start` - Begin template evaluation
+  - `template_span_eval` - Evaluating a `${...}` interpolation
+  - `template_union_distribute` - Union detected in interpolation(s)
+  - `template_union_member` - Evaluating for specific union member
+  - `template_union_member_result` - Result of evaluating member (shows accumulated)
+  - `template_result` - Final string literal union result
+
+- **Context tracking** (same as conditional union stepping):
+  - `currentUnionMember`: Which member is being evaluated
+  - `currentUnionResults`: Accumulated union so far
+
+- **Examples**:
+  - `\`Prop ${"a" | "b"}\`` => `"Prop a" | "Prop b"`
+  - `\`Prop ${"c"}\`` => `"Prop c"`
+  - `\`Prop ${"a" | "b"} - ${1 | 2}\`` => `"Prop a - 1" | "Prop a - 2" | "Prop b - 1" | "Prop b - 2"`
+  - `Run<"a" | "b">` where `type Run<str> = \`Prop ${str}\`` => `"Prop a" | "Prop b"`

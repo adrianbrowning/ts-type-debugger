@@ -84,6 +84,7 @@ export const App: React.FC = () => {
         onToggleEditor={() => setEditorVisible(!editorVisible)}
         editorVisible={editorVisible}
         hasGenerated={hasGenerated}
+        videoData={videoData}
       />
 
       {/* Main Content Area */}
