@@ -9,7 +9,8 @@
       "Bash(test:*)",
       "Bash(pnpm install:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm lint:ts:*)"
+      "Bash(pnpm lint:ts:*)",
+      "Bash(pnpm add:*)"
     ],
     "deny": [],
     "ask": []
