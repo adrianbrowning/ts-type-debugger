@@ -9,7 +9,7 @@ export default defineConfig({
     // Browser mode for unit & integration tests
     browser: {
       enabled: true,
-      name: 'chromium',
+      instances: [{ browser: 'chromium' }],
       provider: playwright(),
       headless: true,
     },
