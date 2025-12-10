@@ -1,66 +1,167 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { StepDetailsPanel } from '../../../src/web/components/StepDetailsPanel.tsx';
 import { createMockStep } from '../../fixtures/mockVideoData.ts';
 
-// Mock StepDetailsPanel component
-const MockStepDetailsPanel = ({ step }: any) => (
-  <div data-testid="step-details">
-    <div>Expression: {step?.original.expression}</div>
-    {step?.original.parameters && (
-      <div>Parameters: {JSON.stringify(step.original.parameters)}</div>
-    )}
-    {step?.original.result && <div>Result: {step.original.result}</div>}
-    {step?.original.currentUnionMember && (
-      <div>Union Member: {step.original.currentUnionMember}</div>
-    )}
-  </div>
-);
+describe('StepDetailsPanel', () => {
+  it('shows "No step selected" when currentStep is null', () => {
+    // Act
+    render(<StepDetailsPanel currentStep={null} />);
 
-describe('StepDetailsPanel Component', () => {
-  it('displays current step details', () => {
+    // Assert
+    expect(screen.getByText('No step selected')).toBeDefined();
+  });
+
+  it('displays step number and type', () => {
+    // Arrange
     const mockStep = createMockStep({
       original: {
-        step: 1,
+        step: 3,
         type: 'generic_call',
         expression: 'Identity<string>',
+        level: 1,
+      },
+    });
+
+    // Act
+    render(<StepDetailsPanel currentStep={mockStep} />);
+
+    // Assert
+    expect(screen.getByText('Step 3')).toBeDefined();
+    expect(screen.getByText('generic_call')).toBeDefined();
+  });
+
+  it('displays expression text', () => {
+    // Arrange
+    const mockStep = createMockStep({
+      original: {
+        step: 1,
+        type: 'type_alias_start',
+        expression: 'MyComplexType<string, number>',
         level: 0,
       },
     });
 
-    render(<MockStepDetailsPanel step={mockStep} />);
+    // Act
+    render(<StepDetailsPanel currentStep={mockStep} />);
 
-    expect(screen.getByText(/Identity<string>/)).toBeDefined();
+    // Assert
+    expect(screen.getByText('MyComplexType<string, number>')).toBeDefined();
   });
 
-  it('displays currentUnionMember when present', () => {
+  it('shows "Running Results" section when currentUnionMember present', () => {
+    // Arrange
     const mockStep = createMockStep({
       original: {
-        step: 1,
+        step: 2,
         type: 'conditional_union_member',
-        expression: 'test',
-        level: 0,
+        expression: 'Loop2<"a" | "b">',
+        level: 1,
         currentUnionMember: '"a"',
+        currentUnionResults: '1',
       },
     });
 
-    render(<MockStepDetailsPanel step={mockStep} />);
+    // Act
+    render(<StepDetailsPanel currentStep={mockStep} />);
 
-    expect(screen.getByText(/Union Member: "a"/)).toBeDefined();
+    // Assert
+    expect(screen.getByText('Running Results')).toBeDefined();
+    expect(screen.getByText('Current Member:')).toBeDefined();
+    expect(screen.getByText('"a"')).toBeDefined();
+    expect(screen.getByText('Accumulated:')).toBeDefined();
+    expect(screen.getByText('1')).toBeDefined();
   });
 
-  it('displays result when available', () => {
+  it('does not show "Running Results" when currentUnionMember absent', () => {
+    // Arrange
     const mockStep = createMockStep({
       original: {
         step: 1,
-        type: 'generic_result',
-        expression: 'test',
+        type: 'type_alias_start',
+        expression: 'Test',
         level: 0,
+      },
+    });
+
+    // Act
+    render(<StepDetailsPanel currentStep={mockStep} />);
+
+    // Assert
+    expect(screen.queryByText('Running Results')).toBeNull();
+  });
+
+  it('shows result when available', () => {
+    // Arrange
+    const mockStep = createMockStep({
+      original: {
+        step: 4,
+        type: 'generic_result',
+        expression: 'Identity<string>',
+        level: 1,
         result: 'string',
       },
     });
 
-    render(<MockStepDetailsPanel step={mockStep} />);
+    // Act
+    render(<StepDetailsPanel currentStep={mockStep} />);
 
-    expect(screen.getByText(/Result: string/)).toBeDefined();
+    // Assert
+    expect(screen.getByText('Result')).toBeDefined();
+    expect(screen.getByText('string')).toBeDefined();
+  });
+
+  it('shows arguments when present', () => {
+    // Arrange
+    const mockStep = createMockStep({
+      original: {
+        step: 2,
+        type: 'generic_call',
+        expression: 'MyType<string, number>',
+        level: 1,
+        args: { T: 'string', U: 'number' },
+      },
+    });
+
+    // Act
+    render(<StepDetailsPanel currentStep={mockStep} />);
+
+    // Assert
+    expect(screen.getByText('Arguments')).toBeDefined();
+    expect(screen.getByText('T:')).toBeDefined();
+    expect(screen.getByText('string')).toBeDefined();
+    expect(screen.getByText('U:')).toBeDefined();
+    expect(screen.getByText('number')).toBeDefined();
+  });
+
+  it('shows parameters when present', () => {
+    // Arrange
+    const mockStep = createMockStep({
+      original: {
+        step: 3,
+        type: 'generic_def',
+        expression: 'Identity<T>',
+        level: 1,
+        parameters: { T: 'string' },
+      },
+    });
+
+    // Act
+    render(<StepDetailsPanel currentStep={mockStep} />);
+
+    // Assert
+    expect(screen.getByText('Parameters in Scope')).toBeDefined();
+    expect(screen.getByText('T:')).toBeDefined();
+  });
+
+  it('displays header title "Step Details"', () => {
+    // Arrange
+    const mockStep = createMockStep();
+
+    // Act
+    render(<StepDetailsPanel currentStep={mockStep} />);
+
+    // Assert
+    expect(screen.getByText('Step Details')).toBeDefined();
   });
 });

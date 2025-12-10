@@ -1,55 +1,228 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { createMockVideoData } from '../../fixtures/mockVideoData.ts';
+import { usePlayback } from '../../../src/web/hooks/usePlayback.ts';
+import { createMockVideoData, createMockStep } from '../../fixtures/mockVideoData.ts';
 
-// Mock usePlayback hook
-function usePlayback(videoData: any) {
-  const [currentStep, setCurrentStep] = (globalThis as any).useState?.(0) || [0, () => {}];
-  const [isPlaying, setIsPlaying] = (globalThis as any).useState?.(false) || [false, () => {}];
-  const [speed, setSpeed] = (globalThis as any).useState?.(1) || [1, () => {}];
-
-  return {
-    currentStep,
-    isPlaying,
-    speed,
-    play: () => setIsPlaying(true),
-    pause: () => setIsPlaying(false),
-    nextStep: () => setCurrentStep((s: number) => Math.min(s + 1, videoData?.steps.length - 1)),
-    prevStep: () => setCurrentStep((s: number) => Math.max(s - 1, 0)),
-    setSpeed,
-  };
-}
-
-describe('usePlayback Hook', () => {
-  it('initializes with correct default state', () => {
-    const mockData = createMockVideoData();
-
-    // Basic check without renderHook if React hooks aren't available
-    expect(mockData).toBeDefined();
-    expect(mockData.steps.length).toBeGreaterThan(0);
+describe('usePlayback', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
   });
 
-  it('advances step during playback', () => {
-    const mockData = createMockVideoData();
-
-    // Test that data structure is correct
-    expect(mockData.steps).toBeDefined();
-    expect(Array.isArray(mockData.steps)).toBe(true);
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
-  it('respects speed multiplier', () => {
-    const mockData = createMockVideoData();
+  it('initializes with step 0, not playing, speed 1', () => {
+    // Arrange
+    const videoData = createMockVideoData();
 
-    // Verify data has fps
-    expect(mockData.fps).toBeDefined();
-    expect(typeof mockData.fps).toBe('number');
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+
+    // Assert
+    expect(result.current.currentStepIndex).toBe(0);
+    expect(result.current.isPlaying).toBe(false);
+    expect(result.current.speed).toBe(1);
   });
 
-  it('stops at end of steps', () => {
-    const mockData = createMockVideoData();
+  it('returns null currentStep when no videoData provided', () => {
+    // Act
+    const { result } = renderHook(() => usePlayback(null));
 
-    // Verify totalFrames exists
-    expect(mockData.totalFrames).toBeDefined();
-    expect(mockData.totalFrames).toBeGreaterThan(0);
+    // Assert
+    expect(result.current.currentStep).toBeNull();
+    expect(result.current.currentStepIndex).toBe(0);
+  });
+
+  it('advances to next step when nextStep called', () => {
+    // Arrange
+    const videoData = createMockVideoData({
+      steps: [
+        createMockStep({ stepIndex: 0 }),
+        createMockStep({ stepIndex: 1 }),
+        createMockStep({ stepIndex: 2 }),
+      ],
+    });
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+    act(() => result.current.nextStep());
+
+    // Assert
+    expect(result.current.currentStepIndex).toBe(1);
+  });
+
+  it('does not advance past last step', () => {
+    // Arrange
+    const videoData = createMockVideoData({
+      steps: [
+        createMockStep({ stepIndex: 0 }),
+        createMockStep({ stepIndex: 1 }),
+      ],
+    });
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+    act(() => result.current.nextStep());
+    act(() => result.current.nextStep());
+    act(() => result.current.nextStep()); // Extra call should be ignored
+
+    // Assert
+    expect(result.current.currentStepIndex).toBe(1);
+  });
+
+  it('goes back to previous step when previousStep called', () => {
+    // Arrange
+    const videoData = createMockVideoData({
+      steps: [
+        createMockStep({ stepIndex: 0 }),
+        createMockStep({ stepIndex: 1 }),
+      ],
+    });
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+    act(() => result.current.nextStep());
+    act(() => result.current.previousStep());
+
+    // Assert
+    expect(result.current.currentStepIndex).toBe(0);
+  });
+
+  it('does not go below step 0', () => {
+    // Arrange
+    const videoData = createMockVideoData();
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+    act(() => result.current.previousStep());
+    act(() => result.current.previousStep()); // Extra call should be ignored
+
+    // Assert
+    expect(result.current.currentStepIndex).toBe(0);
+  });
+
+  it('toggles play state when togglePlayPause called', () => {
+    // Arrange
+    const videoData = createMockVideoData();
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+    act(() => result.current.togglePlayPause());
+
+    // Assert
+    expect(result.current.isPlaying).toBe(true);
+
+    // Act - toggle again
+    act(() => result.current.togglePlayPause());
+
+    // Assert
+    expect(result.current.isPlaying).toBe(false);
+  });
+
+  it('changes speed when setSpeed called', () => {
+    // Arrange
+    const videoData = createMockVideoData();
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+    act(() => result.current.setSpeed(2));
+
+    // Assert
+    expect(result.current.speed).toBe(2);
+  });
+
+  it('seeks to specific step when seekToStep called', () => {
+    // Arrange
+    const videoData = createMockVideoData({
+      steps: [
+        createMockStep({ stepIndex: 0 }),
+        createMockStep({ stepIndex: 1 }),
+        createMockStep({ stepIndex: 2 }),
+        createMockStep({ stepIndex: 3 }),
+      ],
+    });
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+    act(() => result.current.seekToStep(2));
+
+    // Assert
+    expect(result.current.currentStepIndex).toBe(2);
+  });
+
+  it('resets state when videoData changes', () => {
+    // Arrange
+    const videoData1 = createMockVideoData({
+      steps: [
+        createMockStep({ stepIndex: 0 }),
+        createMockStep({ stepIndex: 1 }),
+      ],
+    });
+    const videoData2 = createMockVideoData({
+      steps: [
+        createMockStep({ stepIndex: 0 }),
+      ],
+    });
+
+    // Act
+    const { result, rerender } = renderHook(
+      ({ data }) => usePlayback(data),
+      { initialProps: { data: videoData1 } }
+    );
+    act(() => result.current.nextStep());
+    expect(result.current.currentStepIndex).toBe(1);
+
+    rerender({ data: videoData2 });
+
+    // Assert
+    expect(result.current.currentStepIndex).toBe(0);
+    expect(result.current.isPlaying).toBe(false);
+    expect(result.current.speed).toBe(1);
+  });
+
+  it('returns correct currentStep based on index', () => {
+    // Arrange
+    const step0 = createMockStep({
+      stepIndex: 0,
+      original: { step: 1, type: 'type_alias_start', expression: 'Test', level: 0 },
+    });
+    const step1 = createMockStep({
+      stepIndex: 1,
+      original: { step: 2, type: 'generic_call', expression: 'Identity<string>', level: 1 },
+    });
+    const videoData = createMockVideoData({ steps: [step0, step1] });
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+
+    // Assert
+    expect(result.current.currentStep?.original.expression).toBe('Test');
+
+    // Act - advance
+    act(() => result.current.nextStep());
+
+    // Assert
+    expect(result.current.currentStep?.original.expression).toBe('Identity<string>');
+  });
+
+  it('stops playing when nextStep or previousStep called', () => {
+    // Arrange
+    const videoData = createMockVideoData({
+      steps: [
+        createMockStep({ stepIndex: 0 }),
+        createMockStep({ stepIndex: 1 }),
+      ],
+    });
+
+    // Act
+    const { result } = renderHook(() => usePlayback(videoData));
+    act(() => result.current.togglePlayPause());
+    expect(result.current.isPlaying).toBe(true);
+
+    act(() => result.current.nextStep());
+
+    // Assert - should pause when manually stepping
+    expect(result.current.isPlaying).toBe(false);
   });
 });

@@ -1,15 +1,20 @@
 import { describe, it, expect } from 'vitest';
+import ts from 'typescript';
 import { generateAST, traceTypeResolution } from './astGenerator.ts';
 import { SIMPLE_TYPES, COMPLEX_TYPES, EDGE_CASES } from '../tests/fixtures/types.ts';
 import { getTraceTypes, findTraceByType, countTraceType } from '../tests/fixtures/testHelpers.ts';
 
 describe('AST Generation', () => {
-  it('creates valid SourceFile', () => {
+  it('parses TypeScript code into an AST', () => {
+    // Arrange
     const code = 'type Test = string;';
+
+    // Act
     const ast = generateAST(code);
 
+    // Assert
     expect(ast).toBeDefined();
-    expect(ast.kind).toBe(308); // ts.SyntaxKind.SourceFile
+    expect(ast.kind).toBe(ts.SyntaxKind.SourceFile);
   });
 
   it('handles invalid syntax gracefully', () => {
@@ -100,7 +105,8 @@ describe('Type Resolution Tracing', () => {
     expect(findTraceByType(trace, 'mapped_type_start')).toBeDefined();
     expect(findTraceByType(trace, 'mapped_type_constraint')).toBeDefined();
     expect(findTraceByType(trace, 'map_iteration')).toBeDefined();
-    expect(findTraceByType(trace, 'mapped_type_end')).toBeDefined();
+    expect(findTraceByType(trace, 'map_iteration_result')).toBeDefined();
+    expect(findTraceByType(trace, 'mapped_type_result')).toBeDefined();
   });
 
   it('traces indexed access type', () => {
@@ -259,6 +265,30 @@ describe('Conditional Type Evaluation', () => {
   });
 });
 
+describe('Type Alias Result Trace', () => {
+  it('adds type_alias_result entry showing final result', () => {
+    const code = `
+type tables = { User: { id: number }; Post: { id: number } };
+type Simple = { [k in keyof tables]: k }
+    `.trim();
+
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, 'Simple');
+
+    // Should have type_alias_result as the last trace entry
+    const resultEntry = findTraceByType(trace, 'type_alias_result');
+    expect(resultEntry).toBeDefined();
+
+    // Should show the result
+    expect(resultEntry?.result).toBeDefined();
+    expect(resultEntry?.result).toContain('User');
+    expect(resultEntry?.result).toContain('Post');
+
+    // Should have position pointing to the type alias
+    expect(resultEntry?.position).toBeDefined();
+  });
+});
+
 describe('Mapped Type Evaluation', () => {
   it('evaluates basic mapped type', () => {
     const code = 'type Test<T> = { [K in keyof T]: T[K] };\ntype Result = Test<{a: string}>;';
@@ -285,6 +315,76 @@ describe('Mapped Type Evaluation', () => {
 
     const mappedStarts = countTraceType(trace, 'mapped_type_start');
     expect(mappedStarts).toBeGreaterThanOrEqual(1);
+  });
+
+  it('highlights full constraint including loop variable in mapped type', () => {
+    const code = `
+type tables = { User: { id: number }; Post: { id: number } };
+type Simple = { [k in keyof tables]: k }
+    `.trim();
+
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, 'Simple');
+
+    const constraintEntry = findTraceByType(trace, 'mapped_type_constraint');
+    expect(constraintEntry).toBeDefined();
+    expect(constraintEntry?.position).toBeDefined();
+
+    // Extract the highlighted text from source
+    const position = constraintEntry!.position!;
+    const lines = code.split('\n');
+    // Position uses 1-based line numbers, array is 0-based
+    const line = lines[position.start.line - 1];
+    const highlightedText = line.substring(position.start.character, position.end.character);
+
+    // Should highlight "k in keyof tables" not just "keyof tables"
+    expect(highlightedText).toBe('k in keyof tables');
+  });
+
+  it('highlights value type during map iteration', () => {
+    const code = `
+type tables = { User: { id: number }; Post: { id: number } };
+type Simple = { [k in keyof tables]: k }
+    `.trim();
+
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, 'Simple');
+
+    const iterationEntry = findTraceByType(trace, 'map_iteration');
+    expect(iterationEntry).toBeDefined();
+    expect(iterationEntry?.position).toBeDefined();
+
+    // Extract the highlighted text from source
+    const position = iterationEntry!.position!;
+    const lines = code.split('\n');
+    const line = lines[position.start.line - 1];
+    const highlightedText = line.substring(position.start.character, position.end.character);
+
+    // Should highlight the value type "k" (after the colon), not the whole "[k in keyof tables]"
+    expect(highlightedText).toBe('k');
+  });
+
+  it('highlights value type in map iteration result', () => {
+    const code = `
+type tables = { User: { id: number }; Post: { id: number } };
+type Simple = { [k in keyof tables]: k }
+    `.trim();
+
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, 'Simple');
+
+    const resultEntry = findTraceByType(trace, 'map_iteration_result');
+    expect(resultEntry).toBeDefined();
+    expect(resultEntry?.position).toBeDefined();
+
+    // Extract the highlighted text from source
+    const position = resultEntry!.position!;
+    const lines = code.split('\n');
+    const line = lines[position.start.line - 1];
+    const highlightedText = line.substring(position.start.character, position.end.character);
+
+    // Should highlight the value type "k" (after the colon)
+    expect(highlightedText).toBe('k');
   });
 });
 

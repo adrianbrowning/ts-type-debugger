@@ -19,97 +19,191 @@ async function fillMonacoEditor(page: Page, code: string) {
 // Selector for the type expression input (placeholder contains "_result")
 const TYPE_INPUT_SELECTOR = 'input[placeholder*="_result"]';
 
-test.describe('Union Stepping E2E', () => {
-  test('Loop2 shows 3 union member steps', async ({ page }) => {
-    await page.goto('/');
+// Wait for video generation to complete
+async function waitForGeneration(page: Page) {
+  // Wait for Generate button to be re-enabled (not loading)
+  await page.waitForFunction(
+    () => {
+      const btn = document.querySelector('button:has-text("Generate")');
+      return btn && !btn.textContent?.includes('Generating');
+    },
+    { timeout: 10000 }
+  ).catch(() => {
+    // Fallback to timeout if function doesn't work
+  });
+  // Additional buffer for UI updates
+  await page.waitForTimeout(500);
+}
 
-    // Enter Loop2 code
+test.describe('Union Stepping E2E', () => {
+  test('Loop2 shows step indicator with multiple steps', async ({ page }) => {
+    // Arrange
+    await page.goto('/');
     await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
 
-    // Enter type expression
+    // Act
     await page.fill(TYPE_INPUT_SELECTOR, 'Loop2<"a" | "b" | "x">');
     await page.click('button:has-text("Generate")');
+    await waitForGeneration(page);
 
-    await page.waitForTimeout(3000);
+    // Assert - should show step indicator with format "Step X / Y"
+    await expect(page.locator('text=/Step \\d+ \\/ \\d+/')).toBeVisible();
 
-    // Should have processed 3 union members
-    expect(await page.isVisible('body')).toBe(true);
+    // Should have multiple steps (at least 3 for the union members)
+    const stepText = await page.locator('text=/Step \\d+ \\/ \\d+/').textContent();
+    const match = stepText?.match(/Step \d+ \/ (\d+)/);
+    const totalSteps = match ? parseInt(match[1]) : 0;
+    expect(totalSteps).toBeGreaterThanOrEqual(3);
   });
 
-  test('right panel displays currentUnionMember', async ({ page }) => {
+  test('displays "Step Details" panel with step information', async ({ page }) => {
+    // Arrange
     await page.goto('/');
-
     await fillMonacoEditor(page, `type Test<T> = T extends "a" ? 1 : 2;`);
 
+    // Act
     await page.fill(TYPE_INPUT_SELECTOR, 'Test<"a" | "b">');
     await page.click('button:has-text("Generate")');
+    await waitForGeneration(page);
 
-    await page.waitForTimeout(2000);
+    // Assert - Step Details panel should be visible
+    await expect(page.locator('text=Step Details')).toBeVisible();
 
-    // Check for union member display in step details
-    const content = await page.textContent('body');
-    expect(content).toBeTruthy();
+    // Should display step number
+    await expect(page.locator('text=/Step \\d+/')).toBeVisible();
+
+    // Should display expression
+    await expect(page.locator('text=Expression')).toBeVisible();
   });
 
-  test('right panel displays currentUnionResults accumulation', async ({ page }) => {
+  test('shows Running Results section for union distribution', async ({ page }) => {
+    // Arrange
     await page.goto('/');
-
     await fillMonacoEditor(page, `type Test<T> = T extends any ? T[] : never;`);
 
+    // Act
     await page.fill(TYPE_INPUT_SELECTOR, 'Test<string | number>');
     await page.click('button:has-text("Generate")');
+    await waitForGeneration(page);
 
-    await page.waitForTimeout(2000);
+    // Navigate through steps to find union member step
+    const nextButton = page.locator('button:has-text("Next")');
+    let foundUnionResults = false;
 
-    expect(await page.isVisible('body')).toBe(true);
+    for (let i = 0; i < 20; i++) {
+      const hasRunningResults = await page.locator('text=Running Results').isVisible();
+      if (hasRunningResults) {
+        foundUnionResults = true;
+        break;
+      }
+      if (await nextButton.isEnabled()) {
+        await nextButton.click();
+        await page.waitForTimeout(100);
+      } else {
+        break;
+      }
+    }
+
+    // Assert - should find Running Results section during union stepping
+    expect(foundUnionResults).toBe(true);
   });
 
-  test('final result shows union reduced (never removed)', async ({ page }) => {
+  test('playback controls are functional', async ({ page }) => {
+    // Arrange
     await page.goto('/');
-
-    await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
-
-    await page.fill(TYPE_INPUT_SELECTOR, 'Loop2<"a" | "b" | "x">');
-    await page.click('button:has-text("Generate")');
-
-    await page.waitForTimeout(3000);
-
-    // Final result should be 1 | 2 (never removed)
-    expect(await page.isVisible('body')).toBe(true);
-  });
-
-  test('play/pause and scrub timeline', async ({ page }) => {
-    await page.goto('/');
-
-    // Just use the type input for this test
     await page.fill(TYPE_INPUT_SELECTOR, 'string');
     await page.click('button:has-text("Generate")');
+    await waitForGeneration(page);
 
-    await page.waitForTimeout(2000);
+    // Assert - Play button should be visible
+    const playButton = page.locator('button:has-text("Play")');
+    await expect(playButton).toBeVisible();
 
-    // Test play/pause
-    const playButton = page.locator('button[aria-label*="play"], button:has-text("Play")').first();
-    if (await playButton.isVisible()) {
-      await playButton.click();
-      await page.waitForTimeout(1000);
+    // Act - Click play
+    await playButton.click();
 
-      const pauseButton = page.locator('button[aria-label*="pause"], button:has-text("Pause")').first();
-      if (await pauseButton.isVisible()) {
-        await pauseButton.click();
-      }
-    }
+    // Assert - Should change to Pause
+    await expect(page.locator('button:has-text("Pause")')).toBeVisible();
 
-    // Test timeline scrubbing
-    const timeline = page.locator('input[type="range"], .timeline-slider').first();
-    if (await timeline.isVisible()) {
-      // Only try to scrub if there are steps to scrub to
-      const max = await timeline.getAttribute('max');
-      if (max && parseInt(max) > 0) {
-        const midpoint = Math.floor(parseInt(max) / 2).toString();
-        await timeline.fill(midpoint);
-      }
-    }
+    // Act - Click pause
+    await page.locator('button:has-text("Pause")').click();
 
-    expect(await page.isVisible('body')).toBe(true);
+    // Assert - Should change back to Play
+    await expect(page.locator('button:has-text("Play")')).toBeVisible();
+  });
+
+  test('Prev/Next buttons navigate steps', async ({ page }) => {
+    // Arrange
+    await page.goto('/');
+    await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
+    await page.fill(TYPE_INPUT_SELECTOR, 'Loop2<"a" | "b">');
+    await page.click('button:has-text("Generate")');
+    await waitForGeneration(page);
+
+    // Assert - Initially at step 1
+    await expect(page.locator('text=/Step 1 \\/ \\d+/')).toBeVisible();
+
+    // Assert - Prev button should be disabled at step 1
+    const prevButton = page.locator('button:has-text("Prev")');
+    await expect(prevButton).toBeDisabled();
+
+    // Act - Click Next
+    const nextButton = page.locator('button:has-text("Next")');
+    await nextButton.click();
+
+    // Assert - Should be at step 2
+    await expect(page.locator('text=/Step 2 \\/ \\d+/')).toBeVisible();
+
+    // Assert - Prev should now be enabled
+    await expect(prevButton).toBeEnabled();
+
+    // Act - Click Prev
+    await prevButton.click();
+
+    // Assert - Back to step 1
+    await expect(page.locator('text=/Step 1 \\/ \\d+/')).toBeVisible();
+  });
+
+  test('timeline slider changes current step', async ({ page }) => {
+    // Arrange
+    await page.goto('/');
+    await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
+    await page.fill(TYPE_INPUT_SELECTOR, 'Loop2<"a" | "b">');
+    await page.click('button:has-text("Generate")');
+    await waitForGeneration(page);
+
+    // Get the slider
+    const slider = page.locator('input[type="range"]').first();
+    await expect(slider).toBeVisible();
+
+    // Get max value
+    const max = await slider.getAttribute('max');
+    expect(max).toBeTruthy();
+    const maxValue = parseInt(max!);
+    expect(maxValue).toBeGreaterThan(1);
+
+    // Act - Set slider to last step
+    await slider.fill(max!);
+
+    // Assert - Should show last step
+    const stepText = await page.locator('text=/Step \\d+ \\/ \\d+/').textContent();
+    expect(stepText).toContain(`Step ${maxValue + 1} /`);
+  });
+
+  test('speed buttons change playback speed', async ({ page }) => {
+    // Arrange
+    await page.goto('/');
+    await page.fill(TYPE_INPUT_SELECTOR, 'string');
+    await page.click('button:has-text("Generate")');
+    await waitForGeneration(page);
+
+    // Assert - Speed indicator should show default 1x
+    await expect(page.locator('text=Speed: 1')).toBeVisible();
+
+    // Act - Click 2x speed button
+    await page.locator('button:has-text("2x")').click();
+
+    // Assert - Speed should update to 2x
+    await expect(page.locator('text=Speed: 2')).toBeVisible();
   });
 });
