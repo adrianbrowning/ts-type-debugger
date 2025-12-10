@@ -9,7 +9,20 @@
       "Bash(test:*)",
       "Bash(pnpm install:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm lint:ts:*)"
+      "Bash(pnpm lint:ts:*)",
+      "Bash(pnpm add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\ntest: Add eval_local and typeDebugger unit tests\n\n- Add 8 tests for checkTypeCondition and evalTypeString\n- Add 5 tests for generateTypeVideo API\n- Test union reduction, never removal, type checking\n- Test VideoData structure and error handling\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)",
+      "Bash(pnpm test:*)",
+      "mcp__context7__get-library-docs",
+      "Bash(ls:*)",
+      "mcp__context7__resolve-library-id",
+      "Bash(npm test:*)",
+      "Bash(timeout * pnpm exec vitest:*)",
+      "Bash(timeout * pnpm test:*)",
+      "Bash(timeout * node:*)",
+      "Bash(pnpm test:e2e:*)"
     ],
     "deny": [],
     "ask": []

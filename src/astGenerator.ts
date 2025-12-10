@@ -150,15 +150,20 @@ export function getTypeAliasType(alias: ts.TypeAliasDeclaration, sourceFile: ts.
 /**
  * Type evaluation context for tracing
  */
+// TypeScript's hardcoded max recursion depth is 1000
+const MAX_RECURSION_DEPTH = 1000;
+
 interface EvalContext {
   sourceFile: ts.SourceFile;
   trace: TraceEntry[];
   level: number;
+  depth: number; // Track recursion depth for circular type detection
   parameters: Map<string, string>;
   allTypeAliases: Map<string, ts.TypeAliasDeclaration>;
   currentNode?: ts.Node; // Track the node being evaluated for result steps
   currentUnionMember?: string; // Track which union member is being evaluated
   currentUnionResults?: string; // Track accumulating union results
+  evaluatingArgs?: Set<string>; // Track type arguments being evaluated to prevent recursion
 }
 
 /**
@@ -218,14 +223,61 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   const typeName = typeRef.typeName.getText(context.sourceFile);
   const typeArgs = typeRef.typeArguments?.map(arg => arg.getText(context.sourceFile)) || [];
 
+  // Prevent infinite recursion - use TypeScript's max depth of 1000
+  context.depth++;
+  if (context.depth > MAX_RECURSION_DEPTH) {
+    context.depth--;
+    return typeArgs.length > 0 ? `${typeName}<${typeArgs.join(', ')}>` : typeName;
+  }
+
   // First check if typeName is a parameter (e.g., `t` when inside `type T<t> = t`)
   // Only if no type arguments - a parameter with args would be invalid
   if (!typeArgs.length && context.parameters.has(typeName)) {
+    context.depth--;
     return context.parameters.get(typeName)!;
   }
 
-  // Substitute any parameters in the type arguments
-  const substitutedArgs = typeArgs.map(arg => {
+  // Evaluate type arguments - this traces nested generics
+  const evaluatedArgs: string[] = [];
+  if (typeRef.typeArguments) {
+    // Initialize evaluatingArgs set if not present
+    if (!context.evaluatingArgs) {
+      context.evaluatingArgs = new Set();
+    }
+
+    for (const argNode of typeRef.typeArguments) {
+      const argText = argNode.getText(context.sourceFile);
+
+      // If it's a type reference (potentially a generic), evaluate it to trace
+      if (ts.isTypeReferenceNode(argNode)) {
+        const argTypeName = argNode.typeName.getText(context.sourceFile);
+        // Check if it's a parameter reference first
+        if (!argNode.typeArguments?.length && context.parameters.has(argTypeName)) {
+          evaluatedArgs.push(context.parameters.get(argTypeName)!);
+        } else if (context.evaluatingArgs.has(argText)) {
+          // Prevent infinite recursion - use text form if already evaluating
+          evaluatedArgs.push(argText);
+        } else {
+          // Evaluate the nested generic/reference
+          context.evaluatingArgs.add(argText);
+          context.level++;
+          const evaluated = evaluateGenericCall(argNode, context);
+          context.level--;
+          context.evaluatingArgs.delete(argText);
+          evaluatedArgs.push(evaluated);
+        }
+      } else {
+        // For non-reference types, evaluate them
+        context.level++;
+        const evaluated = evaluateTypeNode(argNode, context);
+        context.level--;
+        evaluatedArgs.push(evaluated);
+      }
+    }
+  }
+
+  // Substitute any parameters in the type arguments (for non-evaluated string args)
+  const substitutedArgs = evaluatedArgs.length > 0 ? evaluatedArgs : typeArgs.map(arg => {
     // If arg is a parameter name that's in scope, replace it with its bound value
     if (context.parameters.has(arg)) {
       return context.parameters.get(arg)!;
@@ -241,8 +293,26 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
 
   // Look up the generic function/type alias
   const aliasDecl = context.allTypeAliases.get(typeName);
-  if (!aliasDecl || !aliasDecl.typeParameters) {
-    return `${typeName}<${substitutedArgs.join(', ')}>`;
+  if (!aliasDecl) {
+    // Built-in or unknown type - return as-is
+    context.depth--;
+    return typeArgs.length > 0 ? `${typeName}<${substitutedArgs.join(', ')}>` : typeName;
+  }
+
+  // Non-generic type alias - still need to evaluate its body
+  if (!aliasDecl.typeParameters) {
+    // Log alias reference
+    addTrace(context, 'alias_reference', `${typeName} = ${aliasDecl.type.getText(context.sourceFile)}`, {
+      position: getNodePosition(aliasDecl, context.sourceFile),
+    });
+
+    // Evaluate the type alias body
+    context.level++;
+    const result = evaluateTypeNode(aliasDecl.type, context);
+    context.level--;
+
+    context.depth--;
+    return result;
   }
 
   // Bind parameters to arguments FIRST
@@ -305,6 +375,7 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   context.parameters.clear();
   oldParams.forEach((v, k) => context.parameters.set(k, v));
 
+  context.depth--;
   return result;
 }
 
@@ -342,17 +413,23 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
     position: getNodePosition(condType, context.sourceFile),
   });
 
-  // Check if this is a discriminative conditional with a union
+  // Check if this conditional should distribute over a union
+  // First check for distributive (naked type parameter with union value)
+  // Then discriminative determines if each member gets different treatment
+  const distributiveParam = getDistributiveParameter(condType.checkType, context.sourceFile);
   const discriminativeParam = getDiscriminativeParameter(condType.checkType, condType.extendsType, context.sourceFile);
 
-  if (discriminativeParam && context.parameters.has(discriminativeParam)) {
-    const paramValue = context.parameters.get(discriminativeParam)!;
+  // Use distributive param if available, fall back to discriminative for backwards compat
+  const unionParam = distributiveParam || discriminativeParam;
+
+  if (unionParam && context.parameters.has(unionParam)) {
+    const paramValue = context.parameters.get(unionParam)!;
     const unionMembers = parseUnionType(paramValue);
 
     // Only distribute if we have a union (multiple members)
     if (unionMembers.length > 1) {
       // Log union distribution
-      addTrace(context, 'conditional_union_distribute', `Union ${discriminativeParam} = ${paramValue}`, {
+      addTrace(context, 'conditional_union_distribute', `Union ${unionParam} = ${paramValue}`, {
         position: getNodePosition(condType.checkType, context.sourceFile),
       });
 
@@ -366,11 +443,11 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
         context.currentUnionMember = member;
 
         // Temporarily bind the parameter to this member
-        const oldValue = context.parameters.get(discriminativeParam)!;
-        context.parameters.set(discriminativeParam, member);
+        const oldValue = context.parameters.get(unionParam)!;
+        context.parameters.set(unionParam, member);
 
         // Log which member we're evaluating
-        addTrace(context, 'conditional_union_member', `Evaluating for ${discriminativeParam} = ${member}`, {
+        addTrace(context, 'conditional_union_member', `Evaluating for ${unionParam} = ${member}`, {
           position: getNodePosition(condType.checkType, context.sourceFile),
           currentUnionMember: member,
           currentUnionResults: results.length > 0 ? results.join(' | ') : undefined,
@@ -456,7 +533,7 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
         }
 
         // Restore the parameter
-        context.parameters.set(discriminativeParam, oldValue);
+        context.parameters.set(unionParam, oldValue);
       }
 
       // Final reduced result
@@ -581,8 +658,14 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
 
     // Evaluate the span type (could call generics, conditionals, etc)
     let evaluatedType: string;
-    if (ts.isTypeReferenceNode(span.type) && context.allTypeAliases.has(span.type.typeName.getText(context.sourceFile))) {
+    if (ts.isConditionalTypeNode(span.type)) {
+      // It's a conditional - evaluate it to trace the condition
+      evaluatedType = evaluateTypeNode(span.type, context);
+    } else if (ts.isTypeReferenceNode(span.type) && context.allTypeAliases.has(span.type.typeName.getText(context.sourceFile))) {
       // It's a reference to a generic/type alias - evaluate it
+      evaluatedType = evaluateTypeNode(span.type, context);
+    } else if (ts.isMappedTypeNode(span.type) || ts.isIndexedAccessTypeNode(span.type)) {
+      // Complex types that need evaluation
       evaluatedType = evaluateTypeNode(span.type, context);
     } else {
       // Simple type or parameter reference - use substituted value
@@ -708,6 +791,21 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
   });
 
   return finalResult;
+}
+
+/**
+ * Check if a conditional should distribute over a union (TypeScript distributive conditional behavior)
+ * Distribution happens when check type is a naked type parameter bound to a union
+ * For example: T extends any ? T[] : never distributes over string | number
+ * Returns the parameter name if distribution should happen
+ */
+function getDistributiveParameter(checkNode: ts.TypeNode, sourceFile: ts.SourceFile): string | null {
+  // Check if checkType is a simple type reference (identifier, not a generic call)
+  if (!ts.isTypeReferenceNode(checkNode) || checkNode.typeArguments?.length) {
+    return null;
+  }
+
+  return checkNode.getText(sourceFile);
 }
 
 /**
@@ -871,26 +969,29 @@ function evaluateIndexedAccess(indexedType: ts.IndexedAccessTypeNode, context: E
     position: getNodePosition(indexedType, context.sourceFile),
   });
 
-  // Evaluate the object type FIRST (this could be a mapped type)
+  // Evaluate the object type for tracing (shows internal steps)
   context.level++;
-  const objResult = evaluateTypeNode(indexedType.objectType, context);
+  evaluateTypeNode(indexedType.objectType, context);
   context.level--;
 
-  // Then evaluate the index type to get the key(s)
+  // Evaluate the index type for tracing (shows internal steps)
   context.level++;
-  const indexResult = evaluateTypeNode(indexedType.indexType, context);
+  evaluateTypeNode(indexedType.indexType, context);
   context.level--;
 
-  // Use real TS type checker to resolve the final result
-  let finalResult = indexResult;
+  // Use real TS type checker to resolve the FULL indexed access expression
+  // Important: Don't use the evaluated results, use the ORIGINAL expression with substituted params
+  // This avoids issues where mapped type returns union of values instead of the object structure
+  const substitutedObj = substituteParameters(objTypeStr, context.parameters);
+  const substitutedIndex = substituteParameters(indexTypeStr, context.parameters);
+  const fullExpr = `(${substitutedObj})[${substitutedIndex}]`;
+
+  let finalResult = fullExpr;
   try {
-    // Substitute any remaining parameter references
-    const substitutedResult = substituteParameters(indexResult, context.parameters);
-    // Evaluate with real TS type checker to get resolved type
-    finalResult = evalTypeString(context.sourceFile.text, substitutedResult);
+    finalResult = evalTypeString(context.sourceFile.text, fullExpr);
   } catch {
-    // Fallback to traced result if evaluation fails
-    finalResult = indexResult;
+    // Fallback to unresolved form if evaluation fails
+    finalResult = fullExpr;
   }
 
   // Log the result of indexing
@@ -905,6 +1006,13 @@ function evaluateIndexedAccess(indexedType: ts.IndexedAccessTypeNode, context: E
  * Main type node evaluator
  */
 export function evaluateTypeNode(typeNode: ts.TypeNode, context: EvalContext): string {
+  // Prevent infinite recursion
+  context.depth++;
+  if (context.depth > MAX_RECURSION_DEPTH) {
+    context.depth--;
+    return typeNode.getText(context.sourceFile);
+  }
+
   // Save previous node and set current node
   const previousNode = context.currentNode;
   context.currentNode = typeNode;
@@ -938,6 +1046,7 @@ export function evaluateTypeNode(typeNode: ts.TypeNode, context: EvalContext): s
 
   // Restore previous node
   context.currentNode = previousNode;
+  context.depth--;
   return result;
 }
 
@@ -966,6 +1075,7 @@ export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Trace
     sourceFile: ast,
     trace: [],
     level: 0,
+    depth: 0,
     parameters: new Map(),
     allTypeAliases,
   };

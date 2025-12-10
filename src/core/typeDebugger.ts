@@ -23,9 +23,7 @@ export async function generateTypeVideo(
     // Validate: reject inputs starting with 'type X ='
     const typeKeywordPattern = /^\s*type\s+\w+\s*=/i;
     if (typeKeywordPattern.test(typeName)) {
-      throw new Error(
-        "Type expressions cannot start with 'type X ='. Enter only the type expression (e.g., '\"a\" extends string ? true : false')"
-      );
+      return null;
     }
 
     // Always wrap the user input in a temporary type alias for evaluation
