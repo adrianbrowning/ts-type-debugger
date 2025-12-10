@@ -354,5 +354,41 @@ exports[`Conditional Type Resolution Integration > resolves simple conditional (
     "startFrame": 270,
     "stepIndex": 9,
   },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 330,
+    "highlightLines": {
+      "chars": {
+        "end": 27,
+        "start": 0,
+      },
+      "end": 0,
+      "start": 0,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "__EvalTarget__ = "yes"",
+      "level": 0,
+      "parameters": undefined,
+      "position": {
+        "end": {
+          "character": 27,
+          "line": 1,
+        },
+        "start": {
+          "character": 0,
+          "line": 1,
+        },
+      },
+      "result": ""yes"",
+      "step": 11,
+      "type": "type_alias_result",
+    },
+    "startFrame": 300,
+    "stepIndex": 10,
+  },
 ]
 `;

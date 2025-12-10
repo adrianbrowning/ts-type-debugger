@@ -85,6 +85,7 @@ export const ANIMATIONS = {
  * Color scheme for different trace types
  */
 export const TRACE_TYPE_COLORS: Record<string, string> = {
+  type_alias_result: '#10B981', // green
   generic_call: '#3B82F6', // blue
   generic_def: '#8B5CF6', // purple
   generic_result: '#10B981', // green
@@ -103,8 +104,8 @@ export const TRACE_TYPE_COLORS: Record<string, string> = {
   mapped_type_constraint: '#F59E0B', // amber
   mapped_type_constraint_result: '#F59E0B', // amber
   map_iteration: '#3B82F6', // blue
+  map_iteration_result: '#10B981', // green
   mapped_type_result: '#10B981', // green
-  mapped_type_end: '#8B5CF6', // purple
   indexed_access: '#06B6D4', // cyan
   indexed_access_result: '#10B981', // green
 };

@@ -150,5 +150,41 @@ exports[`Generic Type Resolution Integration > resolves simple identity generic 
     "startFrame": 90,
     "stepIndex": 3,
   },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 150,
+    "highlightLines": {
+      "chars": {
+        "end": 39,
+        "start": 0,
+      },
+      "end": 0,
+      "start": 0,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "__EvalTarget__ = string",
+      "level": 0,
+      "parameters": undefined,
+      "position": {
+        "end": {
+          "character": 39,
+          "line": 1,
+        },
+        "start": {
+          "character": 0,
+          "line": 1,
+        },
+      },
+      "result": "string",
+      "step": 5,
+      "type": "type_alias_result",
+    },
+    "startFrame": 120,
+    "stepIndex": 4,
+  },
 ]
 `;

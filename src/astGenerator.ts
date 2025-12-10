@@ -8,7 +8,7 @@ import {checkTypeCondition, evalTypeString} from "./eval_local.ts";
  */
 export interface TraceEntry {
   step: number;
-  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'template_literal_start' | 'template_union_distribute' | 'template_union_member' | 'template_union_member_result' | 'template_span_eval' | 'template_result' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce';
+  type: 'type_alias_start' | 'type_alias_result' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'template_literal_start' | 'template_union_distribute' | 'template_union_member' | 'template_union_member_result' | 'template_span_eval' | 'template_result' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'map_iteration_result' | 'mapped_type_result' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce';
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
@@ -20,6 +20,9 @@ export interface TraceEntry {
   };
   currentUnionMember?: string;
   currentUnionResults?: string;
+  currentMappedKey?: string;
+  currentMappedObject?: Record<string, string>;
+  currentMappedObjectStr?: string;
 }
 
 /**
@@ -183,12 +186,28 @@ function getNodePosition(node: ts.Node, sourceFile: ts.SourceFile): { start: { l
 }
 
 /**
+ * Helper to get position spanning from one node to another
+ */
+function getCustomPosition(startNode: ts.Node, endNode: ts.Node, sourceFile: ts.SourceFile): { start: { line: number; character: number }; end: { line: number; character: number } } | undefined {
+  try {
+    const start = sourceFile.getLineAndCharacterOfPosition(startNode.getStart(sourceFile));
+    const end = sourceFile.getLineAndCharacterOfPosition(endNode.getEnd());
+    return {
+      start: { line: start.line + 1, character: start.character },
+      end: { line: end.line + 1, character: end.character },
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Add trace entry helper
  */
 function addTrace(context: EvalContext, type: TraceEntry['type'], expression: string, opts: Partial<TraceEntry> = {}): void {
   // For result steps without explicit position, use current node context
   // Exclude semantic steps that don't correspond to specific code locations
-  const resultTypes = new Set(['mapped_type_constraint_result', 'mapped_type_result', 'mapped_type_end', 'indexed_access_result', 'template_literal', 'template_result']);
+  const resultTypes = new Set(['type_alias_result', 'mapped_type_constraint_result', 'map_iteration_result', 'mapped_type_result', 'indexed_access_result', 'template_literal', 'template_result']);
   const semanticSteps = new Set(['conditional_evaluation']); // No auto-position for these
 
   const shouldUseContextNode = resultTypes.has(type) && !opts.position && context.currentNode;
@@ -857,6 +876,14 @@ function parseUnionType(typeStr: string): string[] {
 }
 
 /**
+ * Format mapped object entries as TypeScript object type syntax
+ */
+function formatMappedObject(entries: Record<string, string>): string {
+  const pairs = Object.entries(entries).map(([k, v]) => `${k}: ${v}`);
+  return `{ ${pairs.join('; ')} }`;
+}
+
+/**
  * Simple type compatibility check (simplified - real TS would do full type checking)
  */
 function isTypeCompatible(check: string, extendsType: string): boolean {
@@ -882,10 +909,14 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
   const typeParam = mappedType.typeParameter;
   const loopVarName = typeParam.name.text;
 
-  // Log constraint evaluation
+  // Log constraint evaluation - highlight from loop variable name to constraint end
   const constraintStr = typeParam.constraint?.getText(context.sourceFile) || 'string | number | symbol';
+  const constraintPosition = typeParam.constraint
+    ? getCustomPosition(typeParam.name, typeParam.constraint, context.sourceFile)
+    : getNodePosition(mappedType, context.sourceFile);
+
   addTrace(context, 'mapped_type_constraint', `${loopVarName} in ${constraintStr}`, {
-    position: getNodePosition(typeParam.constraint || mappedType, context.sourceFile),
+    position: constraintPosition,
   });
 
   // Evaluate the constraint to get iteration keys
@@ -897,13 +928,13 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
     context.level--;
 
     // Then use real TS type checker to get accurate resolved type
-    const constraintStr = substituteParameters(
+    const substitutedConstraint = substituteParameters(
       typeParam.constraint.getText(context.sourceFile),
       context.parameters
     );
     let realResult: string;
     try {
-      realResult = evalTypeString(context.sourceFile.text, constraintStr);
+      realResult = evalTypeString(context.sourceFile.text, substitutedConstraint);
     } catch {
       // Fallback to traced result if evaluation fails
       realResult = constraintResult;
@@ -918,7 +949,6 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
 
   // Evaluate mapped type body for each key and build object entries
   const mappedEntries: Record<string, string> = {};
-  const mappedResults: string[] = [];
   const oldParams = new Map(context.parameters);
 
   for (const key of keys) {
@@ -926,7 +956,9 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
     context.parameters.set(loopVarName, key);
 
     addTrace(context, 'map_iteration', `${loopVarName} = ${key}`, {
-      position: getNodePosition(typeParam, context.sourceFile),
+      position: mappedType.type ? getNodePosition(mappedType.type, context.sourceFile) : undefined,
+      currentMappedKey: key,
+      currentMappedObject: { ...mappedEntries },
     });
 
     // Evaluate the type body for this iteration
@@ -935,7 +967,16 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
       const iterResult = evaluateTypeNode(mappedType.type, context);
       context.level--;
       mappedEntries[key] = iterResult;
-      mappedResults.push(iterResult);
+
+      // Show the object being built after each iteration
+      const currentObj = formatMappedObject(mappedEntries);
+      addTrace(context, 'map_iteration_result', `${key}: ${iterResult}`, {
+        position: getNodePosition(mappedType.type, context.sourceFile),
+        result: iterResult,
+        currentMappedKey: key,
+        currentMappedObject: { ...mappedEntries },
+        currentMappedObjectStr: currentObj,
+      });
     }
   }
 
@@ -943,19 +984,13 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
   context.parameters.clear();
   oldParams.forEach((v, k) => context.parameters.set(k, v));
 
-  // Log the constructed object type
-  const objStr = JSON.stringify(mappedEntries);
-  addTrace(context, 'mapped_type_result', `Constructed object: ${objStr}`, {
-    result: objStr,
+  // Format the final object type
+  const resultObj = formatMappedObject(mappedEntries);
+  addTrace(context, 'mapped_type_result', resultObj, {
+    result: resultObj,
   });
 
-  // Return union of all mapped values
-  const resultStr = mappedResults.join(' | ');
-  addTrace(context, 'mapped_type_end', `mapped type union: ${resultStr}`, {
-    result: resultStr,
-  });
-
-  return resultStr;
+  return resultObj;
 }
 
 /**
@@ -1086,7 +1121,12 @@ export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Trace
   });
 
   // Start evaluation
-  evaluateTypeNode(targetAlias.type, context);
+  const result = evaluateTypeNode(targetAlias.type, context);
+
+  addTrace(context, 'type_alias_result', `${targetAlias.name.text} = ${result}`, {
+    result,
+    position: getNodePosition(targetAlias, ast),
+  });
 
   return context.trace;
 }

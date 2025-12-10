@@ -86,5 +86,25 @@ exports[`Type Resolution Tracing > captures complete trace with snapshots 1`] = 
     "step": 4,
     "type": "generic_result",
   },
+  {
+    "currentUnionMember": undefined,
+    "currentUnionResults": undefined,
+    "expression": "Result = number",
+    "level": 0,
+    "parameters": undefined,
+    "position": {
+      "end": {
+        "character": 31,
+        "line": 2,
+      },
+      "start": {
+        "character": 0,
+        "line": 2,
+      },
+    },
+    "result": "number",
+    "step": 5,
+    "type": "type_alias_result",
+  },
 ]
 `;

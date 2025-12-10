@@ -48,6 +48,7 @@ export const THEME = {
 
   // Step type colors
   stepType: {
+    type_alias_result: '#10b981',
     generic_call: '#3b82f6',
     generic_def: '#8b5cf6',
     generic_result: '#10b981',
@@ -64,8 +65,8 @@ export const THEME = {
     mapped_type_constraint: '#f59e0b',
     mapped_type_constraint_result: '#f59e0b',
     map_iteration: '#3b82f6',
+    map_iteration_result: '#10b981',
     mapped_type_result: '#10b981',
-    mapped_type_end: '#8b5cf6',
     indexed_access: '#06b6d4',
     indexed_access_result: '#10b981',
     type_alias_start: '#94a3b8',

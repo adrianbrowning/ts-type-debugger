@@ -1181,5 +1181,41 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "startFrame": 870,
     "stepIndex": 29,
   },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 930,
+    "highlightLines": {
+      "chars": {
+        "end": 33,
+        "start": 0,
+      },
+      "end": 0,
+      "start": 0,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "__EvalTarget__ = never",
+      "level": 0,
+      "parameters": undefined,
+      "position": {
+        "end": {
+          "character": 33,
+          "line": 1,
+        },
+        "start": {
+          "character": 0,
+          "line": 1,
+        },
+      },
+      "result": "never",
+      "step": 31,
+      "type": "type_alias_result",
+    },
+    "startFrame": 900,
+    "stepIndex": 30,
+  },
 ]
 `;
