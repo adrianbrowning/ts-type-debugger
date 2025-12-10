@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
 // Mock MonacoCodeEditor component
 const MockMonacoCodeEditor = ({ value, onChange }: any) => (
@@ -29,14 +29,9 @@ describe('MonacoCodeEditor Component', () => {
     );
 
     const textarea = container.querySelector('[data-testid="editor-textarea"]') as HTMLTextAreaElement;
+    expect(textarea).toBeDefined();
 
-    if (textarea) {
-      textarea.value = 'updated';
-      textarea.dispatchEvent(new Event('change', { bubbles: true }));
-
-      expect(onChange).toHaveBeenCalled();
-    }
-
-    expect(document.body).toBeDefined();
+    fireEvent.change(textarea, { target: { value: 'updated' } });
+    expect(onChange).toHaveBeenCalledWith('updated');
   });
 });

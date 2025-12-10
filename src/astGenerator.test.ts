@@ -162,11 +162,16 @@ describe('Generic Type Evaluation', () => {
 
 describe('Template Literal Evaluation', () => {
   it('evaluates static template', () => {
+    // Static templates (no interpolations) are represented as LiteralType in TS AST,
+    // not TemplateLiteralTypeNode, so no special template tracing occurs.
+    // It's treated as a simple literal type.
     const code = 'type Test = `static`;';
     const ast = generateAST(code);
     const trace = traceTypeResolution(ast, 'Test');
 
-    expect(findTraceByType(trace, 'template_literal_start')).toBeDefined();
+    // Should have at least the type_alias_start entry
+    expect(trace.length).toBeGreaterThan(0);
+    expect(trace[0].type).toBe('type_alias_start');
   });
 
   it('evaluates template with single string interpolation', () => {

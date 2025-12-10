@@ -14,7 +14,18 @@
       "Bash(git add:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\ntest: Add eval_local and typeDebugger unit tests\n\n- Add 8 tests for checkTypeCondition and evalTypeString\n- Add 5 tests for generateTypeVideo API\n- Test union reduction, never removal, type checking\n- Test VideoData structure and error handling\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git commit:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "mcp__context7__get-library-docs",
+      "Bash(ls:*)",
+      "mcp__context7__resolve-library-id",
+      "Bash(npm test:*)",
+      "Bash(timeout 15 node:*)",
+      "Bash(timeout * npx vitest:*)",
+      "Bash(timeout 15 npx tsx:*)",
+      "Bash(timeout 60 pnpm test:*)",
+      "Bash(timeout 20 node:*)",
+      "Bash(timeout 20 npx tsx:*)",
+      "Bash(timeout 30 npx tsx:*)"
     ],
     "deny": [],
     "ask": []

@@ -3,26 +3,30 @@ import { createSystem, createVirtualTypeScriptEnvironment } from "@typescript/vf
 import * as ts from "typescript";
 import {libFiles} from "./services/typescript/lib-bundle.ts"
 
-// function getLocalLibFile(name: string) {
-//     // Assumes you have "typescript" installed locally
-//     return readFileSync(resolve(`node_modules/typescript/lib/${name}`), "utf8");
-// }
+// Memoization caches to avoid expensive env creation for repeated evaluations
+const evalCache = new Map<string, string>();
+const checkCache = new Map<string, boolean>();
 
+function hashArgs(...args: string[]): string {
+    let hash = 0;
+    const str = args.join('|');
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+    }
+    return hash.toString(36);
+}
 
 function loadLibs() {
-    return  new Map<string, string>(Object.entries(libFiles));
-    // const fsMap = new Map<string, string>();
-    // for (const libName of readdirSync('./node_modules/typescript/lib')) {
-    //     if (libName.startsWith("lib.") && libName.endsWith(".d.ts")) {
-    //         fsMap.set("/" + libName, getLocalLibFile(libName));
-    //     }
-    // }
-    // return fsMap;
+    return new Map<string, string>(Object.entries(libFiles));
 }
 
 export function checkTypeCondition(typeBody: string, checker: string, context?: string): boolean {
-    const fsMap = loadLibs();
+    // Check cache first
+    const cacheKey = hashArgs(typeBody, checker, context || '');
+    const cached = checkCache.get(cacheKey);
+    if (cached !== undefined) return cached;
 
+    const fsMap = loadLibs();
     const fileName = "temp.ts";
     const code = `
     type path = ${typeBody};
@@ -61,14 +65,25 @@ export function checkTypeCondition(typeBody: string, checker: string, context?: 
     });
 
     if (!resultType) throw new Error("Could not determine result type");
-    return typeChecker.typeToString(resultType) === "true";
+    const result = typeChecker.typeToString(resultType) === "true";
+    checkCache.set(cacheKey, result);
+    return result;
 }
 
-export function evalTypeString(context: string, expr: string): string {
-    const fsMap = loadLibs();
+export function evalTypeString(expr: string): string;
+export function evalTypeString(context: string, expr: string): string;
+export function evalTypeString(contextOrExpr: string, expr?: string): string {
+    const context = expr === undefined ? '' : contextOrExpr;
+    const actualExpr = expr === undefined ? contextOrExpr : expr;
 
+    // Check cache first
+    const cacheKey = hashArgs(context, actualExpr);
+    const cached = evalCache.get(cacheKey);
+    if (cached !== undefined) return cached;
+
+    const fsMap = loadLibs();
     const fileName = "/main.ts";
-    fsMap.set(fileName, `${context}\ntype _Eval = ${expr};`);
+    fsMap.set(fileName, `${context}\ntype _Eval = ${actualExpr};`);
     const system = createSystem(fsMap);
     const env = createVirtualTypeScriptEnvironment(system, [fileName], ts, {
         rootDir: "/",
@@ -116,5 +131,7 @@ export function evalTypeString(context: string, expr: string): string {
         return checker.typeToString(type);
     }
 
-    return typeString(type);
+    const result = typeString(type);
+    evalCache.set(cacheKey, result);
+    return result;
 }

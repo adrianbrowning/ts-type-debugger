@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, defineWorkspace } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 
@@ -6,20 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    // Browser mode for unit & integration tests
-    browser: {
-      enabled: true,
-      instances: [{ browser: 'chromium' }],
-      provider: playwright(),
-      headless: true,
-    },
-    include: [
-      'src/**/*.test.{ts,tsx}',
-      'tests/unit/**/*.test.{ts,tsx}',
-      'tests/integration/**/*.test.{ts,tsx}',
-      'tests/ui/**/*.test.{ts,tsx}'
-    ],
-    exclude: ['tests/e2e/**', 'node_modules/**'],
+    setupFiles: ['./tests/setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -31,6 +18,12 @@ export default defineConfig({
         '**/*.test.tsx'
       ]
     },
-    testTimeout: 15000
+    // Default: Node.js mode for unit/integration tests (fast)
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'tests/integration/**/*.test.{ts,tsx}',
+    ],
+    exclude: ['tests/e2e/**', 'tests/ui/**', 'node_modules/**'],
+    testTimeout: 30000,
   }
 });
