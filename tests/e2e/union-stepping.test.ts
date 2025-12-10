@@ -1,19 +1,33 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
+
+// Helper to fill Monaco editor - click, select all, type
+async function fillMonacoEditor(page: Page, code: string) {
+  // Wait for Monaco to be ready
+  await page.waitForSelector('.monaco-editor', { timeout: 10000 });
+
+  // Click on the editor to focus it
+  await page.click('.monaco-editor');
+
+  // Select all existing content and replace
+  await page.keyboard.press('Meta+A'); // Cmd+A on Mac
+  await page.keyboard.press('Control+A'); // Ctrl+A on Windows/Linux
+
+  // Type the new code
+  await page.keyboard.type(code, { delay: 5 });
+}
+
+// Selector for the type expression input (placeholder contains "_result")
+const TYPE_INPUT_SELECTOR = 'input[placeholder*="_result"]';
 
 test.describe('Union Stepping E2E', () => {
   test('Loop2 shows 3 union member steps', async ({ page }) => {
     await page.goto('/');
 
     // Enter Loop2 code
-    const codeInput = page.locator('textarea').first();
-    await codeInput.fill(`
-      type Loop2<str> = str extends "a" ? 1
-        : str extends "b" ? 2
-        : never;
-    `);
+    await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
 
     // Enter type expression
-    await page.fill('input[placeholder*="type"]', 'Loop2<"a" | "b" | "x">');
+    await page.fill(TYPE_INPUT_SELECTOR, 'Loop2<"a" | "b" | "x">');
     await page.click('button:has-text("Generate")');
 
     await page.waitForTimeout(3000);
@@ -25,11 +39,9 @@ test.describe('Union Stepping E2E', () => {
   test('right panel displays currentUnionMember', async ({ page }) => {
     await page.goto('/');
 
-    await page.locator('textarea').first().fill(`
-      type Test<T> = T extends "a" ? 1 : 2;
-    `);
+    await fillMonacoEditor(page, `type Test<T> = T extends "a" ? 1 : 2;`);
 
-    await page.fill('input[placeholder*="type"]', 'Test<"a" | "b">');
+    await page.fill(TYPE_INPUT_SELECTOR, 'Test<"a" | "b">');
     await page.click('button:has-text("Generate")');
 
     await page.waitForTimeout(2000);
@@ -42,11 +54,9 @@ test.describe('Union Stepping E2E', () => {
   test('right panel displays currentUnionResults accumulation', async ({ page }) => {
     await page.goto('/');
 
-    await page.locator('textarea').first().fill(`
-      type Test<T> = T extends any ? T[] : never;
-    `);
+    await fillMonacoEditor(page, `type Test<T> = T extends any ? T[] : never;`);
 
-    await page.fill('input[placeholder*="type"]', 'Test<string | number>');
+    await page.fill(TYPE_INPUT_SELECTOR, 'Test<string | number>');
     await page.click('button:has-text("Generate")');
 
     await page.waitForTimeout(2000);
@@ -57,13 +67,9 @@ test.describe('Union Stepping E2E', () => {
   test('final result shows union reduced (never removed)', async ({ page }) => {
     await page.goto('/');
 
-    await page.locator('textarea').first().fill(`
-      type Loop2<str> = str extends "a" ? 1
-        : str extends "b" ? 2
-        : never;
-    `);
+    await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
 
-    await page.fill('input[placeholder*="type"]', 'Loop2<"a" | "b" | "x">');
+    await page.fill(TYPE_INPUT_SELECTOR, 'Loop2<"a" | "b" | "x">');
     await page.click('button:has-text("Generate")');
 
     await page.waitForTimeout(3000);
@@ -75,7 +81,8 @@ test.describe('Union Stepping E2E', () => {
   test('play/pause and scrub timeline', async ({ page }) => {
     await page.goto('/');
 
-    await page.fill('input, textarea', 'string');
+    // Just use the type input for this test
+    await page.fill(TYPE_INPUT_SELECTOR, 'string');
     await page.click('button:has-text("Generate")');
 
     await page.waitForTimeout(2000);
@@ -95,7 +102,12 @@ test.describe('Union Stepping E2E', () => {
     // Test timeline scrubbing
     const timeline = page.locator('input[type="range"], .timeline-slider').first();
     if (await timeline.isVisible()) {
-      await timeline.fill('50');
+      // Only try to scrub if there are steps to scrub to
+      const max = await timeline.getAttribute('max');
+      if (max && parseInt(max) > 0) {
+        const midpoint = Math.floor(parseInt(max) / 2).toString();
+        await timeline.fill(midpoint);
+      }
     }
 
     expect(await page.isVisible('body')).toBe(true);

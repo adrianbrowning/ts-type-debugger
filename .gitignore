@@ -244,3 +244,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+/playwright-report/index.html
+/test-results/.last-run.json

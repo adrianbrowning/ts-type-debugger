@@ -969,28 +969,29 @@ function evaluateIndexedAccess(indexedType: ts.IndexedAccessTypeNode, context: E
     position: getNodePosition(indexedType, context.sourceFile),
   });
 
-  // Evaluate the object type FIRST (this could be a mapped type)
+  // Evaluate the object type for tracing (shows internal steps)
   context.level++;
-  const objResult = evaluateTypeNode(indexedType.objectType, context);
+  evaluateTypeNode(indexedType.objectType, context);
   context.level--;
 
-  // Then evaluate the index type to get the key(s)
+  // Evaluate the index type for tracing (shows internal steps)
   context.level++;
-  const indexResult = evaluateTypeNode(indexedType.indexType, context);
+  evaluateTypeNode(indexedType.indexType, context);
   context.level--;
 
-  // Use real TS type checker to resolve the final result
-  // We need to evaluate the FULL indexed access: objResult[indexResult]
-  let finalResult = `${objResult}[${indexResult}]`;
+  // Use real TS type checker to resolve the FULL indexed access expression
+  // Important: Don't use the evaluated results, use the ORIGINAL expression with substituted params
+  // This avoids issues where mapped type returns union of values instead of the object structure
+  const substitutedObj = substituteParameters(objTypeStr, context.parameters);
+  const substitutedIndex = substituteParameters(indexTypeStr, context.parameters);
+  const fullExpr = `(${substitutedObj})[${substitutedIndex}]`;
+
+  let finalResult = fullExpr;
   try {
-    // Substitute any remaining parameter references in both parts
-    const substitutedObj = substituteParameters(objResult, context.parameters);
-    const substitutedIndex = substituteParameters(indexResult, context.parameters);
-    // Evaluate with real TS type checker to get resolved type
-    finalResult = evalTypeString(context.sourceFile.text, `${substitutedObj}[${substitutedIndex}]`);
+    finalResult = evalTypeString(context.sourceFile.text, fullExpr);
   } catch {
     // Fallback to unresolved form if evaluation fails
-    finalResult = `${objResult}[${indexResult}]`;
+    finalResult = fullExpr;
   }
 
   // Log the result of indexing

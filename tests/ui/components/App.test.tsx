@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from '../../../src/web/App.tsx';
 
@@ -21,8 +21,10 @@ describe('App Component', () => {
     if (generateButton) {
       await user.click(generateButton);
 
-      // Wait for processing
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Wait for loading state to finish
+      await waitFor(() => {
+        expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+      }, { timeout: 5000 });
     }
 
     expect(document.body).toBeDefined();
@@ -41,7 +43,10 @@ describe('App Component', () => {
       if (generateButton) {
         await user.click(generateButton);
 
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Wait for error state or loading to finish
+        await waitFor(() => {
+          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+        }, { timeout: 3000 });
       }
     }
 

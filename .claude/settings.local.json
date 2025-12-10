@@ -19,13 +19,10 @@
       "Bash(ls:*)",
       "mcp__context7__resolve-library-id",
       "Bash(npm test:*)",
-      "Bash(timeout 15 node:*)",
-      "Bash(timeout * npx vitest:*)",
-      "Bash(timeout 15 npx tsx:*)",
-      "Bash(timeout 60 pnpm test:*)",
-      "Bash(timeout 20 node:*)",
-      "Bash(timeout 20 npx tsx:*)",
-      "Bash(timeout 30 npx tsx:*)"
+      "Bash(timeout * pnpm exec vitest:*)",
+      "Bash(timeout * pnpm test:*)",
+      "Bash(timeout * node:*)",
+      "Bash(pnpm test:e2e:*)"
     ],
     "deny": [],
     "ask": []
