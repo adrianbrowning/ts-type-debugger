@@ -34,10 +34,11 @@ describe('App Component', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    // Try to submit invalid syntax
+    // Try to submit invalid syntax - clear existing value and type invalid
     const input = screen.queryByPlaceholderText(/type/i);
     if (input) {
-      await user.type(input, '{{{');
+      await user.clear(input);
+      await user.type(input, 'InvalidType<<<>>>');
 
       const generateButton = screen.queryByText(/generate/i);
       if (generateButton) {

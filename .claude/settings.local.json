@@ -22,7 +22,16 @@
       "Bash(timeout * pnpm exec vitest:*)",
       "Bash(timeout * pnpm test:*)",
       "Bash(timeout * node:*)",
-      "Bash(pnpm test:e2e:*)"
+      "Bash(pnpm test:e2e:*)",
+      "Skill(react)",
+      "Skill(tdd-integration)",
+      "Bash(pnpm vitest:*)",
+      "Bash(pnpm test:unit:*)",
+      "Bash(wait)",
+      "Bash(timeout 15 pnpm test:unit:*)",
+      "Bash(pnpm test:ui:*)",
+      "Skill(testing-best-practice)",
+      "Bash(pnpm vitest run:*)"
     ],
     "deny": [],
     "ask": []

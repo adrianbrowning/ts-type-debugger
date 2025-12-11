@@ -6,7 +6,6 @@ import { Header } from './components/Header.tsx';
 import { MonacoCodeEditor } from './components/MonacoCodeEditor.tsx';
 import { CodePanel } from './components/CodePanel.tsx';
 import { StepDetailsPanel } from './components/StepDetailsPanel.tsx';
-import { FooterNav } from './components/FooterNav.tsx';
 import { THEME } from './theme.ts';
 import { CustomTypes } from '../base.ts';
 
@@ -97,7 +96,7 @@ export const App: React.FC = () => {
         }}
       >
         {/* Editor Panel (Hidden/Visible) */}
-        {editorVisible && (
+        {editorVisible && !hasGenerated && (
           <div
             style={{
               width: hasGenerated ? THEME.size.editorWidth : undefined,
@@ -139,7 +138,7 @@ export const App: React.FC = () => {
                     }
                   }}
                   disabled={isLoading}
-                  placeholder='e.g., _result or "a" extends string ? true : false'
+                  placeholder='Enter type expression (e.g., _result or "a" extends string ? true : false)'
                   style={{
                     flex: 1,
                     padding: THEME.spacing.md,
@@ -296,25 +295,22 @@ export const App: React.FC = () => {
         {/* Step Details Panel */}
         {hasGenerated && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <StepDetailsPanel currentStep={playback.currentStep} />
+            <StepDetailsPanel
+              currentStep={playback.currentStep}
+              steps={videoData?.steps ?? []}
+              currentStepIndex={playback.currentStepIndex}
+              totalSteps={videoData?.steps.length ?? 0}
+              typeAliases={videoData?.typeAliases ?? []}
+              onPrevious={playback.previousStep}
+              onNext={playback.nextStep}
+              onStepInto={playback.stepInto}
+              onStepOver={playback.stepOver}
+              onStepOut={playback.stepOut}
+              onSeekToStep={playback.seekToStep}
+            />
           </div>
         )}
       </div>
-
-      {/* Footer Navigation */}
-      {videoData && (
-        <FooterNav
-          videoData={videoData}
-          currentStepIndex={playback.currentStepIndex}
-          isPlaying={playback.isPlaying}
-          speed={playback.speed}
-          onTogglePlayPause={playback.togglePlayPause}
-          onNextStep={playback.nextStep}
-          onPreviousStep={playback.previousStep}
-          onSetSpeed={playback.setSpeed}
-          onSeekToStep={playback.seekToStep}
-        />
-      )}
     </div>
   );
 };

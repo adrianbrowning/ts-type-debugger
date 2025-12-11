@@ -147,6 +147,50 @@ export function usePlayback(videoData: VideoData | null) {
 
   const currentStep = videoData?.steps[state.currentStepIndex] || null;
 
+  // Helper: find next step matching level condition
+  const findNextStepByLevel = useCallback(
+    (levelCheck: (stepLevel: number, currentLevel: number) => boolean) => {
+      if (!videoData || !currentStep) return;
+
+      const currentLevel = currentStep.original.level;
+
+      // Find next step matching level condition
+      for (let i = state.currentStepIndex + 1; i < videoData.steps.length; i++) {
+        if (levelCheck(videoData.steps[i].original.level, currentLevel)) {
+          setState((prev) => ({
+            ...prev,
+            currentStepIndex: i,
+            isPlaying: false,
+          }));
+          return;
+        }
+      }
+
+      // No matching step found, go to last step
+      setState((prev) => ({
+        ...prev,
+        currentStepIndex: videoData.steps.length - 1,
+        isPlaying: false,
+      }));
+    },
+    [videoData, currentStep, state.currentStepIndex]
+  );
+
+  // Step over: move to next step at same or lower level (parent or sibling)
+  const stepOver = useCallback(() => {
+    findNextStepByLevel((stepLevel, currentLevel) => stepLevel <= currentLevel);
+  }, [findNextStepByLevel]);
+
+  // Step out: move to next step at strictly lower level (parent)
+  const stepOut = useCallback(() => {
+    findNextStepByLevel((stepLevel, currentLevel) => stepLevel < currentLevel);
+  }, [findNextStepByLevel]);
+
+  // Step into: just go to next step (alias for nextStep)
+  const stepInto = useCallback(() => {
+    nextStep();
+  }, [nextStep]);
+
   return {
     currentStep,
     currentStepIndex: state.currentStepIndex,
@@ -159,5 +203,8 @@ export function usePlayback(videoData: VideoData | null) {
     previousStep,
     setSpeed,
     seekToStep,
+    stepOver,
+    stepOut,
+    stepInto,
   };
 }

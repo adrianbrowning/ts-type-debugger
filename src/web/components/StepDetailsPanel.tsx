@@ -1,16 +1,65 @@
-import React from 'react';
-import type { VideoTraceStep } from '../../core/types.ts';
-import { formatResult, formatParameters } from '../../videoGenerator.ts';
+import React, { useMemo } from 'react';
+import type { VideoTraceStep, TypeInfo } from '../../core/types.ts';
 import { THEME } from '../theme.ts';
+import { DebugToolbar } from './DebugToolbar';
+import { CallStackSection } from './CallStackSection.tsx';
+import { IterationSection } from './IterationSection';
+import { ScopeSection } from './ScopeSection';
+import { GlobalsSection } from './GlobalsSection.tsx';
+import { CollapsibleSection } from './CollapsibleSection.tsx';
 
-interface StepDetailsPanelProps {
+type StepDetailsPanelProps = {
   currentStep: VideoTraceStep | null;
+  steps: VideoTraceStep[];
+  currentStepIndex: number;
+  totalSteps: number;
+  typeAliases: TypeInfo[];
+  onPrevious: () => void;
+  onNext: () => void;
+  onStepInto: () => void;
+  onStepOver: () => void;
+  onStepOut: () => void;
+  onSeekToStep: (index: number) => void;
+};
+
+/**
+ * Calculate used type names by scanning traces for type references
+ */
+function calculateUsedTypeNames(steps: VideoTraceStep[]): Set<string> {
+  const usedNames = new Set<string>();
+
+  for (const step of steps) {
+    const expr = step.original.expression || '';
+    // Match type names (capitalized identifiers)
+    const matches = expr.match(/[A-Z][a-zA-Z0-9]*/g);
+    if (matches) {
+      matches.forEach(name => usedNames.add(name));
+    }
+  }
+
+  return usedNames;
 }
 
 /**
- * Displays details for the current step
+ * Displays details for the current step in Chrome DevTools style
  */
-export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({ currentStep }) => {
+export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
+  currentStep,
+  steps,
+  currentStepIndex,
+  totalSteps,
+  typeAliases,
+  onPrevious,
+  onNext,
+  onStepInto,
+  onStepOver,
+  onStepOut,
+  onSeekToStep,
+}) => {
+  const usedTypeNames = useMemo(() => calculateUsedTypeNames(steps), [steps]);
+  const canStepOut = currentStep !== null;
+
+  // Empty state
   if (!currentStep) {
     return (
       <div
@@ -60,9 +109,8 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({ currentStep 
   }
 
   const step = currentStep.original;
-  const result = formatResult(currentStep);
-  const params = formatParameters(currentStep);
-  const typeColor = THEME.accent.highlight;
+  const parameters = step.parameters || {};
+  const hasResult = step.result !== undefined && step.result !== null;
 
   return (
     <div
@@ -74,88 +122,53 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({ currentStep 
         overflow: 'hidden',
       }}
     >
-      {/* Header */}
-      <div
-        style={{
-          padding: `${THEME.spacing.lg} ${THEME.spacing.xl}`,
-          borderBottom: `1px solid ${THEME.border.subtle}`,
-          backgroundColor: THEME.bg.primary,
-        }}
-      >
-        <h3
-          style={{
-            margin: 0,
-            color: THEME.text.primary,
-            fontSize: THEME.fontSize.xl,
-            fontWeight: THEME.fontWeight.semibold,
-          }}
-        >
-          Step Details
-        </h3>
-      </div>
+      {/* Debug Toolbar */}
+      <DebugToolbar
+        currentStepIndex={currentStepIndex}
+        totalSteps={totalSteps}
+        onPrevious={onPrevious}
+        onNext={onNext}
+        onStepInto={onStepInto}
+        onStepOver={onStepOver}
+        onStepOut={onStepOut}
+        canStepOut={canStepOut}
+      />
 
-      {/* Content */}
+      {/* Scrollable sections */}
       <div
         style={{
           flex: 1,
           overflow: 'auto',
-          padding: THEME.spacing.xl,
           display: 'flex',
           flexDirection: 'column',
-          gap: THEME.spacing.lg,
         }}
       >
-        {/* Step Indicator */}
-        <div
-          style={{
-            padding: `${THEME.spacing.md} ${THEME.spacing.lg}`,
-            backgroundColor: THEME.bg.active,
-            borderLeft: `4px solid ${THEME.accent.highlight}`,
-            borderRadius: THEME.radius.md,
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: THEME.spacing.md,
-            }}
-          >
-            <span
-              style={{
-                color: THEME.text.primary,
-                fontSize: THEME.fontSize.lg,
-                fontWeight: THEME.fontWeight.semibold,
-              }}
-            >
-              Step {step.step}
-            </span>
-            <span
-              style={{
-                color: THEME.accent.highlight,
-                fontSize: THEME.fontSize.sm,
-                fontWeight: THEME.fontWeight.medium,
-              }}
-            >
-              {step.type}
-            </span>
-          </div>
-        </div>
+        {/* Call Stack */}
+        <CallStackSection
+          steps={steps}
+          currentStepIndex={currentStepIndex}
+          onNavigateToStep={onSeekToStep}
+        />
 
-        {/* Expression */}
-        <div>
-          <h4
-            style={{
-              margin: `0 0 ${THEME.spacing.md} 0`,
-              color: THEME.text.secondary,
-              fontSize: THEME.fontSize.xs,
-              fontWeight: THEME.fontWeight.semibold,
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-            }}
-          >
-            Expression
-          </h4>
+        {/* Iteration (only if currentUnionMember exists) */}
+        {step.currentUnionMember && (
+          <IterationSection
+            currentMember={step.currentUnionMember}
+            accumulatedResults={step.currentUnionResults}
+          />
+        )}
+
+        {/* Scope */}
+        <ScopeSection parameters={parameters} />
+
+        {/* Globals */}
+        <GlobalsSection
+          typeAliases={typeAliases}
+          usedTypeNames={usedTypeNames}
+        />
+
+        {/* Expression - collapsed by default to avoid text conflicts */}
+        <CollapsibleSection title="Expression" defaultExpanded={false}>
           <pre
             style={{
               margin: 0,
@@ -168,244 +181,45 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({ currentStep 
               fontSize: THEME.fontSize.sm,
               lineHeight: 1.6,
               overflow: 'auto',
-              maxHeight: '120px',
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-word',
             }}
           >
             {step.expression}
           </pre>
-        </div>
-
-        {/* Running Results (Union Stepping) */}
-        {step.currentUnionMember && (
-          <div>
-            <h4
-              style={{
-                margin: `0 0 ${THEME.spacing.md} 0`,
-                color: THEME.text.secondary,
-                fontSize: THEME.fontSize.xs,
-                fontWeight: THEME.fontWeight.semibold,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}
-            >
-              Running Results
-            </h4>
-            <div
-              style={{
-                padding: THEME.spacing.md,
-                backgroundColor: THEME.bg.editor,
-                borderRadius: THEME.radius.md,
-                border: `1px solid ${THEME.border.subtle}`,
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  gap: THEME.spacing.md,
-                  marginBottom: THEME.spacing.sm,
-                  fontSize: THEME.fontSize.sm,
-                }}
-              >
-                <span
-                  style={{
-                    color: THEME.accent.highlight,
-                    fontWeight: THEME.fontWeight.semibold,
-                  }}
-                >
-                  Current Member:
-                </span>
-                <span
-                  style={{
-                    color: THEME.text.primary,
-                    fontFamily: '"Fira Code", monospace',
-                    flex: 1,
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  {step.currentUnionMember}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: THEME.spacing.md,
-                  fontSize: THEME.fontSize.sm,
-                }}
-              >
-                <span
-                  style={{
-                    color: THEME.accent.highlight,
-                    fontWeight: THEME.fontWeight.semibold,
-                  }}
-                >
-                  Accumulated:
-                </span>
-                <span
-                  style={{
-                    color: THEME.text.primary,
-                    fontFamily: '"Fira Code", monospace',
-                    flex: 1,
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  {step.currentUnionResults}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Parameters */}
-        {Object.keys(params).length > 0 && (
-          <div>
-            <h4
-              style={{
-                margin: `0 0 ${THEME.spacing.md} 0`,
-                color: THEME.text.secondary,
-                fontSize: THEME.fontSize.xs,
-                fontWeight: THEME.fontWeight.semibold,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}
-            >
-              Parameters in Scope
-            </h4>
-            <div
-              style={{
-                padding: THEME.spacing.md,
-                backgroundColor: THEME.bg.editor,
-                borderRadius: THEME.radius.md,
-                border: `1px solid ${THEME.border.subtle}`,
-              }}
-            >
-              {Object.entries(params).map(([key, value]) => (
-                <div
-                  key={key}
-                  style={{
-                    display: 'flex',
-                    gap: THEME.spacing.md,
-                    marginBottom: THEME.spacing.sm,
-                    fontSize: THEME.fontSize.sm,
-                  }}
-                >
-                  <span
-                    style={{
-                      color: THEME.accent.highlight,
-                      fontWeight: THEME.fontWeight.semibold,
-                    }}
-                  >
-                    {key}:
-                  </span>
-                  <span
-                    style={{
-                      color: THEME.text.primary,
-                      fontFamily: '"Fira Code", monospace',
-                      flex: 1,
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {value}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Result */}
-        {result && (
-          <div>
-            <h4
-              style={{
-                margin: `0 0 ${THEME.spacing.md} 0`,
-                color: THEME.text.secondary,
-                fontSize: THEME.fontSize.xs,
-                fontWeight: THEME.fontWeight.semibold,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}
-            >
-              Result
-            </h4>
-            <pre
-              style={{
-                margin: 0,
-                padding: THEME.spacing.md,
-                backgroundColor: THEME.bg.editor,
-                borderRadius: THEME.radius.md,
-                border: `1px solid ${THEME.border.subtle}`,
-                color: THEME.accent.success,
-                fontFamily: '"Fira Code", monospace',
-                fontSize: THEME.fontSize.sm,
-                lineHeight: 1.6,
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-              }}
-            >
-              {result}
-            </pre>
-          </div>
-        )}
-
-        {/* Arguments */}
-        {step.args && Object.keys(step.args).length > 0 && (
-          <div>
-            <h4
-              style={{
-                margin: `0 0 ${THEME.spacing.md} 0`,
-                color: THEME.text.secondary,
-                fontSize: THEME.fontSize.xs,
-                fontWeight: THEME.fontWeight.semibold,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}
-            >
-              Arguments
-            </h4>
-            <div
-              style={{
-                padding: THEME.spacing.md,
-                backgroundColor: THEME.bg.editor,
-                borderRadius: THEME.radius.md,
-                border: `1px solid ${THEME.border.subtle}`,
-              }}
-            >
-              {Object.entries(step.args).map(([key, value]) => (
-                <div
-                  key={key}
-                  style={{
-                    display: 'flex',
-                    gap: THEME.spacing.md,
-                    marginBottom: THEME.spacing.sm,
-                    fontSize: THEME.fontSize.sm,
-                  }}
-                >
-                  <span
-                    style={{
-                      color: THEME.accent.warning,
-                      fontWeight: THEME.fontWeight.semibold,
-                    }}
-                  >
-                    {key}:
-                  </span>
-                  <span
-                    style={{
-                      color: THEME.text.primary,
-                      fontFamily: '"Fira Code", monospace',
-                      flex: 1,
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {value}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        </CollapsibleSection>
       </div>
+
+      {/* Result bar (sticky at bottom) */}
+      {hasResult && (
+        <div
+          style={{
+            padding: THEME.spacing.md,
+            backgroundColor: THEME.bg.primary,
+            borderTop: `1px solid ${THEME.border.subtle}`,
+          }}
+        >
+          <span
+            style={{
+              color: THEME.text.secondary,
+              fontSize: THEME.fontSize.sm,
+              fontWeight: THEME.fontWeight.semibold,
+              marginRight: THEME.spacing.sm,
+            }}
+          >
+            Result:
+          </span>
+          <code
+            style={{
+              color: THEME.accent.success,
+              fontFamily: '"Fira Code", monospace',
+              fontSize: THEME.fontSize.sm,
+            }}
+          >
+            {step.result}
+          </code>
+        </div>
+      )}
     </div>
   );
 };
