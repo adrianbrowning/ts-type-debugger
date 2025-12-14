@@ -1,8 +1,8 @@
 import React from 'react';
-import { COLORS } from '../config.ts';
+import { useCssTheme } from '../theme.ts';
 import type { VideoData } from '../../core/types.ts';
 
-interface PlaybackControlsProps {
+type PlaybackControlsProps = {
   videoData: VideoData | null;
   currentStepIndex: number;
   isPlaying: boolean;
@@ -12,7 +12,7 @@ interface PlaybackControlsProps {
   onPreviousStep: () => void;
   onSetSpeed: (speed: number) => void;
   onSeekToStep: (stepIndex: number) => void;
-}
+};
 
 /**
  * Playback controls for web app
@@ -28,15 +28,17 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   onSetSpeed,
   onSeekToStep,
 }) => {
+  const theme = useCssTheme();
+
   if (!videoData) {
     return (
       <div
         style={{
           padding: 16,
-          backgroundColor: COLORS.background,
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: 8,
-          color: COLORS.textSecondary,
+          backgroundColor: theme.bg.primary,
+          border: `1px solid ${theme.border.subtle}`,
+          borderRadius: theme.radius.lg,
+          color: theme.text.secondary,
           textAlign: 'center',
         }}
       >
@@ -55,9 +57,9 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
         flexDirection: 'column',
         gap: 16,
         padding: 16,
-        backgroundColor: COLORS.background,
-        border: `1px solid ${COLORS.border}`,
-        borderRadius: 8,
+        backgroundColor: theme.bg.primary,
+        border: `1px solid ${theme.border.subtle}`,
+        borderRadius: theme.radius.lg,
       }}
     >
       {/* Play controls row */}
@@ -68,17 +70,17 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
           disabled={currentStepIndex === 0}
           style={{
             padding: '8px 12px',
-            backgroundColor: currentStepIndex === 0 ? COLORS.border : COLORS.info,
-            color: COLORS.text,
+            backgroundColor: currentStepIndex === 0 ? theme.border.subtle : theme.accent.highlight,
+            color: currentStepIndex === 0 ? theme.text.primary : theme.accent.btnText,
             border: 'none',
-            borderRadius: 4,
+            borderRadius: theme.radius.sm,
             cursor: currentStepIndex === 0 ? 'not-allowed' : 'pointer',
             opacity: currentStepIndex === 0 ? 0.5 : 1,
-            fontSize: 14,
-            fontWeight: 600,
+            fontSize: theme.fontSize.md,
+            fontWeight: theme.fontWeight.semibold,
           }}
         >
-          ⏮ Prev
+          Prev
         </button>
 
         {/* Play/Pause button */}
@@ -86,16 +88,16 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
           onClick={onTogglePlayPause}
           style={{
             padding: '8px 16px',
-            backgroundColor: isPlaying ? COLORS.warning : COLORS.success,
-            color: COLORS.text,
+            backgroundColor: isPlaying ? theme.accent.warning : theme.accent.success,
+            color: theme.accent.btnText,
             border: 'none',
-            borderRadius: 4,
+            borderRadius: theme.radius.sm,
             cursor: 'pointer',
-            fontSize: 14,
-            fontWeight: 600,
+            fontSize: theme.fontSize.md,
+            fontWeight: theme.fontWeight.semibold,
           }}
         >
-          {isPlaying ? '⏸ Pause' : '▶ Play'}
+          {isPlaying ? 'Pause' : 'Play'}
         </button>
 
         {/* Next button */}
@@ -104,25 +106,25 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
           disabled={currentStepIndex === totalSteps - 1}
           style={{
             padding: '8px 12px',
-            backgroundColor: currentStepIndex === totalSteps - 1 ? COLORS.border : COLORS.info,
-            color: COLORS.text,
+            backgroundColor: currentStepIndex === totalSteps - 1 ? theme.border.subtle : theme.accent.highlight,
+            color: currentStepIndex === totalSteps - 1 ? theme.text.primary : theme.accent.btnText,
             border: 'none',
-            borderRadius: 4,
+            borderRadius: theme.radius.sm,
             cursor: currentStepIndex === totalSteps - 1 ? 'not-allowed' : 'pointer',
             opacity: currentStepIndex === totalSteps - 1 ? 0.5 : 1,
-            fontSize: 14,
-            fontWeight: 600,
+            fontSize: theme.fontSize.md,
+            fontWeight: theme.fontWeight.semibold,
           }}
         >
-          Next ⏭
+          Next
         </button>
 
         {/* Step indicator */}
         <div
           style={{
             marginLeft: 'auto',
-            color: COLORS.textSecondary,
-            fontSize: 13,
+            color: theme.text.secondary,
+            fontSize: theme.fontSize.sm,
           }}
         >
           Step {currentStepIndex + 1} / {totalSteps}
@@ -141,7 +143,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
             flex: 1,
             height: 6,
             borderRadius: 3,
-            background: `linear-gradient(to right, ${COLORS.info} 0%, ${COLORS.info} ${progress}%, ${COLORS.border} ${progress}%, ${COLORS.border} 100%)`,
+            background: `linear-gradient(to right, ${theme.accent.highlight} 0%, ${theme.accent.highlight} ${progress}%, ${theme.border.subtle} ${progress}%, ${theme.border.subtle} 100%)`,
             outline: 'none',
             cursor: 'pointer',
             WebkitAppearance: 'none',
@@ -149,8 +151,8 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
         />
         <div
           style={{
-            color: COLORS.textTertiary,
-            fontSize: 12,
+            color: theme.text.tertiary,
+            fontSize: theme.fontSize.xs,
             minWidth: 45,
             textAlign: 'right',
           }}
@@ -161,7 +163,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
 
       {/* Speed control */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ color: COLORS.textSecondary, fontSize: 13, minWidth: 60 }}>
+        <span style={{ color: theme.text.secondary, fontSize: theme.fontSize.sm, minWidth: 60 }}>
           Speed: {speed.toFixed(1)}x
         </span>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -171,13 +173,13 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
               onClick={() => onSetSpeed(s)}
               style={{
                 padding: '6px 10px',
-                backgroundColor: speed === s ? COLORS.info : COLORS.surface,
-                color: COLORS.text,
-                border: `1px solid ${COLORS.border}`,
-                borderRadius: 4,
+                backgroundColor: speed === s ? theme.accent.highlight : theme.bg.secondary,
+                color: speed === s ? theme.accent.btnText : theme.text.primary,
+                border: `1px solid ${theme.border.subtle}`,
+                borderRadius: theme.radius.sm,
                 cursor: 'pointer',
-                fontSize: 12,
-                fontWeight: speed === s ? 600 : 400,
+                fontSize: theme.fontSize.xs,
+                fontWeight: speed === s ? theme.fontWeight.semibold : theme.fontWeight.normal,
               }}
             >
               {s}x

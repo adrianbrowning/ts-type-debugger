@@ -35,6 +35,16 @@ export type VideoTraceStep = {
 }
 
 /**
+ * Call stack frame for debugging
+ */
+export type CallFrame = {
+  name: string;
+  line?: number;
+  stepIndex: number;
+  level: number;
+}
+
+/**
  * Complete video data structure
  */
 export type VideoData = {

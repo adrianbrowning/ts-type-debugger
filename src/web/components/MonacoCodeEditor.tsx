@@ -1,12 +1,13 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
-import { THEME } from '../theme.ts';
+import { useCssTheme } from '../theme.ts';
+import { useTheme } from '../hooks/useTheme.tsx';
 
-interface MonacoCodeEditorProps {
+type MonacoCodeEditorProps = {
   code: string;
   onChange: (code: string) => void;
   isLoading?: boolean;
-}
+};
 
 /**
  * Monaco Editor component for TypeScript code editing
@@ -16,6 +17,12 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
   onChange,
   isLoading = false,
 }) => {
+  const theme = useCssTheme();
+  const { isDark } = useTheme();
+
+  // Use vs/vs-dark based on theme mode
+  const monacoTheme = isDark ? 'vs-dark' : 'vs';
+
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
       onChange(value);
@@ -29,17 +36,17 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: THEME.bg.editor,
-        borderRight: `1px solid ${THEME.border.subtle}`,
+        backgroundColor: theme.bg.editor,
+        borderRight: `1px solid ${theme.border.subtle}`,
         overflow: 'hidden',
       }}
     >
       {/* Header */}
       <div
         style={{
-          padding: `${THEME.spacing.lg} ${THEME.spacing.xl}`,
-          borderBottom: `1px solid ${THEME.border.subtle}`,
-          backgroundColor: THEME.bg.primary,
+          padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+          borderBottom: `1px solid ${theme.border.subtle}`,
+          backgroundColor: theme.bg.primary,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -48,9 +55,9 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
         <h3
           style={{
             margin: 0,
-            color: THEME.text.primary,
-            fontSize: THEME.fontSize['2xl'],
-            fontWeight: THEME.fontWeight.bold,
+            color: theme.text.primary,
+            fontSize: theme.fontSize['2xl'],
+            fontWeight: theme.fontWeight.bold,
           }}
         >
           TypeScript Code
@@ -64,7 +71,7 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
           defaultLanguage="typescript"
           value={code}
           onChange={handleEditorChange}
-          theme="vs-dark"
+          theme={monacoTheme}
           options={{
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
@@ -79,7 +86,7 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
             lineNumbersMinChars: 3,
             readOnly: isLoading,
           }}
-          loading={<div style={{ color: THEME.text.secondary }}>Loading editor...</div>}
+          loading={<div style={{ color: theme.text.secondary }}>Loading editor...</div>}
         />
       </div>
     </div>

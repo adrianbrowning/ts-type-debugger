@@ -1,40 +1,42 @@
 import React from 'react';
 import type { TypeInfo } from '../../core/types.ts';
-import { THEME } from '../theme.ts';
+import { useCssTheme } from '../theme.ts';
 
-interface TypeDefinitionPanelProps {
+type TypeDefinitionPanelProps = {
   activeType: TypeInfo | null;
-}
+};
 
 /**
  * Displays the currently active type definition
  */
 export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ activeType }) => {
+  const theme = useCssTheme();
+
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: THEME.bg.secondary,
-        borderRight: `1px solid ${THEME.border.subtle}`,
+        backgroundColor: theme.bg.secondary,
+        borderRight: `1px solid ${theme.border.subtle}`,
         overflow: 'hidden',
       }}
     >
       {/* Header */}
       <div
         style={{
-          padding: `${THEME.spacing.lg} ${THEME.spacing.xl}`,
-          borderBottom: `1px solid ${THEME.border.subtle}`,
-          backgroundColor: THEME.bg.primary,
+          padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+          borderBottom: `1px solid ${theme.border.subtle}`,
+          backgroundColor: theme.bg.primary,
         }}
       >
         <h3
           style={{
             margin: 0,
-            color: THEME.text.primary,
-            fontSize: THEME.fontSize.xl,
-            fontWeight: THEME.fontWeight.semibold,
+            color: theme.text.primary,
+            fontSize: theme.fontSize.xl,
+            fontWeight: theme.fontWeight.semibold,
           }}
         >
           Type Definition
@@ -46,7 +48,7 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
         style={{
           flex: 1,
           overflow: 'auto',
-          padding: THEME.spacing.xl,
+          padding: theme.spacing.xl,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -63,10 +65,10 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
             >
               <h4
                 style={{
-                  margin: `0 0 ${THEME.spacing.md} 0`,
-                  color: THEME.text.secondary,
-                  fontSize: THEME.fontSize.xs,
-                  fontWeight: THEME.fontWeight.semibold,
+                  margin: `0 0 ${theme.spacing.md} 0`,
+                  color: theme.text.secondary,
+                  fontSize: theme.fontSize.xs,
+                  fontWeight: theme.fontWeight.semibold,
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px',
                 }}
@@ -76,13 +78,13 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
               <pre
                 style={{
                   margin: 0,
-                  padding: THEME.spacing.md,
-                  backgroundColor: THEME.bg.editor,
-                  borderRadius: THEME.radius.md,
-                  border: `1px solid ${THEME.border.subtle}`,
-                  color: THEME.text.primary,
+                  padding: theme.spacing.md,
+                  backgroundColor: theme.bg.editor,
+                  borderRadius: theme.radius.md,
+                  border: `1px solid ${theme.border.subtle}`,
+                  color: theme.text.primary,
                   fontFamily: '"Fira Code", monospace',
-                  fontSize: THEME.fontSize.sm,
+                  fontSize: theme.fontSize.sm,
                   lineHeight: 1.6,
                   overflow: 'auto',
                   whiteSpace: 'pre-wrap',
@@ -96,8 +98,8 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
         ) : (
           <p
             style={{
-              color: THEME.text.secondary,
-              fontSize: THEME.fontSize.md,
+              color: theme.text.secondary,
+              fontSize: theme.fontSize.md,
               margin: 0,
               textAlign: 'center',
             }}

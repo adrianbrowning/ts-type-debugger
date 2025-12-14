@@ -464,11 +464,15 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
           position: getNodePosition(condType.checkType, context.sourceFile),
           currentUnionMember: member,
         });
+        // Recursively evaluate check type to trace any nested generics
+        evaluateTypeNode(condType.checkType, context);
 
         addTrace(context, 'conditional_evaluate_right', memberExtendsStr, {
           position: getNodePosition(condType.extendsType, context.sourceFile),
           currentUnionMember: member,
         });
+        // Recursively evaluate extends type to trace any nested generics
+        evaluateTypeNode(condType.extendsType, context);
         context.level--;
 
         // Highlight only the comparison part for this member
@@ -550,11 +554,15 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   addTrace(context, 'conditional_evaluate_left', checkStr, {
     position: getNodePosition(condType.checkType, context.sourceFile),
   });
+  // Recursively evaluate check type to trace any nested generics
+  evaluateTypeNode(condType.checkType, context);
 
   // Log right side (extends type)
   addTrace(context, 'conditional_evaluate_right', extendsStr, {
     position: getNodePosition(condType.extendsType, context.sourceFile),
   });
+  // Recursively evaluate extends type to trace any nested generics
+  evaluateTypeNode(condType.extendsType, context);
   context.level--;
 
   // Log comparison operation (check extends extends)
@@ -656,21 +664,8 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
       position: getNodePosition(span.type, context.sourceFile),
     });
 
-    // Evaluate the span type (could call generics, conditionals, etc)
-    let evaluatedType: string;
-    if (ts.isConditionalTypeNode(span.type)) {
-      // It's a conditional - evaluate it to trace the condition
-      evaluatedType = evaluateTypeNode(span.type, context);
-    } else if (ts.isTypeReferenceNode(span.type) && context.allTypeAliases.has(span.type.typeName.getText(context.sourceFile))) {
-      // It's a reference to a generic/type alias - evaluate it
-      evaluatedType = evaluateTypeNode(span.type, context);
-    } else if (ts.isMappedTypeNode(span.type) || ts.isIndexedAccessTypeNode(span.type)) {
-      // Complex types that need evaluation
-      evaluatedType = evaluateTypeNode(span.type, context);
-    } else {
-      // Simple type or parameter reference - use substituted value
-      evaluatedType = substitutedStr;
-    }
+    // Always evaluate the span type for complete tracing of nested generics
+    const evaluatedType = evaluateTypeNode(span.type, context);
 
     // Use real TS type checker to get accurate result
     let resolvedType: string;

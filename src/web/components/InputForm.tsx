@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { COLORS } from '../config.ts';
+import { useCssTheme } from '../theme.ts';
 import { CustomTypes } from '../../base.ts';
 
-interface InputFormProps {
+type InputFormProps = {
   onGenerate: (code: string, typeName: string) => Promise<void>;
   isLoading: boolean;
   error: string | null;
-}
+};
 
 /**
  * Input form for type evaluation - web version
  */
 export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, error }) => {
+  const theme = useCssTheme();
   const [code, setCode] = useState<string>(`type _result = getter<"">;
 ` + CustomTypes);
   const [typeName, setTypeName] = useState<string>('_result');
@@ -29,18 +30,18 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
         flexDirection: 'column',
         gap: 16,
         padding: 20,
-        backgroundColor: COLORS.background,
-        border: `1px solid ${COLORS.border}`,
-        borderRadius: 8,
+        backgroundColor: theme.bg.primary,
+        border: `1px solid ${theme.border.subtle}`,
+        borderRadius: theme.radius.lg,
       }}
     >
       {/* Title */}
       <h2
         style={{
           margin: 0,
-          color: COLORS.text,
-          fontSize: 18,
-          fontWeight: 600,
+          color: theme.text.primary,
+          fontSize: theme.fontSize['2xl'],
+          fontWeight: theme.fontWeight.semibold,
         }}
       >
         Type Evaluation Debugger
@@ -50,9 +51,9 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <label
           style={{
-            color: COLORS.textSecondary,
-            fontSize: 13,
-            fontWeight: 600,
+            color: theme.text.secondary,
+            fontSize: theme.fontSize.sm,
+            fontWeight: theme.fontWeight.semibold,
             textTransform: 'uppercase',
             letterSpacing: 0.5,
           }}
@@ -65,12 +66,12 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
           disabled={isLoading}
           style={{
             padding: 12,
-            backgroundColor: COLORS.surface,
-            color: COLORS.text,
-            border: `1px solid ${COLORS.border}`,
-            borderRadius: 4,
+            backgroundColor: theme.bg.secondary,
+            color: theme.text.primary,
+            border: `1px solid ${theme.border.subtle}`,
+            borderRadius: theme.radius.sm,
             fontFamily: '"Fira Code", monospace',
-            fontSize: 13,
+            fontSize: theme.fontSize.sm,
             lineHeight: 1.5,
             minHeight: 200,
             resize: 'vertical',
@@ -84,9 +85,9 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <label
           style={{
-            color: COLORS.textSecondary,
-            fontSize: 13,
-            fontWeight: 600,
+            color: theme.text.secondary,
+            fontSize: theme.fontSize.sm,
+            fontWeight: theme.fontWeight.semibold,
             textTransform: 'uppercase',
             letterSpacing: 0.5,
           }}
@@ -101,12 +102,12 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
           placeholder="e.g., _result"
           style={{
             padding: 12,
-            backgroundColor: COLORS.surface,
-            color: COLORS.text,
-            border: `1px solid ${COLORS.border}`,
-            borderRadius: 4,
+            backgroundColor: theme.bg.secondary,
+            color: theme.text.primary,
+            border: `1px solid ${theme.border.subtle}`,
+            borderRadius: theme.radius.sm,
             fontFamily: '"Fira Code", monospace',
-            fontSize: 13,
+            fontSize: theme.fontSize.sm,
             opacity: isLoading ? 0.6 : 1,
             cursor: isLoading ? 'not-allowed' : 'text',
           }}
@@ -119,10 +120,10 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
           style={{
             padding: 12,
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: `1px solid ${COLORS.error}`,
-            borderRadius: 4,
-            color: COLORS.error,
-            fontSize: 13,
+            border: `1px solid ${theme.accent.error}`,
+            borderRadius: theme.radius.sm,
+            color: theme.accent.error,
+            fontSize: theme.fontSize.sm,
           }}
         >
           {error}
@@ -136,12 +137,12 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
         style={{
           padding: '12px 24px',
           backgroundColor:
-            isLoading || !code.trim() || !typeName.trim() ? COLORS.border : COLORS.info,
-          color: COLORS.text,
+            isLoading || !code.trim() || !typeName.trim() ? theme.border.subtle : theme.accent.highlight,
+          color: isLoading || !code.trim() || !typeName.trim() ? theme.text.primary : theme.accent.btnText,
           border: 'none',
-          borderRadius: 4,
-          fontSize: 14,
-          fontWeight: 600,
+          borderRadius: theme.radius.sm,
+          fontSize: theme.fontSize.md,
+          fontWeight: theme.fontWeight.semibold,
           cursor:
             isLoading || !code.trim() || !typeName.trim() ? 'not-allowed' : 'pointer',
           opacity: isLoading || !code.trim() || !typeName.trim() ? 0.6 : 1,

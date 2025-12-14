@@ -49,4 +49,22 @@ describe('Template Literal Resolution Integration', () => {
     const condition = result!.steps.find(s => s.original.type === 'condition');
     expect(condition).toBeDefined();
   });
+
+  it('traces all generics in template interpolation regardless of alias map', async () => {
+    // This test ensures generics are always evaluated, not just those in allTypeAliases
+    const code = `
+      type Upper<S extends string> = Uppercase<S>;
+      type Template<S extends string> = \`PREFIX_\${Upper<S>}_SUFFIX\`;
+      type __EvalTarget__ = Template<"hello">;
+    `;
+    const result = await generateTypeVideo(code, '__EvalTarget__');
+
+    expect(result).toBeDefined();
+    // Should trace the Upper generic call
+    const upperCalls = result!.steps.filter(s =>
+      s.original.type === 'generic_call' &&
+      s.original.expression.includes('Upper')
+    );
+    expect(upperCalls.length).toBeGreaterThan(0);
+  });
 });

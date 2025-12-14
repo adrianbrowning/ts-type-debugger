@@ -218,128 +218,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "stepIndex": 5,
   },
   {
-    "color": "#F59E0B",
+    "color": "#3B82F6",
     "duration": 30,
     "endFrame": 210,
     "highlightLines": {
       "chars": {
-        "end": 82,
-        "start": 39,
+        "end": 75,
+        "start": 69,
       },
       "end": 24,
       "start": 24,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "path extends validateLeafPath<tables, path>",
-      "level": 1,
-      "parameters": {
-        "path": """",
-      },
-      "position": {
-        "end": {
-          "character": 82,
-          "line": 25,
-        },
-        "start": {
-          "character": 39,
-          "line": 25,
-        },
-      },
-      "step": 7,
-      "type": "conditional_comparison",
-    },
-    "startFrame": 180,
-    "stepIndex": 6,
-  },
-  {
-    "color": "#F59E0B",
-    "duration": 30,
-    "endFrame": 240,
-    "highlightLines": {
-      "chars": {
-        "end": 38,
-        "start": 8,
-      },
-      "end": 26,
-      "start": 26,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "false",
-      "level": 1,
-      "parameters": {
-        "path": """",
-      },
-      "position": {
-        "end": {
-          "character": 38,
-          "line": 27,
-        },
-        "start": {
-          "character": 8,
-          "line": 27,
-        },
-      },
-      "result": "false",
-      "step": 8,
-      "type": "conditional_evaluation",
-    },
-    "startFrame": 210,
-    "stepIndex": 7,
-  },
-  {
-    "color": "#EF4444",
-    "duration": 30,
-    "endFrame": 270,
-    "highlightLines": {
-      "chars": {
-        "end": 38,
-        "start": 8,
-      },
-      "end": 26,
-      "start": 26,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "validateLeafPath<tables, path>",
-      "level": 1,
-      "parameters": {
-        "path": """",
-      },
-      "position": {
-        "end": {
-          "character": 38,
-          "line": 27,
-        },
-        "start": {
-          "character": 8,
-          "line": 27,
-        },
-      },
-      "step": 9,
-      "type": "branch_false",
-    },
-    "startFrame": 240,
-    "stepIndex": 8,
-  },
-  {
-    "color": "#3B82F6",
-    "duration": 30,
-    "endFrame": 300,
-    "highlightLines": {
-      "chars": {
-        "end": 31,
-        "start": 25,
-      },
-      "end": 26,
-      "start": 26,
     },
     "isHighlight": true,
     "original": {
@@ -353,24 +241,24 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       },
       "position": {
         "end": {
-          "character": 31,
-          "line": 27,
+          "character": 75,
+          "line": 25,
         },
         "start": {
-          "character": 25,
-          "line": 27,
+          "character": 69,
+          "line": 25,
         },
       },
-      "step": 10,
+      "step": 7,
       "type": "generic_call",
     },
-    "startFrame": 270,
-    "stepIndex": 9,
+    "startFrame": 180,
+    "stepIndex": 6,
   },
   {
     "color": "#6366F1",
     "duration": 30,
-    "endFrame": 330,
+    "endFrame": 240,
     "highlightLines": {
       "end": 5,
       "start": 2,
@@ -397,23 +285,23 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 3,
         },
       },
-      "step": 11,
+      "step": 8,
       "type": "alias_reference",
     },
-    "startFrame": 300,
-    "stepIndex": 10,
+    "startFrame": 210,
+    "stepIndex": 7,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 360,
+    "endFrame": 270,
     "highlightLines": {
       "chars": {
-        "end": 38,
-        "start": 8,
+        "end": 82,
+        "start": 52,
       },
-      "end": 26,
-      "start": 26,
+      "end": 24,
+      "start": 24,
     },
     "isHighlight": true,
     "original": {
@@ -436,24 +324,24 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       },
       "position": {
         "end": {
-          "character": 38,
-          "line": 27,
+          "character": 82,
+          "line": 25,
         },
         "start": {
-          "character": 8,
-          "line": 27,
+          "character": 52,
+          "line": 25,
         },
       },
-      "step": 12,
+      "step": 9,
       "type": "generic_call",
     },
-    "startFrame": 330,
-    "stepIndex": 11,
+    "startFrame": 240,
+    "stepIndex": 8,
   },
   {
     "color": "#8B5CF6",
     "duration": 30,
-    "endFrame": 390,
+    "endFrame": 300,
     "highlightLines": {
       "end": 23,
       "start": 14,
@@ -491,16 +379,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 15,
         },
       },
-      "step": 13,
+      "step": 10,
       "type": "generic_def",
     },
-    "startFrame": 360,
-    "stepIndex": 12,
+    "startFrame": 270,
+    "stepIndex": 9,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 420,
+    "endFrame": 330,
     "highlightLines": {
       "end": 23,
       "start": 15,
@@ -535,16 +423,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 14,
+      "step": 11,
       "type": "condition",
     },
-    "startFrame": 390,
-    "stepIndex": 13,
+    "startFrame": 300,
+    "stepIndex": 10,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 450,
+    "endFrame": 360,
     "highlightLines": {
       "chars": {
         "end": 10,
@@ -577,16 +465,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 15,
+      "step": 12,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 420,
-    "stepIndex": 14,
+    "startFrame": 330,
+    "stepIndex": 11,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 480,
+    "endFrame": 390,
     "highlightLines": {
       "chars": {
         "end": 48,
@@ -619,16 +507,185 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 16,
+      "step": 13,
       "type": "conditional_evaluate_right",
+    },
+    "startFrame": 360,
+    "stepIndex": 12,
+  },
+  {
+    "color": "#06B6D4",
+    "duration": 30,
+    "endFrame": 420,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "\`\${infer head}.\${infer tail}\`",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "step": 14,
+      "type": "template_literal_start",
+    },
+    "startFrame": 390,
+    "stepIndex": 13,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 450,
+    "highlightLines": {
+      "chars": {
+        "end": 32,
+        "start": 22,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "\${infer head}",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 32,
+          "line": 16,
+        },
+        "start": {
+          "character": 22,
+          "line": 16,
+        },
+      },
+      "step": 15,
+      "type": "template_span_eval",
+    },
+    "startFrame": 420,
+    "stepIndex": 14,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 480,
+    "highlightLines": {
+      "chars": {
+        "end": 46,
+        "start": 36,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "\${infer tail}",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 46,
+          "line": 16,
+        },
+        "start": {
+          "character": 36,
+          "line": 16,
+        },
+      },
+      "step": 16,
+      "type": "template_span_eval",
     },
     "startFrame": 450,
     "stepIndex": 15,
   },
   {
-    "color": "#F59E0B",
+    "color": "#10B981",
     "duration": 30,
     "endFrame": 510,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": ""head.tail"",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "result": ""head.tail"",
+      "step": 17,
+      "type": "template_result",
+    },
+    "startFrame": 480,
+    "stepIndex": 16,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 540,
     "highlightLines": {
       "chars": {
         "end": 48,
@@ -661,16 +718,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 17,
+      "step": 18,
       "type": "conditional_comparison",
     },
-    "startFrame": 480,
-    "stepIndex": 16,
+    "startFrame": 510,
+    "stepIndex": 17,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 540,
+    "endFrame": 570,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -700,16 +757,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "false",
-      "step": 18,
+      "step": 19,
       "type": "conditional_evaluation",
     },
-    "startFrame": 510,
-    "stepIndex": 17,
+    "startFrame": 540,
+    "stepIndex": 18,
   },
   {
     "color": "#EF4444",
     "duration": 30,
-    "endFrame": 570,
+    "endFrame": 600,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -742,16 +799,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 19,
+      "step": 20,
       "type": "branch_false",
     },
-    "startFrame": 540,
-    "stepIndex": 18,
+    "startFrame": 570,
+    "stepIndex": 19,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 600,
+    "endFrame": 630,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -782,16 +839,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 20,
+      "step": 21,
       "type": "condition",
     },
-    "startFrame": 570,
-    "stepIndex": 19,
+    "startFrame": 600,
+    "stepIndex": 20,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 630,
+    "endFrame": 660,
     "highlightLines": {
       "chars": {
         "end": 14,
@@ -824,16 +881,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 21,
+      "step": 22,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 600,
-    "stepIndex": 20,
+    "startFrame": 630,
+    "stepIndex": 21,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 660,
+    "endFrame": 690,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -866,16 +923,1136 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 22,
+      "step": 23,
       "type": "conditional_evaluate_right",
     },
-    "startFrame": 630,
-    "stepIndex": 21,
+    "startFrame": 660,
+    "stepIndex": 22,
+  },
+  {
+    "color": "#3B82F6",
+    "duration": 30,
+    "endFrame": 720,
+    "highlightLines": {
+      "chars": {
+        "end": 31,
+        "start": 23,
+      },
+      "end": 19,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "args": {
+        "arg0": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+      },
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "keyOf<{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }>",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 31,
+          "line": 20,
+        },
+        "start": {
+          "character": 23,
+          "line": 20,
+        },
+      },
+      "step": 24,
+      "type": "generic_call",
+    },
+    "startFrame": 690,
+    "stepIndex": 23,
+  },
+  {
+    "color": "#8B5CF6",
+    "duration": 30,
+    "endFrame": 750,
+    "highlightLines": {
+      "chars": {
+        "end": 76,
+        "start": 4,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "type keyOf<o> = {[k in keyof o]: k extends string ? k : never}[keyof o];",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+      },
+      "position": {
+        "end": {
+          "character": 76,
+          "line": 7,
+        },
+        "start": {
+          "character": 4,
+          "line": 7,
+        },
+      },
+      "step": 25,
+      "type": "generic_def",
+    },
+    "startFrame": 720,
+    "stepIndex": 24,
+  },
+  {
+    "color": "#06B6D4",
+    "duration": 30,
+    "endFrame": 780,
+    "highlightLines": {
+      "chars": {
+        "end": 75,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "{[k in keyof o]: k extends string ? k : never}[keyof o]",
+      "level": 6,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 75,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "step": 26,
+      "type": "indexed_access",
+    },
+    "startFrame": 750,
+    "stepIndex": 25,
+  },
+  {
+    "color": "#8B5CF6",
+    "duration": 30,
+    "endFrame": 810,
+    "highlightLines": {
+      "chars": {
+        "end": 66,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "{[k in keyof o]: k extends string ? k : never}",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 66,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "step": 27,
+      "type": "mapped_type_start",
+    },
+    "startFrame": 780,
+    "stepIndex": 26,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 690,
+    "endFrame": 840,
+    "highlightLines": {
+      "chars": {
+        "end": 34,
+        "start": 27,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k in keyof o",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 34,
+          "line": 7,
+        },
+        "start": {
+          "character": 27,
+          "line": 7,
+        },
+      },
+      "step": 28,
+      "type": "mapped_type_constraint",
+    },
+    "startFrame": 810,
+    "stepIndex": 27,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 870,
+    "highlightLines": {
+      "chars": {
+        "end": 66,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k in ("User" | "Post")",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 66,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "result": ""User" | "Post"",
+      "step": 29,
+      "type": "mapped_type_constraint_result",
+    },
+    "startFrame": 840,
+    "stepIndex": 28,
+  },
+  {
+    "color": "#3B82F6",
+    "duration": 30,
+    "endFrame": 900,
+    "highlightLines": {
+      "chars": {
+        "end": 34,
+        "start": 22,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k = "User"",
+      "level": 7,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 34,
+          "line": 7,
+        },
+        "start": {
+          "character": 22,
+          "line": 7,
+        },
+      },
+      "step": 30,
+      "type": "map_iteration",
+    },
+    "startFrame": 870,
+    "stepIndex": 29,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 930,
+    "highlightLines": {
+      "chars": {
+        "end": 65,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k extends string ? k : never",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 65,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 31,
+      "type": "condition",
+    },
+    "startFrame": 900,
+    "stepIndex": 30,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 960,
+    "highlightLines": {
+      "chars": {
+        "end": 38,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k",
+      "level": 9,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 38,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 32,
+      "type": "conditional_evaluate_left",
+    },
+    "startFrame": 930,
+    "stepIndex": 31,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 990,
+    "highlightLines": {
+      "chars": {
+        "end": 53,
+        "start": 47,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "string",
+      "level": 9,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 53,
+          "line": 7,
+        },
+        "start": {
+          "character": 47,
+          "line": 7,
+        },
+      },
+      "step": 33,
+      "type": "conditional_evaluate_right",
+    },
+    "startFrame": 960,
+    "stepIndex": 32,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1020,
+    "highlightLines": {
+      "chars": {
+        "end": 53,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k extends string",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 53,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 34,
+      "type": "conditional_comparison",
+    },
+    "startFrame": 990,
+    "stepIndex": 33,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1050,
+    "highlightLines": {
+      "chars": {
+        "end": 57,
+        "start": 56,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "true",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 57,
+          "line": 7,
+        },
+        "start": {
+          "character": 56,
+          "line": 7,
+        },
+      },
+      "result": "true",
+      "step": 35,
+      "type": "conditional_evaluation",
+    },
+    "startFrame": 1020,
+    "stepIndex": 34,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 1080,
+    "highlightLines": {
+      "chars": {
+        "end": 57,
+        "start": 56,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 57,
+          "line": 7,
+        },
+        "start": {
+          "character": 56,
+          "line": 7,
+        },
+      },
+      "step": 36,
+      "type": "branch_true",
+    },
+    "startFrame": 1050,
+    "stepIndex": 35,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 1110,
+    "highlightLines": {
+      "chars": {
+        "end": 65,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": ""User"",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 65,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 37,
+      "type": "result_assignment",
+    },
+    "startFrame": 1080,
+    "stepIndex": 36,
+  },
+  {
+    "color": "#3B82F6",
+    "duration": 30,
+    "endFrame": 1140,
+    "highlightLines": {
+      "chars": {
+        "end": 34,
+        "start": 22,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k = "Post"",
+      "level": 7,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 34,
+          "line": 7,
+        },
+        "start": {
+          "character": 22,
+          "line": 7,
+        },
+      },
+      "step": 38,
+      "type": "map_iteration",
+    },
+    "startFrame": 1110,
+    "stepIndex": 37,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1170,
+    "highlightLines": {
+      "chars": {
+        "end": 65,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k extends string ? k : never",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 65,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 39,
+      "type": "condition",
+    },
+    "startFrame": 1140,
+    "stepIndex": 38,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 1200,
+    "highlightLines": {
+      "chars": {
+        "end": 38,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k",
+      "level": 9,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 38,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 40,
+      "type": "conditional_evaluate_left",
+    },
+    "startFrame": 1170,
+    "stepIndex": 39,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 1230,
+    "highlightLines": {
+      "chars": {
+        "end": 53,
+        "start": 47,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "string",
+      "level": 9,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 53,
+          "line": 7,
+        },
+        "start": {
+          "character": 47,
+          "line": 7,
+        },
+      },
+      "step": 41,
+      "type": "conditional_evaluate_right",
+    },
+    "startFrame": 1200,
+    "stepIndex": 40,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1260,
+    "highlightLines": {
+      "chars": {
+        "end": 53,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k extends string",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 53,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 42,
+      "type": "conditional_comparison",
+    },
+    "startFrame": 1230,
+    "stepIndex": 41,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1290,
+    "highlightLines": {
+      "chars": {
+        "end": 57,
+        "start": 56,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "true",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 57,
+          "line": 7,
+        },
+        "start": {
+          "character": 56,
+          "line": 7,
+        },
+      },
+      "result": "true",
+      "step": 43,
+      "type": "conditional_evaluation",
+    },
+    "startFrame": 1260,
+    "stepIndex": 42,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 1320,
+    "highlightLines": {
+      "chars": {
+        "end": 57,
+        "start": 56,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 57,
+          "line": 7,
+        },
+        "start": {
+          "character": 56,
+          "line": 7,
+        },
+      },
+      "step": 44,
+      "type": "branch_true",
+    },
+    "startFrame": 1290,
+    "stepIndex": 43,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 1350,
+    "highlightLines": {
+      "chars": {
+        "end": 65,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": ""Post"",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 65,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 45,
+      "type": "result_assignment",
+    },
+    "startFrame": 1320,
+    "stepIndex": 44,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 1380,
+    "highlightLines": {
+      "chars": {
+        "end": 66,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "Constructed object: {"\\"User\\"":"\\"User\\"","\\"Post\\"":"\\"Post\\""}",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 66,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "result": "{"\\"User\\"":"\\"User\\"","\\"Post\\"":"\\"Post\\""}",
+      "step": 46,
+      "type": "mapped_type_result",
+    },
+    "startFrame": 1350,
+    "stepIndex": 45,
+  },
+  {
+    "color": "#8B5CF6",
+    "duration": 30,
+    "endFrame": 1410,
+    "highlightLines": {
+      "chars": {
+        "end": 66,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "mapped type union: "User" | "Post"",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 66,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "result": ""User" | "Post"",
+      "step": 47,
+      "type": "mapped_type_end",
+    },
+    "startFrame": 1380,
+    "stepIndex": 46,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 1440,
+    "highlightLines": {
+      "chars": {
+        "end": 75,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "Extracted: "User" | "Post"",
+      "level": 6,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 75,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "result": ""User" | "Post"",
+      "step": 48,
+      "type": "indexed_access_result",
+    },
+    "startFrame": 1410,
+    "stepIndex": 47,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 1470,
+    "highlightLines": {
+      "chars": {
+        "end": 76,
+        "start": 4,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "keyOf => "User" | "Post"",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+      },
+      "position": {
+        "end": {
+          "character": 76,
+          "line": 7,
+        },
+        "start": {
+          "character": 4,
+          "line": 7,
+        },
+      },
+      "result": ""User" | "Post"",
+      "step": 49,
+      "type": "generic_result",
+    },
+    "startFrame": 1440,
+    "stepIndex": 48,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1500,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -908,16 +2085,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 23,
+      "step": 50,
       "type": "conditional_comparison",
     },
-    "startFrame": 660,
-    "stepIndex": 22,
+    "startFrame": 1470,
+    "stepIndex": 49,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 720,
+    "endFrame": 1530,
     "highlightLines": {
       "chars": {
         "end": 17,
@@ -951,16 +2128,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "false",
-      "step": 24,
+      "step": 51,
       "type": "conditional_evaluation",
     },
-    "startFrame": 690,
-    "stepIndex": 23,
+    "startFrame": 1500,
+    "stepIndex": 50,
   },
   {
     "color": "#EF4444",
     "duration": 30,
-    "endFrame": 750,
+    "endFrame": 1560,
     "highlightLines": {
       "chars": {
         "end": 17,
@@ -993,16 +2170,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 24,
         },
       },
-      "step": 25,
+      "step": 52,
       "type": "branch_false",
     },
-    "startFrame": 720,
-    "stepIndex": 24,
+    "startFrame": 1530,
+    "stepIndex": 51,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 780,
+    "endFrame": 1590,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -1031,16 +2208,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 26,
+      "step": 53,
       "type": "result_assignment",
     },
-    "startFrame": 750,
-    "stepIndex": 25,
+    "startFrame": 1560,
+    "stepIndex": 52,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 810,
+    "endFrame": 1620,
     "highlightLines": {
       "end": 23,
       "start": 15,
@@ -1069,16 +2246,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 27,
+      "step": 54,
       "type": "result_assignment",
     },
-    "startFrame": 780,
-    "stepIndex": 26,
+    "startFrame": 1590,
+    "stepIndex": 53,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 840,
+    "endFrame": 1650,
     "highlightLines": {
       "end": 23,
       "start": 14,
@@ -1108,16 +2285,2202 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "never",
-      "step": 28,
+      "step": 55,
       "type": "generic_result",
     },
-    "startFrame": 810,
-    "stepIndex": 27,
+    "startFrame": 1620,
+    "stepIndex": 54,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1680,
+    "highlightLines": {
+      "chars": {
+        "end": 82,
+        "start": 39,
+      },
+      "end": 24,
+      "start": 24,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "path extends validateLeafPath<tables, path>",
+      "level": 1,
+      "parameters": {
+        "path": """",
+      },
+      "position": {
+        "end": {
+          "character": 82,
+          "line": 25,
+        },
+        "start": {
+          "character": 39,
+          "line": 25,
+        },
+      },
+      "step": 56,
+      "type": "conditional_comparison",
+    },
+    "startFrame": 1650,
+    "stepIndex": 55,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1710,
+    "highlightLines": {
+      "chars": {
+        "end": 38,
+        "start": 8,
+      },
+      "end": 26,
+      "start": 26,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "false",
+      "level": 1,
+      "parameters": {
+        "path": """",
+      },
+      "position": {
+        "end": {
+          "character": 38,
+          "line": 27,
+        },
+        "start": {
+          "character": 8,
+          "line": 27,
+        },
+      },
+      "result": "false",
+      "step": 57,
+      "type": "conditional_evaluation",
+    },
+    "startFrame": 1680,
+    "stepIndex": 56,
+  },
+  {
+    "color": "#EF4444",
+    "duration": 30,
+    "endFrame": 1740,
+    "highlightLines": {
+      "chars": {
+        "end": 38,
+        "start": 8,
+      },
+      "end": 26,
+      "start": 26,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "validateLeafPath<tables, path>",
+      "level": 1,
+      "parameters": {
+        "path": """",
+      },
+      "position": {
+        "end": {
+          "character": 38,
+          "line": 27,
+        },
+        "start": {
+          "character": 8,
+          "line": 27,
+        },
+      },
+      "step": 58,
+      "type": "branch_false",
+    },
+    "startFrame": 1710,
+    "stepIndex": 57,
+  },
+  {
+    "color": "#3B82F6",
+    "duration": 30,
+    "endFrame": 1770,
+    "highlightLines": {
+      "chars": {
+        "end": 31,
+        "start": 25,
+      },
+      "end": 26,
+      "start": 26,
+    },
+    "isHighlight": true,
+    "original": {
+      "args": {},
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "tables<>",
+      "level": 3,
+      "parameters": {
+        "path": """",
+      },
+      "position": {
+        "end": {
+          "character": 31,
+          "line": 27,
+        },
+        "start": {
+          "character": 25,
+          "line": 27,
+        },
+      },
+      "step": 59,
+      "type": "generic_call",
+    },
+    "startFrame": 1740,
+    "stepIndex": 58,
+  },
+  {
+    "color": "#6366F1",
+    "duration": 30,
+    "endFrame": 1800,
+    "highlightLines": {
+      "end": 5,
+      "start": 2,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "tables = {
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+      "level": 3,
+      "parameters": {
+        "path": """",
+      },
+      "position": {
+        "end": {
+          "character": 6,
+          "line": 6,
+        },
+        "start": {
+          "character": 4,
+          "line": 3,
+        },
+      },
+      "step": 60,
+      "type": "alias_reference",
+    },
+    "startFrame": 1770,
+    "stepIndex": 59,
+  },
+  {
+    "color": "#3B82F6",
+    "duration": 30,
+    "endFrame": 1830,
+    "highlightLines": {
+      "chars": {
+        "end": 38,
+        "start": 8,
+      },
+      "end": 26,
+      "start": 26,
+    },
+    "isHighlight": true,
+    "original": {
+      "args": {
+        "arg0": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "arg1": """",
+      },
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "validateLeafPath<{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }, "">",
+      "level": 2,
+      "parameters": {
+        "path": """",
+      },
+      "position": {
+        "end": {
+          "character": 38,
+          "line": 27,
+        },
+        "start": {
+          "character": 8,
+          "line": 27,
+        },
+      },
+      "step": 61,
+      "type": "generic_call",
+    },
+    "startFrame": 1800,
+    "stepIndex": 60,
+  },
+  {
+    "color": "#8B5CF6",
+    "duration": 30,
+    "endFrame": 1860,
+    "highlightLines": {
+      "end": 23,
+      "start": 14,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "type validateLeafPath<o, path extends string, prefix extends string = ""> =
+      path extends \`\${infer head}.\${infer tail}\`
+        ? head extends keyOf<o>
+          ? validateLeafPath<getKey<o, head>, tail, \`\${prefix}\${head}.\`>
+          : never
+        : path extends keyOf<o>
+          ? isLeaf<getKey<o, path>> extends true
+            ? \`\${prefix}\${path}\`
+            : never
+          : never;",
+      "level": 2,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 18,
+          "line": 24,
+        },
+        "start": {
+          "character": 4,
+          "line": 15,
+        },
+      },
+      "step": 62,
+      "type": "generic_def",
+    },
+    "startFrame": 1830,
+    "stepIndex": 61,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 1890,
+    "highlightLines": {
+      "end": 23,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "path extends \`\${infer head}.\${infer tail}\` ? head extends keyOf<o>
+          ? validateLeafPath<getKey<o, head>, tail, \`\${prefix}\${head}.\`>
+          : never : path extends keyOf<o>
+          ? isLeaf<getKey<o, path>> extends true
+            ? \`\${prefix}\${path}\`
+            : never
+          : never",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 17,
+          "line": 24,
+        },
+        "start": {
+          "character": 6,
+          "line": 16,
+        },
+      },
+      "step": 63,
+      "type": "condition",
+    },
+    "startFrame": 1860,
+    "stepIndex": 62,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 1920,
+    "highlightLines": {
+      "chars": {
+        "end": 10,
+        "start": 6,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "path",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 10,
+          "line": 16,
+        },
+        "start": {
+          "character": 6,
+          "line": 16,
+        },
+      },
+      "step": 64,
+      "type": "conditional_evaluate_left",
+    },
+    "startFrame": 1890,
+    "stepIndex": 63,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 1950,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "\`\${infer head}.\${infer tail}\`",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "step": 65,
+      "type": "conditional_evaluate_right",
+    },
+    "startFrame": 1920,
+    "stepIndex": 64,
+  },
+  {
+    "color": "#06B6D4",
+    "duration": 30,
+    "endFrame": 1980,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "\`\${infer head}.\${infer tail}\`",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "step": 66,
+      "type": "template_literal_start",
+    },
+    "startFrame": 1950,
+    "stepIndex": 65,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 2010,
+    "highlightLines": {
+      "chars": {
+        "end": 32,
+        "start": 22,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "\${infer head}",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 32,
+          "line": 16,
+        },
+        "start": {
+          "character": 22,
+          "line": 16,
+        },
+      },
+      "step": 67,
+      "type": "template_span_eval",
+    },
+    "startFrame": 1980,
+    "stepIndex": 66,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 2040,
+    "highlightLines": {
+      "chars": {
+        "end": 46,
+        "start": 36,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "\${infer tail}",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 46,
+          "line": 16,
+        },
+        "start": {
+          "character": 36,
+          "line": 16,
+        },
+      },
+      "step": 68,
+      "type": "template_span_eval",
+    },
+    "startFrame": 2010,
+    "stepIndex": 67,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 870,
+    "endFrame": 2070,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": ""head.tail"",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "result": ""head.tail"",
+      "step": 69,
+      "type": "template_result",
+    },
+    "startFrame": 2040,
+    "stepIndex": 68,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2100,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 6,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "path extends \`\${infer head}.\${infer tail}\`",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 6,
+          "line": 16,
+        },
+      },
+      "step": 70,
+      "type": "conditional_comparison",
+    },
+    "startFrame": 2070,
+    "stepIndex": 69,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2130,
+    "highlightLines": {
+      "end": 23,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "false",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 17,
+          "line": 24,
+        },
+        "start": {
+          "character": 10,
+          "line": 20,
+        },
+      },
+      "result": "false",
+      "step": 71,
+      "type": "conditional_evaluation",
+    },
+    "startFrame": 2100,
+    "stepIndex": 70,
+  },
+  {
+    "color": "#EF4444",
+    "duration": 30,
+    "endFrame": 2160,
+    "highlightLines": {
+      "end": 23,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "path extends keyOf<o>
+          ? isLeaf<getKey<o, path>> extends true
+            ? \`\${prefix}\${path}\`
+            : never
+          : never",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 17,
+          "line": 24,
+        },
+        "start": {
+          "character": 10,
+          "line": 20,
+        },
+      },
+      "step": 72,
+      "type": "branch_false",
+    },
+    "startFrame": 2130,
+    "stepIndex": 71,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2190,
+    "highlightLines": {
+      "end": 23,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "path extends keyOf<o> ? isLeaf<getKey<o, path>> extends true
+            ? \`\${prefix}\${path}\`
+            : never : never",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 17,
+          "line": 24,
+        },
+        "start": {
+          "character": 10,
+          "line": 20,
+        },
+      },
+      "step": 73,
+      "type": "condition",
+    },
+    "startFrame": 2160,
+    "stepIndex": 72,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 2220,
+    "highlightLines": {
+      "chars": {
+        "end": 14,
+        "start": 10,
+      },
+      "end": 19,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "path",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 14,
+          "line": 20,
+        },
+        "start": {
+          "character": 10,
+          "line": 20,
+        },
+      },
+      "step": 74,
+      "type": "conditional_evaluate_left",
+    },
+    "startFrame": 2190,
+    "stepIndex": 73,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 2250,
+    "highlightLines": {
+      "chars": {
+        "end": 31,
+        "start": 23,
+      },
+      "end": 19,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "keyOf<o>",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 31,
+          "line": 20,
+        },
+        "start": {
+          "character": 23,
+          "line": 20,
+        },
+      },
+      "step": 75,
+      "type": "conditional_evaluate_right",
+    },
+    "startFrame": 2220,
+    "stepIndex": 74,
+  },
+  {
+    "color": "#3B82F6",
+    "duration": 30,
+    "endFrame": 2280,
+    "highlightLines": {
+      "chars": {
+        "end": 31,
+        "start": 23,
+      },
+      "end": 19,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "args": {
+        "arg0": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+      },
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "keyOf<{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }>",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 31,
+          "line": 20,
+        },
+        "start": {
+          "character": 23,
+          "line": 20,
+        },
+      },
+      "step": 76,
+      "type": "generic_call",
+    },
+    "startFrame": 2250,
+    "stepIndex": 75,
+  },
+  {
+    "color": "#8B5CF6",
+    "duration": 30,
+    "endFrame": 2310,
+    "highlightLines": {
+      "chars": {
+        "end": 76,
+        "start": 4,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "type keyOf<o> = {[k in keyof o]: k extends string ? k : never}[keyof o];",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+      },
+      "position": {
+        "end": {
+          "character": 76,
+          "line": 7,
+        },
+        "start": {
+          "character": 4,
+          "line": 7,
+        },
+      },
+      "step": 77,
+      "type": "generic_def",
+    },
+    "startFrame": 2280,
+    "stepIndex": 76,
+  },
+  {
+    "color": "#06B6D4",
+    "duration": 30,
+    "endFrame": 2340,
+    "highlightLines": {
+      "chars": {
+        "end": 75,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "{[k in keyof o]: k extends string ? k : never}[keyof o]",
+      "level": 6,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 75,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "step": 78,
+      "type": "indexed_access",
+    },
+    "startFrame": 2310,
+    "stepIndex": 77,
+  },
+  {
+    "color": "#8B5CF6",
+    "duration": 30,
+    "endFrame": 2370,
+    "highlightLines": {
+      "chars": {
+        "end": 66,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "{[k in keyof o]: k extends string ? k : never}",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 66,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "step": 79,
+      "type": "mapped_type_start",
+    },
+    "startFrame": 2340,
+    "stepIndex": 78,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2400,
+    "highlightLines": {
+      "chars": {
+        "end": 34,
+        "start": 27,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k in keyof o",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 34,
+          "line": 7,
+        },
+        "start": {
+          "character": 27,
+          "line": 7,
+        },
+      },
+      "step": 80,
+      "type": "mapped_type_constraint",
+    },
+    "startFrame": 2370,
+    "stepIndex": 79,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2430,
+    "highlightLines": {
+      "chars": {
+        "end": 66,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k in ("User" | "Post")",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 66,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "result": ""User" | "Post"",
+      "step": 81,
+      "type": "mapped_type_constraint_result",
+    },
+    "startFrame": 2400,
+    "stepIndex": 80,
+  },
+  {
+    "color": "#3B82F6",
+    "duration": 30,
+    "endFrame": 2460,
+    "highlightLines": {
+      "chars": {
+        "end": 34,
+        "start": 22,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k = "User"",
+      "level": 7,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 34,
+          "line": 7,
+        },
+        "start": {
+          "character": 22,
+          "line": 7,
+        },
+      },
+      "step": 82,
+      "type": "map_iteration",
+    },
+    "startFrame": 2430,
+    "stepIndex": 81,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2490,
+    "highlightLines": {
+      "chars": {
+        "end": 65,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k extends string ? k : never",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 65,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 83,
+      "type": "condition",
+    },
+    "startFrame": 2460,
+    "stepIndex": 82,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 2520,
+    "highlightLines": {
+      "chars": {
+        "end": 38,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k",
+      "level": 9,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 38,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 84,
+      "type": "conditional_evaluate_left",
+    },
+    "startFrame": 2490,
+    "stepIndex": 83,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 2550,
+    "highlightLines": {
+      "chars": {
+        "end": 53,
+        "start": 47,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "string",
+      "level": 9,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 53,
+          "line": 7,
+        },
+        "start": {
+          "character": 47,
+          "line": 7,
+        },
+      },
+      "step": 85,
+      "type": "conditional_evaluate_right",
+    },
+    "startFrame": 2520,
+    "stepIndex": 84,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2580,
+    "highlightLines": {
+      "chars": {
+        "end": 53,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k extends string",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 53,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 86,
+      "type": "conditional_comparison",
+    },
+    "startFrame": 2550,
+    "stepIndex": 85,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2610,
+    "highlightLines": {
+      "chars": {
+        "end": 57,
+        "start": 56,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "true",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 57,
+          "line": 7,
+        },
+        "start": {
+          "character": 56,
+          "line": 7,
+        },
+      },
+      "result": "true",
+      "step": 87,
+      "type": "conditional_evaluation",
+    },
+    "startFrame": 2580,
+    "stepIndex": 86,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 2640,
+    "highlightLines": {
+      "chars": {
+        "end": 57,
+        "start": 56,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 57,
+          "line": 7,
+        },
+        "start": {
+          "character": 56,
+          "line": 7,
+        },
+      },
+      "step": 88,
+      "type": "branch_true",
+    },
+    "startFrame": 2610,
+    "stepIndex": 87,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 2670,
+    "highlightLines": {
+      "chars": {
+        "end": 65,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": ""User"",
+      "level": 8,
+      "parameters": {
+        "k": ""User"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 65,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 89,
+      "type": "result_assignment",
+    },
+    "startFrame": 2640,
+    "stepIndex": 88,
+  },
+  {
+    "color": "#3B82F6",
+    "duration": 30,
+    "endFrame": 2700,
+    "highlightLines": {
+      "chars": {
+        "end": 34,
+        "start": 22,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k = "Post"",
+      "level": 7,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 34,
+          "line": 7,
+        },
+        "start": {
+          "character": 22,
+          "line": 7,
+        },
+      },
+      "step": 90,
+      "type": "map_iteration",
+    },
+    "startFrame": 2670,
+    "stepIndex": 89,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2730,
+    "highlightLines": {
+      "chars": {
+        "end": 65,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k extends string ? k : never",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 65,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 91,
+      "type": "condition",
+    },
+    "startFrame": 2700,
+    "stepIndex": 90,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 2760,
+    "highlightLines": {
+      "chars": {
+        "end": 38,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k",
+      "level": 9,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 38,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 92,
+      "type": "conditional_evaluate_left",
+    },
+    "startFrame": 2730,
+    "stepIndex": 91,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 2790,
+    "highlightLines": {
+      "chars": {
+        "end": 53,
+        "start": 47,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "string",
+      "level": 9,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 53,
+          "line": 7,
+        },
+        "start": {
+          "character": 47,
+          "line": 7,
+        },
+      },
+      "step": 93,
+      "type": "conditional_evaluate_right",
+    },
+    "startFrame": 2760,
+    "stepIndex": 92,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2820,
+    "highlightLines": {
+      "chars": {
+        "end": 53,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k extends string",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 53,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 94,
+      "type": "conditional_comparison",
+    },
+    "startFrame": 2790,
+    "stepIndex": 93,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 2850,
+    "highlightLines": {
+      "chars": {
+        "end": 57,
+        "start": 56,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "true",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 57,
+          "line": 7,
+        },
+        "start": {
+          "character": 56,
+          "line": 7,
+        },
+      },
+      "result": "true",
+      "step": 95,
+      "type": "conditional_evaluation",
+    },
+    "startFrame": 2820,
+    "stepIndex": 94,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 2880,
+    "highlightLines": {
+      "chars": {
+        "end": 57,
+        "start": 56,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "k",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 57,
+          "line": 7,
+        },
+        "start": {
+          "character": 56,
+          "line": 7,
+        },
+      },
+      "step": 96,
+      "type": "branch_true",
+    },
+    "startFrame": 2850,
+    "stepIndex": 95,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 2910,
+    "highlightLines": {
+      "chars": {
+        "end": 65,
+        "start": 37,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": ""Post"",
+      "level": 8,
+      "parameters": {
+        "k": ""Post"",
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 65,
+          "line": 7,
+        },
+        "start": {
+          "character": 37,
+          "line": 7,
+        },
+      },
+      "step": 97,
+      "type": "result_assignment",
+    },
+    "startFrame": 2880,
+    "stepIndex": 96,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 2940,
+    "highlightLines": {
+      "chars": {
+        "end": 66,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "Constructed object: {"\\"User\\"":"\\"User\\"","\\"Post\\"":"\\"Post\\""}",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 66,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "result": "{"\\"User\\"":"\\"User\\"","\\"Post\\"":"\\"Post\\""}",
+      "step": 98,
+      "type": "mapped_type_result",
+    },
+    "startFrame": 2910,
+    "stepIndex": 97,
+  },
+  {
+    "color": "#8B5CF6",
+    "duration": 30,
+    "endFrame": 2970,
+    "highlightLines": {
+      "chars": {
+        "end": 66,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "mapped type union: "User" | "Post"",
+      "level": 7,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 66,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "result": ""User" | "Post"",
+      "step": 99,
+      "type": "mapped_type_end",
+    },
+    "startFrame": 2940,
+    "stepIndex": 98,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 3000,
+    "highlightLines": {
+      "chars": {
+        "end": 75,
+        "start": 20,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "Extracted: "User" | "Post"",
+      "level": 6,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 75,
+          "line": 7,
+        },
+        "start": {
+          "character": 20,
+          "line": 7,
+        },
+      },
+      "result": ""User" | "Post"",
+      "step": 100,
+      "type": "indexed_access_result",
+    },
+    "startFrame": 2970,
+    "stepIndex": 99,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 3030,
+    "highlightLines": {
+      "chars": {
+        "end": 76,
+        "start": 4,
+      },
+      "end": 6,
+      "start": 6,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "keyOf => "User" | "Post"",
+      "level": 5,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+      },
+      "position": {
+        "end": {
+          "character": 76,
+          "line": 7,
+        },
+        "start": {
+          "character": 4,
+          "line": 7,
+        },
+      },
+      "result": ""User" | "Post"",
+      "step": 101,
+      "type": "generic_result",
+    },
+    "startFrame": 3000,
+    "stepIndex": 100,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 3060,
+    "highlightLines": {
+      "chars": {
+        "end": 31,
+        "start": 10,
+      },
+      "end": 19,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "path extends keyOf<o>",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 31,
+          "line": 20,
+        },
+        "start": {
+          "character": 10,
+          "line": 20,
+        },
+      },
+      "step": 102,
+      "type": "conditional_comparison",
+    },
+    "startFrame": 3030,
+    "stepIndex": 101,
+  },
+  {
+    "color": "#F59E0B",
+    "duration": 30,
+    "endFrame": 3090,
+    "highlightLines": {
+      "chars": {
+        "end": 17,
+        "start": 12,
+      },
+      "end": 23,
+      "start": 23,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "false",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 17,
+          "line": 24,
+        },
+        "start": {
+          "character": 12,
+          "line": 24,
+        },
+      },
+      "result": "false",
+      "step": 103,
+      "type": "conditional_evaluation",
+    },
+    "startFrame": 3060,
+    "stepIndex": 102,
+  },
+  {
+    "color": "#EF4444",
+    "duration": 30,
+    "endFrame": 3120,
+    "highlightLines": {
+      "chars": {
+        "end": 17,
+        "start": 12,
+      },
+      "end": 23,
+      "start": 23,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "never",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 17,
+          "line": 24,
+        },
+        "start": {
+          "character": 12,
+          "line": 24,
+        },
+      },
+      "step": 104,
+      "type": "branch_false",
+    },
+    "startFrame": 3090,
+    "stepIndex": 103,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 3150,
+    "highlightLines": {
+      "end": 23,
+      "start": 19,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "never",
+      "level": 4,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 17,
+          "line": 24,
+        },
+        "start": {
+          "character": 10,
+          "line": 20,
+        },
+      },
+      "step": 105,
+      "type": "result_assignment",
+    },
+    "startFrame": 3120,
+    "stepIndex": 104,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 3180,
+    "highlightLines": {
+      "end": 23,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "never",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 17,
+          "line": 24,
+        },
+        "start": {
+          "character": 6,
+          "line": 16,
+        },
+      },
+      "step": 106,
+      "type": "result_assignment",
+    },
+    "startFrame": 3150,
+    "stepIndex": 105,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 3210,
+    "highlightLines": {
+      "end": 23,
+      "start": 14,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "validateLeafPath => never",
+      "level": 2,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 18,
+          "line": 24,
+        },
+        "start": {
+          "character": 4,
+          "line": 15,
+        },
+      },
+      "result": "never",
+      "step": 107,
+      "type": "generic_result",
+    },
+    "startFrame": 3180,
+    "stepIndex": 106,
+  },
+  {
+    "color": "#10B981",
+    "duration": 30,
+    "endFrame": 3240,
     "highlightLines": {
       "end": 26,
       "start": 24,
@@ -1141,16 +4504,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 25,
         },
       },
-      "step": 29,
+      "step": 108,
       "type": "result_assignment",
     },
-    "startFrame": 840,
-    "stepIndex": 28,
+    "startFrame": 3210,
+    "stepIndex": 107,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 900,
+    "endFrame": 3270,
     "highlightLines": {
       "end": 26,
       "start": 24,
@@ -1175,11 +4538,11 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "never",
-      "step": 30,
+      "step": 109,
       "type": "generic_result",
     },
-    "startFrame": 870,
-    "stepIndex": 29,
+    "startFrame": 3240,
+    "stepIndex": 108,
   },
 ]
 `;
