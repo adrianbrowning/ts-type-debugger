@@ -1,74 +1,85 @@
-/**
- * Color theme based on img.png design (GitHub Dark-inspired)
- */
+import { useMemo } from 'react';
+import { useTheme } from './hooks/useTheme.tsx';
 
-export const THEME = {
+/**
+ * Returns CSS variable reference string
+ * Browser resolves the actual value at paint time (after class is applied)
+ * This eliminates the race condition between React render and DOM class updates
+ */
+const cssVar = (name: string): string => `var(${name})`;
+
+/**
+ * Creates theme object by reading CSS variables
+ * Call this to get current theme values from CSS custom properties
+ */
+export const createTheme = () => ({
   // Backgrounds
   bg: {
-    primary: '#0d1117',      // Main background
-    secondary: '#161b22',    // Panel backgrounds
-    editor: '#1e2128',       // Code editor
-    active: '#1f3a5f',       // Active elements
-    hover: '#262c36',        // Hover states
+    primary: cssVar('--bg'),
+    secondary: cssVar('--bg-secondary'),
+    editor: cssVar('--bg-editor'),
+    active: cssVar('--bg-active'),
+    hover: cssVar('--bg-hover'),
   },
 
   // Text colors
   text: {
-    primary: '#ffffff',      // White text
-    secondary: '#8b949e',    // Muted gray
-    tertiary: '#6e7681',     // Darker gray
-    disabled: '#4a5568',     // Disabled/inactive
+    primary: cssVar('--text-primary'),
+    secondary: cssVar('--text-secondary'),
+    tertiary: cssVar('--text-tertiary'),
+    disabled: cssVar('--text-disabled'),
   },
 
   // Accent colors
   accent: {
-    primary: '#22c55e',      // Green (primary action)
-    primaryAlt: '#10b981',   // Alternative green
-    highlight: '#3b82f6',    // Blue (highlights)
-    warning: '#f59e0b',      // Amber
-    success: '#10b981',      // Green
-    error: '#ef4444',        // Red
+    primary: cssVar('--accent-primary'),
+    primaryAlt: cssVar('--accent-primary-alt'),
+    highlight: cssVar('--accent-highlight'),
+    warning: cssVar('--accent-warning'),
+    success: cssVar('--accent-success'),
+    error: cssVar('--accent-error'),
+    btnText: cssVar('--btn-accent-text'),
   },
 
   // Borders
   border: {
-    subtle: '#30363d',       // Dark gray borders
-    medium: '#444c56',       // Medium borders
+    subtle: cssVar('--border-subtle'),
+    medium: cssVar('--border-medium'),
   },
 
-  // Syntax highlighting (VS Code dark theme)
+  // Syntax highlighting
   syntax: {
-    keyword: '#569cd6',      // Blue
-    type: '#4ec9b0',         // Cyan/Teal
-    string: '#ce9178',       // Orange/Salmon
-    number: '#b5cea8',       // Light green
-    comment: '#6a9955',      // Green
-    punctuation: '#d4d4d4',  // Light gray
+    keyword: cssVar('--syntax-keyword'),
+    type: cssVar('--syntax-type'),
+    string: cssVar('--syntax-string'),
+    number: cssVar('--syntax-number'),
+    comment: cssVar('--syntax-comment'),
+    punctuation: cssVar('--syntax-punctuation'),
   },
 
   // Step type colors
   stepType: {
-    generic_call: '#3b82f6',
-    generic_def: '#8b5cf6',
-    generic_result: '#10b981',
-    condition: '#f59e0b',
-    conditional_evaluate_left: '#ec4899',
-    conditional_evaluate_right: '#ec4899',
-    conditional_evaluation: '#f59e0b',
-    branch_true: '#10b981',
-    branch_false: '#ef4444',
-    template_literal: '#06b6d4',
-    alias_reference: '#6366f1',
-    substitution: '#14b8a6',
-    mapped_type_start: '#8b5cf6',
-    mapped_type_constraint: '#f59e0b',
-    mapped_type_constraint_result: '#f59e0b',
-    map_iteration: '#3b82f6',
-    mapped_type_result: '#10b981',
-    mapped_type_end: '#8b5cf6',
-    indexed_access: '#06b6d4',
-    indexed_access_result: '#10b981',
-    type_alias_start: '#94a3b8',
+    generic_call: cssVar('--step-generic-call'),
+    generic_def: cssVar('--step-generic-def'),
+    generic_result: cssVar('--step-generic-result'),
+    condition: cssVar('--step-condition'),
+    conditional_evaluate_left: cssVar('--step-conditional-evaluate-left'),
+    conditional_evaluate_right: cssVar('--step-conditional-evaluate-right'),
+    conditional_evaluation: cssVar('--step-conditional-evaluation'),
+    branch_true: cssVar('--step-branch-true'),
+    branch_false: cssVar('--step-branch-false'),
+    template_literal: cssVar('--step-template-literal'),
+    alias_reference: cssVar('--step-alias-reference'),
+    substitution: cssVar('--step-substitution'),
+    mapped_type_start: cssVar('--step-mapped-type-start'),
+    mapped_type_constraint: cssVar('--step-mapped-type-constraint'),
+    mapped_type_constraint_result: cssVar('--step-mapped-type-constraint-result'),
+    map_iteration: cssVar('--step-map-iteration'),
+    mapped_type_result: cssVar('--step-mapped-type-result'),
+    mapped_type_end: cssVar('--step-mapped-type-end'),
+    indexed_access: cssVar('--step-indexed-access'),
+    indexed_access_result: cssVar('--step-indexed-access-result'),
+    type_alias_start: cssVar('--step-type-alias-start'),
   },
 
   // Sizing
@@ -81,31 +92,31 @@ export const THEME = {
 
   // Border radius
   radius: {
-    sm: '4px',
-    md: '6px',
-    lg: '8px',
+    sm: cssVar('--radius-sm') || '4px',
+    md: cssVar('--radius-md') || '6px',
+    lg: cssVar('--radius-lg') || '8px',
   },
 
   // Spacing
   spacing: {
-    xs: '4px',
-    sm: '8px',
-    md: '12px',
-    lg: '16px',
-    xl: '20px',
-    xxl: '24px',
+    xs: cssVar('--spacing-xs') || '4px',
+    sm: cssVar('--spacing-sm') || '8px',
+    md: cssVar('--spacing-md') || '12px',
+    lg: cssVar('--spacing-lg') || '16px',
+    xl: cssVar('--spacing-xl') || '20px',
+    xxl: cssVar('--spacing-xxl') || '24px',
   },
 
   // Font sizes
   fontSize: {
-    xs: '12px',
-    sm: '13px',
-    md: '14px',
-    lg: '15px',
-    xl: '16px',
-    '2xl': '18px',
-    '3xl': '24px',
-    '4xl': '28px',
+    xs: cssVar('--font-size-xs') || '12px',
+    sm: cssVar('--font-size-sm') || '13px',
+    md: cssVar('--font-size-md') || '14px',
+    lg: cssVar('--font-size-lg') || '15px',
+    xl: cssVar('--font-size-xl') || '16px',
+    '2xl': cssVar('--font-size-2xl') || '18px',
+    '3xl': cssVar('--font-size-3xl') || '24px',
+    '4xl': cssVar('--font-size-4xl') || '28px',
   },
 
   // Font weights
@@ -122,4 +133,33 @@ export const THEME = {
     modal: 1000,
     tooltip: 1100,
   },
-} as const;
+
+  // Raw numeric values for JS calculations (not CSS variables)
+  raw: {
+    fontSizeMd: 14,
+    lineHeight: 1.6,
+  },
+});
+
+/**
+ * Hook to get reactive theme that updates when theme mode changes
+ * Use this in components instead of THEME constant
+ */
+export const useCssTheme = () => {
+  const { isDark } = useTheme();
+
+  // Re-create theme object when dark/light changes
+  // isDark in deps triggers recalculation when theme switches
+  return useMemo(() => createTheme(), [isDark]);
+};
+
+/**
+ * Theme type for TypeScript
+ */
+export type Theme = ReturnType<typeof createTheme>;
+
+/**
+ * @deprecated Use useCssTheme() hook instead for reactive theming
+ * This static export reads CSS values at module load time and won't update on theme change
+ */
+export const THEME = createTheme();

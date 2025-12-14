@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { THEME } from '../theme.ts';
+import { useCssTheme } from '../theme.ts';
 
 export type CollapsibleSectionProps = {
   title: string;
@@ -16,6 +16,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   headerRight,
   children,
 }) => {
+  const theme = useCssTheme();
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const contentId = `collapsible-${title.replace(/\s+/g, '-').toLowerCase()}`;
 
@@ -28,9 +29,9 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: `${THEME.spacing.sm} ${THEME.spacing.md}`,
-          backgroundColor: THEME.bg.secondary,
-          borderBottom: `1px solid ${THEME.border.subtle}`,
+          padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+          backgroundColor: theme.bg.secondary,
+          borderBottom: `1px solid ${theme.border.subtle}`,
         }}
       >
         <button
@@ -40,7 +41,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: THEME.spacing.sm,
+            gap: theme.spacing.sm,
             cursor: 'pointer',
             flex: 1,
             background: 'none',
@@ -52,17 +53,17 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           <span
             aria-hidden="true"
             style={{
-              color: THEME.text.secondary,
-              fontSize: THEME.fontSize.sm,
+              color: theme.text.secondary,
+              fontSize: theme.fontSize.sm,
             }}
           >
             {isExpanded ? '▼' : '▶'}
           </span>
           <span
             style={{
-              color: THEME.text.primary,
-              fontSize: THEME.fontSize.md,
-              fontWeight: THEME.fontWeight.semibold,
+              color: theme.text.primary,
+              fontSize: theme.fontSize.md,
+              fontWeight: theme.fontWeight.semibold,
             }}
           >
             {title}
@@ -70,11 +71,11 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           {badge !== undefined && (
             <span
               style={{
-                padding: `${THEME.spacing.xs} ${THEME.spacing.sm}`,
-                backgroundColor: THEME.bg.hover,
-                color: THEME.text.secondary,
-                fontSize: THEME.fontSize.xs,
-                borderRadius: THEME.radius.sm,
+                padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+                backgroundColor: theme.bg.hover,
+                color: theme.text.secondary,
+                fontSize: theme.fontSize.xs,
+                borderRadius: theme.radius.sm,
               }}
             >
               {badge}
@@ -82,7 +83,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           )}
         </button>
         {headerRight && (
-          <div style={{ marginLeft: THEME.spacing.md }}>
+          <div style={{ marginLeft: theme.spacing.md }}>
             {headerRight}
           </div>
         )}
@@ -93,7 +94,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           role="region"
           aria-labelledby={contentId}
           style={{
-            padding: THEME.spacing.md,
+            padding: theme.spacing.md,
           }}
         >
           {children}

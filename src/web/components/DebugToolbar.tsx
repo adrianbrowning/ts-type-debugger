@@ -1,5 +1,5 @@
 import React from 'react';
-import { THEME } from '../theme';
+import { useCssTheme, type Theme } from '../theme.ts';
 
 type DebugToolbarProps = {
   currentStepIndex: number;
@@ -17,22 +17,23 @@ type ToolbarButtonProps = {
   disabled?: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  theme: Theme;
 };
 
-function ToolbarButton({ label, disabled = false, onClick, children }: ToolbarButtonProps) {
+function ToolbarButton({ label, disabled = false, onClick, children, theme }: ToolbarButtonProps) {
   const buttonStyle: React.CSSProperties = {
-    backgroundColor: THEME.bg.secondary,
-    border: `1px solid ${THEME.border.subtle}`,
-    borderRadius: THEME.radius.sm,
-    color: THEME.text.primary,
+    backgroundColor: theme.bg.secondary,
+    border: `1px solid ${theme.border.subtle}`,
+    borderRadius: theme.radius.sm,
+    color: theme.text.primary,
     cursor: 'pointer',
-    fontSize: THEME.fontSize.sm,
-    padding: `${THEME.spacing.xs} ${THEME.spacing.sm}`,
+    fontSize: theme.fontSize.sm,
+    padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
   };
 
   const disabledButtonStyle: React.CSSProperties = {
     ...buttonStyle,
-    color: THEME.text.disabled,
+    color: theme.text.disabled,
     cursor: 'not-allowed',
     opacity: 0.5,
   };
@@ -50,8 +51,8 @@ function ToolbarButton({ label, disabled = false, onClick, children }: ToolbarBu
   );
 }
 
-function Separator() {
-  return <span style={{ color: THEME.text.tertiary }}>│</span>;
+function Separator({ theme }: { theme: Theme }) {
+  return <span style={{ color: theme.text.tertiary }}>│</span>;
 }
 
 export function DebugToolbar({
@@ -64,18 +65,20 @@ export function DebugToolbar({
   onStepOut,
   canStepOut,
 }: DebugToolbarProps) {
+  const theme = useCssTheme();
+
   const containerStyle: React.CSSProperties = {
     alignItems: 'center',
-    backgroundColor: THEME.bg.secondary,
-    borderBottom: `1px solid ${THEME.border.subtle}`,
+    backgroundColor: theme.bg.secondary,
+    borderBottom: `1px solid ${theme.border.subtle}`,
     display: 'flex',
-    gap: THEME.spacing.sm,
-    padding: THEME.spacing.sm,
+    gap: theme.spacing.sm,
+    padding: theme.spacing.sm,
   };
 
   const stepCounterStyle: React.CSSProperties = {
-    color: THEME.text.secondary,
-    fontSize: THEME.fontSize.sm,
+    color: theme.text.secondary,
+    fontSize: theme.fontSize.sm,
     marginLeft: 'auto',
   };
 
@@ -84,22 +87,22 @@ export function DebugToolbar({
 
   return (
     <div style={containerStyle}>
-      <ToolbarButton label="Previous" disabled={isAtFirstStep} onClick={onPrevious}>
+      <ToolbarButton label="Previous" disabled={isAtFirstStep} onClick={onPrevious} theme={theme}>
         ◀
       </ToolbarButton>
-      <ToolbarButton label="Next" disabled={isAtLastStep} onClick={onNext}>
+      <ToolbarButton label="Next" disabled={isAtLastStep} onClick={onNext} theme={theme}>
         ▶
       </ToolbarButton>
-      <Separator />
-      <ToolbarButton label="Step Into" onClick={onStepInto}>
+      <Separator theme={theme} />
+      <ToolbarButton label="Step Into" onClick={onStepInto} theme={theme}>
         ⬇ Into
       </ToolbarButton>
-      <Separator />
-      <ToolbarButton label="Step Over" onClick={onStepOver}>
+      <Separator theme={theme} />
+      <ToolbarButton label="Step Over" onClick={onStepOver} theme={theme}>
         ⏭ Over
       </ToolbarButton>
-      <Separator />
-      <ToolbarButton label="Step Out" disabled={!canStepOut} onClick={onStepOut}>
+      <Separator theme={theme} />
+      <ToolbarButton label="Step Out" disabled={!canStepOut} onClick={onStepOut} theme={theme}>
         ⬆ Out
       </ToolbarButton>
       <span style={stepCounterStyle}>

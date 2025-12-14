@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CollapsibleSection } from './CollapsibleSection.tsx';
-import { THEME } from '../theme.ts';
+import { useCssTheme } from '../theme.ts';
 import type { TypeInfo } from '../../core/types.ts';
 
 export type GlobalsSectionProps = {
@@ -14,6 +14,7 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
   usedTypeNames,
   onTypeClick,
 }) => {
+  const theme = useCssTheme();
   const [showAll, setShowAll] = useState(false);
 
   // Separate used and unused types
@@ -28,12 +29,12 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
     <button
       onClick={() => setShowAll(!showAll)}
       style={{
-        padding: `${THEME.spacing.xs} ${THEME.spacing.sm}`,
-        backgroundColor: THEME.bg.hover,
-        color: THEME.text.secondary,
-        border: `1px solid ${THEME.border.subtle}`,
-        borderRadius: THEME.radius.sm,
-        fontSize: THEME.fontSize.xs,
+        padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+        backgroundColor: theme.bg.hover,
+        color: theme.text.secondary,
+        border: `1px solid ${theme.border.subtle}`,
+        borderRadius: theme.radius.sm,
+        fontSize: theme.fontSize.xs,
         cursor: 'pointer',
       }}
     >
@@ -47,7 +48,7 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
       badge={badgeCount}
       headerRight={toggleButton}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: THEME.spacing.xs }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing.xs }}>
         {displayedTypes.map(type => {
           const isUsed = usedTypeNames.has(type.name);
           const opacity = showAll && !isUsed ? 0.5 : 1;
@@ -57,8 +58,8 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
               onClick={() => onTypeClick?.(type.name)}
               style={{
                 fontFamily: 'monospace',
-                fontSize: THEME.fontSize.sm,
-                color: THEME.text.primary,
+                fontSize: theme.fontSize.sm,
+                color: theme.text.primary,
                 cursor: onTypeClick ? 'pointer' : 'default',
                 opacity,
               }}
@@ -72,14 +73,14 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
             <hr
               style={{
                 border: 'none',
-                borderTop: `1px solid ${THEME.border.subtle}`,
-                margin: `${THEME.spacing.sm} 0`,
+                borderTop: `1px solid ${theme.border.subtle}`,
+                margin: `${theme.spacing.sm} 0`,
               }}
             />
             <div
               style={{
-                fontSize: THEME.fontSize.xs,
-                color: THEME.text.secondary,
+                fontSize: theme.fontSize.xs,
+                color: theme.text.secondary,
               }}
             >
               {unusedCount} unused {unusedCount === 1 ? 'type' : 'types'} hidden

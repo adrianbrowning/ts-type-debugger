@@ -1,7 +1,7 @@
 import React from 'react';
-import { CollapsibleSection } from './CollapsibleSection';
-import { InfoRow } from './InfoRow';
-import { THEME } from '../theme';
+import { CollapsibleSection } from './CollapsibleSection.tsx';
+import { InfoRow } from './InfoRow.tsx';
+import { useCssTheme } from '../theme.ts';
 
 export type IterationSectionProps = {
   currentMember?: string;
@@ -32,6 +32,8 @@ export const IterationSection: React.FC<IterationSectionProps> = ({
   currentMember,
   accumulatedResults,
 }) => {
+  const theme = useCssTheme();
+
   if (!currentMember) {
     return null;
   }
@@ -41,7 +43,7 @@ export const IterationSection: React.FC<IterationSectionProps> = ({
 
   return (
     <CollapsibleSection title="Iteration">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: THEME.spacing.sm }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing.sm }}>
         <InfoRow label="Current Member" value={currentMember} monospace />
         <InfoRow label="Accumulated" value={displayAccumulated} monospace />
         <InfoRow label="Index" value={`${currentIndex} of ?`} />

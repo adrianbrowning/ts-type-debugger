@@ -1,5 +1,6 @@
 import React from 'react';
-import { THEME } from '../theme.ts';
+import { useCssTheme } from '../theme.ts';
+import { useTheme, type ThemeMode } from '../hooks/useTheme.tsx';
 import type { VideoData } from '../../core/types.ts';
 import { exportJSON } from '../utils/exportData.ts';
 
@@ -10,10 +11,47 @@ type HeaderProps = {
   videoData: VideoData | null;
 };
 
+const ThemeToggle: React.FC = () => {
+  const { mode, setMode } = useTheme();
+  const theme = useCssTheme();
+
+  const modes: ThemeMode[] = ['system', 'light', 'dark'];
+  const icons: Record<ThemeMode, string> = {
+    system: 'Auto',
+    light: 'Light',
+    dark: 'Dark',
+  };
+
+  return (
+    <div className="theme-toggle">
+      {modes.map((m) => (
+        <button
+          key={m}
+          onClick={() => setMode(m)}
+          className={mode === m ? 'active' : ''}
+          style={{
+            padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+            backgroundColor: mode === m ? undefined : theme.bg.secondary,
+            border: `1px solid ${theme.border.subtle}`,
+            borderRadius: theme.radius.sm,
+            color: mode === m ? undefined : theme.text.primary,
+            cursor: 'pointer',
+            fontSize: theme.fontSize.xs,
+          }}
+        >
+          {icons[m]}
+        </button>
+      ))}
+    </div>
+  );
+};
+
 /**
  * Header with title and Hide/Show Editor button
  */
 export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, hasGenerated, videoData }) => {
+  const theme = useCssTheme();
+
   const handleExport = () => {
     if (videoData) {
       exportJSON(videoData);
@@ -26,9 +64,9 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: `${THEME.spacing.lg} ${THEME.spacing.xxl}`,
-        backgroundColor: THEME.bg.primary,
-        borderBottom: `1px solid ${THEME.border.subtle}`,
+        padding: `${theme.spacing.lg} ${theme.spacing.xxl}`,
+        backgroundColor: theme.bg.primary,
+        borderBottom: `1px solid ${theme.border.subtle}`,
         height: '64px',
         boxSizing: 'border-box',
       }}
@@ -36,63 +74,67 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
       <h1
         style={{
           margin: 0,
-          color: THEME.text.primary,
-          fontSize: THEME.fontSize['3xl'],
-          fontWeight: THEME.fontWeight.bold,
+          color: theme.text.primary,
+          fontSize: theme.fontSize['3xl'],
+          fontWeight: theme.fontWeight.bold,
           letterSpacing: '-0.5px',
         }}
       >
         TypeScript Type Visualizer
       </h1>
 
-      {hasGenerated && (
-        <div style={{ display: 'flex', gap: THEME.spacing.md }}>
-          <button
-            onClick={handleExport}
-            style={{
-              padding: `${THEME.spacing.md} ${THEME.spacing.lg}`,
-              backgroundColor: THEME.bg.secondary,
-              color: THEME.text.primary,
-              border: `1px solid ${THEME.border.subtle}`,
-              borderRadius: THEME.radius.md,
-              fontSize: THEME.fontSize.md,
-              fontWeight: THEME.fontWeight.semibold,
-              cursor: 'pointer',
-              transition: 'background-color 0.2s ease',
-            }}
-            onMouseOver={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = THEME.bg.hover;
-            }}
-            onMouseOut={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = THEME.bg.secondary;
-            }}
-          >
-            Export JSON
-          </button>
-          <button
-            onClick={onToggleEditor}
-            style={{
-              padding: `${THEME.spacing.md} ${THEME.spacing.lg}`,
-              backgroundColor: THEME.accent.primary,
-              color: THEME.text.primary,
-              border: 'none',
-              borderRadius: THEME.radius.md,
-              fontSize: THEME.fontSize.md,
-              fontWeight: THEME.fontWeight.semibold,
-              cursor: 'pointer',
-              transition: 'background-color 0.2s ease',
-            }}
-            onMouseOver={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = THEME.accent.primaryAlt;
-            }}
-            onMouseOut={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = THEME.accent.primary;
-            }}
-          >
-            {editorVisible ? 'Hide Editor' : 'Show Editor'}
-          </button>
-        </div>
-      )}
+      <div style={{ display: 'flex', gap: theme.spacing.md, alignItems: 'center' }}>
+        <ThemeToggle />
+
+        {hasGenerated && (
+          <>
+            <button
+              onClick={handleExport}
+              style={{
+                padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+                backgroundColor: theme.bg.secondary,
+                color: theme.text.primary,
+                border: `1px solid ${theme.border.subtle}`,
+                borderRadius: theme.radius.md,
+                fontSize: theme.fontSize.md,
+                fontWeight: theme.fontWeight.semibold,
+                cursor: 'pointer',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseOver={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = theme.bg.hover;
+              }}
+              onMouseOut={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = theme.bg.secondary;
+              }}
+            >
+              Export JSON
+            </button>
+            <button
+              onClick={onToggleEditor}
+              style={{
+                padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+                backgroundColor: theme.accent.primary,
+                color: theme.accent.btnText,
+                border: 'none',
+                borderRadius: theme.radius.md,
+                fontSize: theme.fontSize.md,
+                fontWeight: theme.fontWeight.semibold,
+                cursor: 'pointer',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseOver={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = theme.accent.primaryAlt;
+              }}
+              onMouseOut={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = theme.accent.primary;
+              }}
+            >
+              {editorVisible ? 'Hide Editor' : 'Show Editor'}
+            </button>
+          </>
+        )}
+      </div>
     </header>
   );
 };

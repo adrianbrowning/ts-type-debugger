@@ -1,32 +1,33 @@
 import React from 'react';
-import { LAYOUT, COLORS, TRACE_TYPE_COLORS } from '../config.ts';
+import { useCssTheme } from '../theme.ts';
 import type { VideoTraceStep } from '../../core/types.ts';
 import { formatResult, formatParameters } from '../../videoGenerator.ts';
 
-interface ResultsPanelProps {
+type ResultsPanelProps = {
   currentStep: VideoTraceStep | null;
-}
+};
 
 /**
  * Renders current evaluation step information - web version
  */
 export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
+  const theme = useCssTheme();
+
   if (!currentStep) {
     return (
       <div
         style={{
-          width: LAYOUT.rightPanel.width,
           height: '100%',
-          backgroundColor: COLORS.surface,
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: 8,
-          padding: LAYOUT.results.padding,
+          backgroundColor: theme.bg.secondary,
+          border: `1px solid ${theme.border.subtle}`,
+          borderRadius: theme.radius.lg,
+          padding: theme.spacing.lg,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <p style={{ color: COLORS.textTertiary }}>No step selected</p>
+        <p style={{ color: theme.text.tertiary }}>No step selected</p>
       </div>
     );
   }
@@ -34,16 +35,15 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
   const step = currentStep.original;
   const result = formatResult(currentStep);
   const params = formatParameters(currentStep);
-  const typeColor = TRACE_TYPE_COLORS[step.type] || COLORS.info;
+  const typeColor = theme.stepType[step.type as keyof typeof theme.stepType] || theme.accent.highlight;
 
   return (
     <div
       style={{
-        width: LAYOUT.rightPanel.width,
         height: '100%',
-        backgroundColor: COLORS.surface,
-        border: `1px solid ${COLORS.border}`,
-        borderRadius: 8,
+        backgroundColor: theme.bg.secondary,
+        border: `1px solid ${theme.border.subtle}`,
+        borderRadius: theme.radius.lg,
         overflow: 'auto',
         display: 'flex',
         flexDirection: 'column',
@@ -52,9 +52,9 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
       {/* Header with step info */}
       <div
         style={{
-          padding: LAYOUT.results.padding,
-          borderBottom: `1px solid ${COLORS.border}`,
-          backgroundColor: COLORS.background,
+          padding: theme.spacing.lg,
+          borderBottom: `1px solid ${theme.border.subtle}`,
+          backgroundColor: theme.bg.primary,
         }}
       >
         <div
@@ -73,18 +73,18 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
               borderRadius: 2,
             }}
           />
-          <span style={{ color: COLORS.text, fontSize: 14, fontWeight: 600 }}>
+          <span style={{ color: theme.text.primary, fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.semibold }}>
             Step {step.step}
           </span>
         </div>
         <p
           style={{
             margin: 0,
-            color: COLORS.text,
-            fontSize: 12,
-            backgroundColor: COLORS.surface,
+            color: theme.text.primary,
+            fontSize: theme.fontSize.xs,
+            backgroundColor: theme.bg.secondary,
             padding: 6,
-            borderRadius: 4,
+            borderRadius: theme.radius.sm,
             fontFamily: 'monospace',
             wordBreak: 'break-word',
           }}
@@ -97,9 +97,9 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
       <div
         style={{
           flex: 1,
-          padding: LAYOUT.results.padding,
+          padding: theme.spacing.lg,
           overflow: 'auto',
-          fontSize: LAYOUT.results.fontSize,
+          fontSize: theme.fontSize.sm,
         }}
       >
         {/* Expression */}
@@ -107,8 +107,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
           <h4
             style={{
               margin: '0 0 8px 0',
-              color: COLORS.textSecondary,
-              fontSize: 11,
+              color: theme.text.secondary,
+              fontSize: theme.fontSize.xs,
               textTransform: 'uppercase',
               letterSpacing: 0.5,
             }}
@@ -119,11 +119,11 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
             style={{
               margin: 0,
               padding: 8,
-              backgroundColor: COLORS.background,
-              borderRadius: 4,
-              color: COLORS.text,
+              backgroundColor: theme.bg.primary,
+              borderRadius: theme.radius.sm,
+              color: theme.text.primary,
               fontFamily: 'monospace',
-              fontSize: 12,
+              fontSize: theme.fontSize.xs,
               overflow: 'auto',
               maxHeight: 120,
               whiteSpace: 'pre-wrap',
@@ -140,8 +140,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
             <h4
               style={{
                 margin: '0 0 8px 0',
-                color: COLORS.textSecondary,
-                fontSize: 11,
+                color: theme.text.secondary,
+                fontSize: theme.fontSize.xs,
                 textTransform: 'uppercase',
                 letterSpacing: 0.5,
               }}
@@ -150,8 +150,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
             </h4>
             <div
               style={{
-                backgroundColor: COLORS.background,
-                borderRadius: 4,
+                backgroundColor: theme.bg.primary,
+                borderRadius: theme.radius.sm,
                 padding: 8,
               }}
             >
@@ -162,15 +162,15 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
                     display: 'flex',
                     gap: 8,
                     marginBottom: 6,
-                    fontSize: 12,
+                    fontSize: theme.fontSize.xs,
                   }}
                 >
-                  <span style={{ color: COLORS.info, fontWeight: 600 }}>
+                  <span style={{ color: theme.accent.highlight, fontWeight: theme.fontWeight.semibold }}>
                     {key}:
                   </span>
                   <span
                     style={{
-                      color: COLORS.text,
+                      color: theme.text.primary,
                       fontFamily: 'monospace',
                       flex: 1,
                       wordBreak: 'break-word',
@@ -190,8 +190,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
             <h4
               style={{
                 margin: '0 0 8px 0',
-                color: COLORS.textSecondary,
-                fontSize: 11,
+                color: theme.text.secondary,
+                fontSize: theme.fontSize.xs,
                 textTransform: 'uppercase',
                 letterSpacing: 0.5,
               }}
@@ -202,11 +202,11 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
               style={{
                 margin: 0,
                 padding: 8,
-                backgroundColor: COLORS.background,
-                borderRadius: 4,
-                color: COLORS.success,
+                backgroundColor: theme.bg.primary,
+                borderRadius: theme.radius.sm,
+                color: theme.accent.success,
                 fontFamily: 'monospace',
-                fontSize: 12,
+                fontSize: theme.fontSize.xs,
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
               }}
@@ -222,8 +222,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
             <h4
               style={{
                 margin: '0 0 8px 0',
-                color: COLORS.textSecondary,
-                fontSize: 11,
+                color: theme.text.secondary,
+                fontSize: theme.fontSize.xs,
                 textTransform: 'uppercase',
                 letterSpacing: 0.5,
               }}
@@ -232,8 +232,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
             </h4>
             <div
               style={{
-                backgroundColor: COLORS.background,
-                borderRadius: 4,
+                backgroundColor: theme.bg.primary,
+                borderRadius: theme.radius.sm,
                 padding: 8,
               }}
             >
@@ -244,15 +244,15 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
                     display: 'flex',
                     gap: 8,
                     marginBottom: 6,
-                    fontSize: 12,
+                    fontSize: theme.fontSize.xs,
                   }}
                 >
-                  <span style={{ color: COLORS.warning, fontWeight: 600 }}>
+                  <span style={{ color: theme.accent.warning, fontWeight: theme.fontWeight.semibold }}>
                     {key}:
                   </span>
                   <span
                     style={{
-                      color: COLORS.text,
+                      color: theme.text.primary,
                       fontFamily: 'monospace',
                       flex: 1,
                       wordBreak: 'break-word',

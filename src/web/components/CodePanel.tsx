@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import type { VideoTraceStep, TypeInfo } from '../../core/types.ts';
-import { THEME } from '../theme.ts';
+import { useCssTheme } from '../theme.ts';
 
-interface CodePanelProps {
+type CodePanelProps = {
   currentStep: VideoTraceStep | null;
   activeType: TypeInfo | null;
   sourceCode: string;
-}
+};
 
 /**
  * Renders code with animated highlight - web version with full syntax highlighting
@@ -14,8 +14,8 @@ interface CodePanelProps {
 export const CodePanel: React.FC<CodePanelProps> = ({
   currentStep,
   activeType,
-  sourceCode,
 }) => {
+  const theme = useCssTheme();
   const highlightRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to keep highlight visible
@@ -38,8 +38,8 @@ export const CodePanel: React.FC<CodePanelProps> = ({
     <div
       style={{
         height: '100%',
-        backgroundColor: THEME.bg.editor,
-        border: `1px solid ${THEME.border.subtle}`,
+        backgroundColor: theme.bg.editor,
+        border: `1px solid ${theme.border.subtle}`,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -48,17 +48,17 @@ export const CodePanel: React.FC<CodePanelProps> = ({
       {/* Header */}
       <div
         style={{
-          padding: THEME.spacing.lg,
-          borderBottom: `1px solid ${THEME.border.subtle}`,
-          backgroundColor: THEME.bg.primary,
+          padding: theme.spacing.lg,
+          borderBottom: `1px solid ${theme.border.subtle}`,
+          backgroundColor: theme.bg.primary,
         }}
       >
         <h3
           style={{
             margin: 0,
-            color: THEME.text.primary,
-            fontSize: THEME.fontSize.xl,
-            fontWeight: THEME.fontWeight.semibold,
+            color: theme.text.primary,
+            fontSize: theme.fontSize.xl,
+            fontWeight: theme.fontWeight.semibold,
           }}
         >
           {activeType?.name || 'Type Definition'}
@@ -66,9 +66,9 @@ export const CodePanel: React.FC<CodePanelProps> = ({
         {activeType && (
           <p
             style={{
-              margin: `${THEME.spacing.md} 0 0 0`,
-              color: THEME.text.secondary,
-              fontSize: THEME.fontSize.sm,
+              margin: `${theme.spacing.md} 0 0 0`,
+              color: theme.text.secondary,
+              fontSize: theme.fontSize.sm,
             }}
           >
             Lines {activeType.startLine + 1}-{activeType.endLine + 1}
@@ -82,8 +82,8 @@ export const CodePanel: React.FC<CodePanelProps> = ({
           flex: 1,
           overflow: 'auto',
           position: 'relative',
-          padding: THEME.spacing.lg,
-          backgroundColor: THEME.bg.editor,
+          padding: theme.spacing.lg,
+          backgroundColor: theme.bg.editor,
         }}
       >
         {/* Code content - show only active type definition */}
@@ -93,9 +93,9 @@ export const CodePanel: React.FC<CodePanelProps> = ({
               style={{
                 margin: 0,
                 fontFamily: '"Fira Code", "Monaco", monospace',
-                fontSize: THEME.fontSize.md,
+                fontSize: theme.fontSize.md,
                 lineHeight: 1.6,
-                color: THEME.text.primary,
+                color: theme.text.primary,
                 whiteSpace: 'pre',
                 position: 'relative',
                 zIndex: 1,
@@ -111,14 +111,14 @@ export const CodePanel: React.FC<CodePanelProps> = ({
                     position: 'absolute',
                     top: `${
                       (currentStep.highlightLines.start - activeType.startLine) *
-                        (1.6 * parseInt(THEME.fontSize.md))
+                        (theme.raw.lineHeight * theme.raw.fontSizeMd)
                     }px`,
                     left: currentStep.highlightLines.chars
-                      ? `${40 + 12 + currentStep.highlightLines.chars.start * (parseInt(THEME.fontSize.md) * 0.6)}px`
+                      ? `${40 + 12 + currentStep.highlightLines.chars.start * (theme.raw.fontSizeMd * 0.6)}px`
                       : `${40 + 12}px`,
                     ...(currentStep.highlightLines.chars
                       ? {
-                          // width: `${(currentStep.highlightLines.chars.end - currentStep.highlightLines.chars.start) * (parseInt(THEME.fontSize.md) * 0.6)}px`,
+                          // width: `${(currentStep.highlightLines.chars.end - currentStep.highlightLines.chars.start) * (parseInt(theme.fontSize.md) * 0.6)}px`,
                           width: `${(currentStep.highlightLines.chars.end - currentStep.highlightLines.chars.start) + 1}ch`,
                         }
                       : {
@@ -126,11 +126,11 @@ export const CodePanel: React.FC<CodePanelProps> = ({
                         }),
                     height: `${
                       (currentStep.highlightLines.end - currentStep.highlightLines.start + 1) *
-                      1.6 * parseInt(THEME.fontSize.md)
+                      theme.raw.lineHeight * theme.raw.fontSizeMd
                     }px`,
                     border: `2px solid #FFD700`,
                     backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                    borderRadius: THEME.radius.md,
+                    borderRadius: theme.radius.md,
                     zIndex: 0,
                     transition: `all 0.3s ease-out`,
                     pointerEvents: 'none',
@@ -146,8 +146,8 @@ export const CodePanel: React.FC<CodePanelProps> = ({
                   <div key={idx} style={{ display: 'flex' }}>
                     <span
                       style={{
-                        color: THEME.text.tertiary,
-                        marginRight: THEME.spacing.lg,
+                        color: theme.text.tertiary,
+                        marginRight: theme.spacing.lg,
                         minWidth: '40px',
                         textAlign: 'right',
                         userSelect: 'none',
@@ -160,7 +160,7 @@ export const CodePanel: React.FC<CodePanelProps> = ({
                         dangerouslySetInnerHTML={{ __html: highlightedLine }}
                         style={{
                           fontFamily: '"Fira Code", "Monaco", monospace',
-                          fontSize: THEME.fontSize.md,
+                          fontSize: theme.fontSize.md,
                         }}
                       />
                     ) : (
@@ -178,8 +178,8 @@ export const CodePanel: React.FC<CodePanelProps> = ({
               alignItems: 'center',
               justifyContent: 'center',
               height: '100%',
-              color: THEME.text.secondary,
-              fontSize: THEME.fontSize.md,
+              color: theme.text.secondary,
+              fontSize: theme.fontSize.md,
             }}
           >
             No active type definition

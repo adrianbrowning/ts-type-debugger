@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypeScript Type Visualizer - Template</title>
+  
+  <!-- Google Fonts: Fira Code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ============================================
+       DESIGN TOKENS
+       ============================================ */
+    :root {
+      /* Background Colors */
+      --bg: #282a36;
+      --bg-secondary: #21222c;
+      --bg-highlight: #44475a;
+      --current-line: #44475a;
+      --selection: #44475a;
+      
+      /* Text Colors */
+      --foreground: #f8f8f2;
+      --comment: #6272a4;
+      
+      /* Accent Colors */
+      --cyan: #8be9fd;
+      --green: #50fa7b;
+      --orange: #ffb86c;
+      --pink: #ff79c6;
+      --purple: #bd93f9;
+      --red: #ff5555;
+      --yellow: #f1fa8c;
+      
+      /* UI Elements */
+      --border: #44475a;
+      --radius: 6px;
+    }
+
+    /* Light Theme */
+    body.theme-light {
+      --bg: #f8f8f2;
+      --bg-secondary: #f1f1f0;
+      --bg-highlight: #e8e8e4;
+      --current-line: #e8e8e4;
+      --selection: #d6d6d0;
+      --foreground: #282a36;
+      --comment: #7c8db5;
+      --cyan: #0fb9d2;
+      --green: #2ecc71;
+      --orange: #e6a050;
+      --pink: #e06ba8;
+      --purple: #9b6dff;
+      --red: #e04545;
+      --yellow: #d4b830;
+      --border: #d6d6d0;
+      --shadow: rgba(40, 42, 54, 0.08);
+    }
+
+    /* System Theme */
+    @media (prefers-color-scheme: light) {
+      body:not(.theme-dark) {
+        --bg: #f8f8f2;
+        --bg-secondary: #f1f1f0;
+        --bg-highlight: #e8e8e4;
+        --current-line: #e8e8e4;
+        --selection: #d6d6d0;
+        --foreground: #282a36;
+        --comment: #7c8db5;
+        --cyan: #0fb9d2;
+        --green: #2ecc71;
+        --orange: #e6a050;
+        --pink: #e06ba8;
+        --purple: #9b6dff;
+        --red: #e04545;
+        --yellow: #d4b830;
+        --border: #d6d6d0;
+        --shadow: rgba(40, 42, 54, 0.08);
+      }
+    }
+
+    /* ============================================
+       BASE STYLES
+       ============================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--foreground);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ============================================
+       HEADER
+       ============================================ */
+    header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    body.theme-light header {
+      box-shadow: 0 1px 3px var(--shadow);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--purple);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fira Code', monospace;
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: var(--bg);
+    }
+
+    body.theme-light .logo-icon {
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(155, 109, 255, 0.3);
+    }
+
+    .logo-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+    .btn {
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--foreground);
+    }
+
+    .btn:hover {
+      background: var(--bg-highlight);
+      border-color: var(--purple);
+    }
+
+    .btn-primary {
+      background: var(--purple);
+      color: var(--bg);
+      border-color: var(--purple);
+    }
+
+    body.theme-light .btn-primary {
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--pink);
+      border-color: var(--pink);
+    }
+
+    .btn.active {
+      background: var(--purple);
+      color: #fff;
+      border-color: var(--purple);
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: calc(100vh - 57px);
+    }
+
+    .panel {
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel:last-child {
+      border-right: none;
+    }
+
+    .panel-header {
+      padding: 12px 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--cyan);
+    }
+
+    .panel-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      background: var(--bg-highlight);
+      border-radius: 20px;
+      color: var(--comment);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    /* ============================================
+       CODE DISPLAY
+       ============================================ */
+    .code-container {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      padding: 16px 0;
+    }
+
+    .code-line {
+      display: flex;
+      padding: 2px 20px;
+    }
+
+    .code-line:hover {
+      background: var(--bg-highlight);
+    }
+
+    .line-num {
+      width: 50px;
+      color: var(--comment);
+      text-align: right;
+      padding-right: 20px;
+      user-select: none;
+    }
+
+    .line-code {
+      flex: 1;
+    }
+
+    .code-line.active {
+      background: var(--current-line);
+      border-left: 3px solid var(--yellow);
+      padding-left: 17px;
+    }
+
+    body.theme-light .code-line.active {
+      background: rgba(212, 184, 48, 0.15);
+    }
+
+    /* Syntax Highlighting */
+    .kw { color: var(--pink); }
+    .type { color: var(--cyan); font-style: italic; }
+    .str { color: var(--yellow); }
+    .num { color: var(--purple); }
+    .comment { color: var(--comment); }
+
+    body.theme-light .kw { font-weight: 500; }
+    body.theme-light .type { font-style: normal; }
+    body.theme-light .str { color: var(--green); }
+
+    /* ============================================
+       SECTIONS
+       ============================================ */
+    .detail-section {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header {
+      padding: 12px 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--foreground);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+    }
+
+    .section-header:hover {
+      background: var(--bg-highlight);
+    }
+
+    .section-toggle {
+      color: var(--comment);
+      font-size: 0.75rem;
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 8px;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 7px;
+      background: var(--bg-highlight);
+      border-radius: 11px;
+      font-size: 0.75rem;
+      color: var(--comment);
+    }
+
+    .section-body {
+      padding: 8px 20px 16px;
+    }
+
+    .section-body.collapsed {
+      display: none;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 0.85rem;
+    }
+
+    .info-label {
+      color: var(--comment);
+    }
+
+    .info-value {
+      font-family: 'Fira Code', monospace;
+      color: var(--foreground);
+    }
+
+    /* ============================================
+       SCROLLBAR
+       ============================================ */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-highlight);
+      border-radius: 5px;
+    }
+
+    body.theme-light ::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--comment);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    /* ============================================
+       UTILITIES
+       ============================================ */
+    .empty-state {
+      color: var(--comment);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- ============================================
+       HEADER
+       ============================================ -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">TS</div>
+      <span class="logo-text">Type Visualizer</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn" id="theme-system" onclick="setTheme('system')">System</button>
+      <button class="btn" id="theme-light" onclick="setTheme('light')">Light</button>
+      <button class="btn" id="theme-dark" onclick="setTheme('dark')">Dark</button>
+    </div>
+  </header>
+
+  <!-- ============================================
+       MAIN CONTENT
+       ============================================ -->
+  <div class="main-container">
+    <!-- LEFT PANEL: Code -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Source.ts</span>
+        <span class="panel-badge">Lines 1-5</span>
+      </div>
+      <div class="panel-content code-container">
+        <div class="code-line">
+          <span class="line-num">1</span>
+          <span class="line-code"><span class="kw">type</span> <span class="type">User</span> = {</span>
+        </div>
+        <div class="code-line">
+          <span class="line-num">2</span>
+          <span class="line-code">  name: <span class="type">string</span>;</span>
+        </div>
+        <div class="code-line active">
+          <span class="line-num">3</span>
+          <span class="line-code">  age: <span class="type">number</span>;</span>
+        </div>
+        <div class="code-line">
+          <span class="line-num">4</span>
+          <span class="line-code">};</span>
+        </div>
+        <div class="code-line">
+          <span class="line-num">5</span>
+          <span class="line-code"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Debug Info -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Debug Panel</span>
+        <span class="panel-badge">Active</span>
+      </div>
+      <div class="panel-content">
+        <!-- Variables Section -->
+        <div class="detail-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <span>▼ Variables<span class="section-badge">3</span></span>
+            <span class="section-toggle">[-]</span>
+          </div>
+          <div class="section-body">
+            <div class="info-row">
+              <span class="info-label">name</span>
+              <span class="info-value">"Alice"</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">age</span>
+              <span class="info-value">30</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">active</span>
+              <span class="info-value">true</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scope Section -->
+        <div class="detail-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <span>▼ Scope<span class="section-badge">0</span></span>
+            <span class="section-toggle">[-]</span>
+          </div>
+          <div class="section-body">
+            <div class="empty-state">No parameters in scope</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       JAVASCRIPT
+       ============================================ -->
+  <script>
+    // Theme Management
+    const THEME_KEY = 'ts-visualizer-theme';
+    
+    function setTheme(theme) {
+      // Update button states
+      document.querySelectorAll('.header-actions .btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(`theme-${theme}`).classList.add('active');
+      
+      // Store preference
+      localStorage.setItem(THEME_KEY, theme);
+      
+      // Apply theme
+      if (theme === 'system') {
+        document.body.classList.remove('theme-light', 'theme-dark');
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+          document.body.classList.add('theme-light');
+        }
+      } else if (theme === 'light') {
+        document.body.classList.remove('theme-dark');
+        document.body.classList.add('theme-light');
+      } else if (theme === 'dark') {
+        document.body.classList.remove('theme-light');
+        document.body.classList.add('theme-dark');
+      }
+    }
+    
+    // Initialize theme
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY) || 'system';
+      setTheme(savedTheme);
+    }
+    
+    // Listen for system theme changes
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+        if (localStorage.getItem(THEME_KEY) === 'system') {
+          setTheme('system');
+        }
+      });
+    }
+    
+    // Section Toggle
+    function toggleSection(header) {
+      const body = header.nextElementSibling;
+      const toggle = header.querySelector('.section-toggle');
+      const arrow = header.querySelector('span:first-child');
+      
+      body.classList.toggle('collapsed');
+      
+      if (body.classList.contains('collapsed')) {
+        toggle.textContent = '[+]';
+        arrow.textContent = arrow.textContent.replace('▼', '▶');
+      } else {
+        toggle.textContent = '[-]';
+        arrow.textContent = arrow.textContent.replace('▶', '▼');
+      }
+    }
+    
+    // Initialize on load
+    initTheme();
+  </script>
+</body>
+</html>

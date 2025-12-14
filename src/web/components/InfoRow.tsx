@@ -1,5 +1,5 @@
 import React from 'react';
-import { THEME } from '../theme';
+import { useCssTheme } from '../theme.ts';
 
 export type InfoRowProps = {
   label: string;
@@ -13,14 +13,18 @@ export const InfoRow: React.FC<InfoRowProps> = ({
   value,
   monospace = false,
   separator = ': '
-}) => (
-  <div>
-    <span style={{ color: THEME.text.secondary }}>{label}{separator}</span>
-    <span style={{
-      fontFamily: monospace ? 'monospace' : undefined,
-      color: THEME.text.primary
-    }}>
-      {value}
-    </span>
-  </div>
-);
+}) => {
+  const theme = useCssTheme();
+
+  return (
+    <div>
+      <span style={{ color: theme.text.secondary }}>{label}{separator}</span>
+      <span style={{
+        fontFamily: monospace ? 'monospace' : undefined,
+        color: theme.text.primary
+      }}>
+        {value}
+      </span>
+    </div>
+  );
+};

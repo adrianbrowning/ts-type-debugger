@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import type { VideoTraceStep, TypeInfo } from '../../core/types.ts';
-import { THEME } from '../theme.ts';
-import { DebugToolbar } from './DebugToolbar';
+import { useCssTheme } from '../theme.ts';
+import { DebugToolbar } from './DebugToolbar.tsx';
 import { CallStackSection } from './CallStackSection.tsx';
-import { IterationSection } from './IterationSection';
-import { ScopeSection } from './ScopeSection';
+import { IterationSection } from './IterationSection.tsx';
+import { ScopeSection } from './ScopeSection.tsx';
 import { GlobalsSection } from './GlobalsSection.tsx';
 import { CollapsibleSection } from './CollapsibleSection.tsx';
 
@@ -56,6 +56,7 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
   onStepOut,
   onSeekToStep,
 }) => {
+  const theme = useCssTheme();
   const usedTypeNames = useMemo(() => calculateUsedTypeNames(steps), [steps]);
   const canStepOut = currentStep !== null;
 
@@ -67,24 +68,24 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
-          backgroundColor: THEME.bg.secondary,
+          backgroundColor: theme.bg.secondary,
           overflow: 'hidden',
         }}
       >
         {/* Header */}
         <div
           style={{
-            padding: `${THEME.spacing.lg} ${THEME.spacing.xl}`,
-            borderBottom: `1px solid ${THEME.border.subtle}`,
-            backgroundColor: THEME.bg.primary,
+            padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+            borderBottom: `1px solid ${theme.border.subtle}`,
+            backgroundColor: theme.bg.primary,
           }}
         >
           <h3
             style={{
               margin: 0,
-              color: THEME.text.primary,
-              fontSize: THEME.fontSize.xl,
-              fontWeight: THEME.fontWeight.semibold,
+              color: theme.text.primary,
+              fontSize: theme.fontSize.xl,
+              fontWeight: theme.fontWeight.semibold,
             }}
           >
             Step Details
@@ -98,8 +99,8 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: THEME.text.secondary,
-            fontSize: THEME.fontSize.md,
+            color: theme.text.secondary,
+            fontSize: theme.fontSize.md,
           }}
         >
           No step selected
@@ -118,7 +119,7 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: THEME.bg.secondary,
+        backgroundColor: theme.bg.secondary,
         overflow: 'hidden',
       }}
     >
@@ -172,13 +173,13 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
           <pre
             style={{
               margin: 0,
-              padding: THEME.spacing.md,
-              backgroundColor: THEME.bg.editor,
-              borderRadius: THEME.radius.md,
-              border: `1px solid ${THEME.border.subtle}`,
-              color: THEME.text.primary,
+              padding: theme.spacing.md,
+              backgroundColor: theme.bg.editor,
+              borderRadius: theme.radius.md,
+              border: `1px solid ${theme.border.subtle}`,
+              color: theme.text.primary,
               fontFamily: '"Fira Code", monospace',
-              fontSize: THEME.fontSize.sm,
+              fontSize: theme.fontSize.sm,
               lineHeight: 1.6,
               overflow: 'auto',
               whiteSpace: 'pre-wrap',
@@ -194,26 +195,26 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
       {hasResult && (
         <div
           style={{
-            padding: THEME.spacing.md,
-            backgroundColor: THEME.bg.primary,
-            borderTop: `1px solid ${THEME.border.subtle}`,
+            padding: theme.spacing.md,
+            backgroundColor: theme.bg.primary,
+            borderTop: `1px solid ${theme.border.subtle}`,
           }}
         >
           <span
             style={{
-              color: THEME.text.secondary,
-              fontSize: THEME.fontSize.sm,
-              fontWeight: THEME.fontWeight.semibold,
-              marginRight: THEME.spacing.sm,
+              color: theme.text.secondary,
+              fontSize: theme.fontSize.sm,
+              fontWeight: theme.fontWeight.semibold,
+              marginRight: theme.spacing.sm,
             }}
           >
             Result:
           </span>
           <code
             style={{
-              color: THEME.accent.success,
+              color: theme.accent.success,
               fontFamily: '"Fira Code", monospace',
-              fontSize: THEME.fontSize.sm,
+              fontSize: theme.fontSize.sm,
             }}
           >
             {step.result}

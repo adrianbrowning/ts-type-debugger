@@ -1,5 +1,5 @@
 import React from 'react';
-import { THEME } from '../theme.ts';
+import { useCssTheme } from '../theme.ts';
 import { CollapsibleSection } from './CollapsibleSection.tsx';
 import { buildCallStack } from '../../core/callStack.ts';
 import type { VideoTraceStep } from '../../core/types.ts';
@@ -18,6 +18,7 @@ export const CallStackSection: React.FC<CallStackSectionProps> = ({
   currentStepIndex,
   onNavigateToStep,
 }) => {
+  const theme = useCssTheme();
   const frames = buildCallStack(steps, currentStepIndex);
   const topFrame = frames.length > 0 ? frames[frames.length - 1] : null;
 
@@ -35,7 +36,7 @@ export const CallStackSection: React.FC<CallStackSectionProps> = ({
   return (
     <CollapsibleSection title="Call Stack">
       <div role="list" aria-label="Call stack frames">
-        {frames.map((frame, index) => {
+        {frames.map((frame) => {
           const isTopFrame = topFrame && frame.stepIndex === topFrame.stepIndex;
           const isRootFrame = frame.level === 0;
           const frameLabel = `${frame.name}${frame.line !== undefined ? `:${frame.line}` : ''}${isRootFrame ? ' (entry)' : ''}`;
@@ -49,12 +50,12 @@ export const CallStackSection: React.FC<CallStackSectionProps> = ({
               onClick={() => handleFrameClick(frame.stepIndex)}
               onKeyDown={(e) => handleFrameKeyDown(e, frame.stepIndex)}
               style={{
-                padding: THEME.spacing.sm,
+                padding: theme.spacing.sm,
                 paddingLeft: `${INDENT_BASE + frame.level * INDENT_PER_LEVEL}px`,
                 cursor: 'pointer',
-                backgroundColor: isTopFrame ? THEME.bg.active : 'transparent',
-                borderLeft: isTopFrame ? `2px solid ${THEME.accent.primary}` : 'none',
-                color: isTopFrame ? THEME.text.primary : THEME.text.secondary,
+                backgroundColor: isTopFrame ? theme.bg.active : 'transparent',
+                borderLeft: isTopFrame ? `2px solid ${theme.accent.primary}` : 'none',
+                color: isTopFrame ? theme.text.primary : theme.text.secondary,
               }}
             >
               <span>

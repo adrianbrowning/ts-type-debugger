@@ -1,5 +1,229 @@
-/* Global styles */
+/* CSS Custom Properties - Dracula Theme */
+:root {
+  /* Backgrounds */
+  --bg: #282a36;
+  --bg-secondary: #21222c;
+  --bg-highlight: #44475a;
+  --bg-editor: #282a36;
+  --bg-active: #44475a;
+  --bg-hover: #44475a;
+  --current-line: #44475a;
+  --selection: #44475a;
 
+  /* Text */
+  --foreground: #f8f8f2;
+  --text-primary: #f8f8f2;
+  --text-secondary: #6272a4;
+  --text-tertiary: #6272a4;
+  --text-disabled: #44475a;
+  --comment: #6272a4;
+
+  /* Borders */
+  --border: #44475a;
+  --border-subtle: #44475a;
+  --border-medium: #6272a4;
+
+  /* Accent colors */
+  --accent-primary: #50fa7b;
+  --accent-primary-alt: #2ecc71;
+  --accent-highlight: #8be9fd;
+  --accent-warning: #ffb86c;
+  --accent-success: #50fa7b;
+  --accent-error: #ff5555;
+  --btn-accent-text: #282a36;
+
+  /* Dracula palette */
+  --cyan: #8be9fd;
+  --green: #50fa7b;
+  --orange: #ffb86c;
+  --pink: #ff79c6;
+  --purple: #bd93f9;
+  --red: #ff5555;
+  --yellow: #f1fa8c;
+
+  /* Syntax highlighting */
+  --syntax-keyword: #ff79c6;
+  --syntax-type: #8be9fd;
+  --syntax-string: #f1fa8c;
+  --syntax-number: #bd93f9;
+  --syntax-comment: #6272a4;
+  --syntax-punctuation: #f8f8f2;
+
+  /* Step type colors */
+  --step-generic-call: #8be9fd;
+  --step-generic-def: #bd93f9;
+  --step-generic-result: #50fa7b;
+  --step-condition: #ffb86c;
+  --step-conditional-evaluate-left: #ff79c6;
+  --step-conditional-evaluate-right: #ff79c6;
+  --step-conditional-evaluation: #ffb86c;
+  --step-branch-true: #50fa7b;
+  --step-branch-false: #ff5555;
+  --step-template-literal: #8be9fd;
+  --step-alias-reference: #bd93f9;
+  --step-substitution: #8be9fd;
+  --step-mapped-type-start: #bd93f9;
+  --step-mapped-type-constraint: #ffb86c;
+  --step-mapped-type-constraint-result: #ffb86c;
+  --step-map-iteration: #8be9fd;
+  --step-mapped-type-result: #50fa7b;
+  --step-mapped-type-end: #bd93f9;
+  --step-indexed-access: #8be9fd;
+  --step-indexed-access-result: #50fa7b;
+  --step-type-alias-start: #6272a4;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-xxl: 24px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* Font sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-md: 14px;
+  --font-size-lg: 15px;
+  --font-size-xl: 16px;
+  --font-size-2xl: 18px;
+  --font-size-3xl: 24px;
+  --font-size-4xl: 28px;
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Z-index */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+
+  /* Transitions */
+  --transition-fast: all 0.15s ease;
+  --transition-normal: all 0.3s ease;
+
+  /* Shadows - dark theme uses minimal shadows */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-glow-green: 0 0 8px var(--green);
+  --shadow-glow-purple: 0 0 8px var(--purple);
+
+  /* Font families */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  /* Sizing */
+  --panel-min-width: 300px;
+  --scrollbar-width: 8px;
+
+  /* Component tokens */
+  --marker-size: 10px;
+  --marker-inactive: var(--comment);
+  --marker-active: var(--green);
+  --badge-min-width: 22px;
+  --badge-height: 22px;
+  --badge-padding: 0 7px;
+  --badge-bg: var(--bg-highlight);
+  --badge-color: var(--comment);
+  --badge-radius: 11px;
+  --radius-full: 20px;
+}
+
+/* Light theme */
+body.theme-light {
+  /* Backgrounds */
+  --bg: #f8f8f2;
+  --bg-secondary: #f1f1f0;
+  --bg-highlight: #e8e8e4;
+  --bg-editor: #f8f8f2;
+  --bg-active: #e8e8e4;
+  --bg-hover: #e8e8e4;
+  --current-line: #e8e8e4;
+  --selection: #d6d6d0;
+
+  /* Text */
+  --foreground: #282a36;
+  --text-primary: #282a36;
+  --text-secondary: #7c8db5;
+  --text-tertiary: #7c8db5;
+  --text-disabled: #d6d6d0;
+  --comment: #7c8db5;
+
+  /* Borders */
+  --border: #d6d6d0;
+  --border-subtle: #d6d6d0;
+  --border-medium: #7c8db5;
+
+  /* Accent colors */
+  --accent-primary: #2ecc71;
+  --accent-primary-alt: #27ae60;
+  --accent-highlight: #0fb9d2;
+  --accent-warning: #e6a050;
+  --accent-success: #2ecc71;
+  --accent-error: #e04545;
+  --btn-accent-text: #282a36;
+
+  /* Dracula light palette */
+  --cyan: #0fb9d2;
+  --green: #2ecc71;
+  --orange: #e6a050;
+  --pink: #e06ba8;
+  --purple: #9b6dff;
+  --red: #e04545;
+  --yellow: #d4b830;
+
+  /* Syntax highlighting */
+  --syntax-keyword: #e06ba8;
+  --syntax-type: #0fb9d2;
+  --syntax-string: #2ecc71;
+  --syntax-number: #9b6dff;
+  --syntax-comment: #7c8db5;
+  --syntax-punctuation: #282a36;
+
+  /* Step type colors - light theme */
+  --step-generic-call: #0fb9d2;
+  --step-generic-def: #9b6dff;
+  --step-generic-result: #2ecc71;
+  --step-condition: #e6a050;
+  --step-conditional-evaluate-left: #e06ba8;
+  --step-conditional-evaluate-right: #e06ba8;
+  --step-conditional-evaluation: #e6a050;
+  --step-branch-true: #2ecc71;
+  --step-branch-false: #e04545;
+  --step-template-literal: #0fb9d2;
+  --step-alias-reference: #9b6dff;
+  --step-substitution: #0fb9d2;
+  --step-mapped-type-start: #9b6dff;
+  --step-mapped-type-constraint: #e6a050;
+  --step-mapped-type-constraint-result: #e6a050;
+  --step-map-iteration: #0fb9d2;
+  --step-mapped-type-result: #2ecc71;
+  --step-mapped-type-end: #9b6dff;
+  --step-indexed-access: #0fb9d2;
+  --step-indexed-access-result: #2ecc71;
+  --step-type-alias-start: #7c8db5;
+
+  /* Shadows - light theme uses subtle shadows */
+  --shadow-sm: 0 1px 3px rgba(40, 42, 54, 0.08);
+  --shadow-md: 0 2px 6px rgba(40, 42, 54, 0.08);
+  --shadow-glow-green: 0 0 8px rgba(46, 204, 113, 0.5);
+  --shadow-glow-purple: 0 2px 4px rgba(155, 109, 255, 0.3);
+}
+
+/* Global styles */
 * {
   box-sizing: border-box;
 }
@@ -12,6 +236,9 @@ body {
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: var(--foreground);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #root {
@@ -26,7 +253,7 @@ input[type='range'] {
   width: 100%;
   height: 6px;
   border-radius: 3px;
-  background: linear-gradient(to right, #3b82f6 0%, #3b82f6 50%, #334155 50%, #334155 100%);
+  background: linear-gradient(to right, var(--accent-highlight) 0%, var(--accent-highlight) 50%, var(--border) 50%, var(--border) 100%);
   outline: none;
   cursor: pointer;
 }
@@ -37,7 +264,7 @@ input[type='range']::-webkit-slider-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: var(--accent-highlight);
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   margin-top: -5px;
@@ -47,7 +274,7 @@ input[type='range']::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: var(--accent-highlight);
   cursor: pointer;
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -72,30 +299,58 @@ input[type='range']::-moz-range-progress {
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: var(--bg-highlight);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: var(--comment);
 }
 
 /* Text selection */
 ::selection {
-  background: #3b82f6;
-  color: #f8fafc;
+  background: var(--purple);
+  color: var(--bg);
 }
 
 ::-moz-selection {
-  background: #3b82f6;
-  color: #f8fafc;
+  background: var(--purple);
+  color: var(--bg);
+}
+
+/* Theme toggle buttons */
+.theme-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.theme-toggle button {
+  padding: 4px 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: var(--transition-fast);
+}
+
+.theme-toggle button:hover {
+  background: var(--bg-highlight);
+  border-color: var(--purple);
+}
+
+.theme-toggle button.active {
+  background: var(--purple);
+  color: var(--bg);
+  border-color: var(--purple);
 }

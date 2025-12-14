@@ -31,7 +31,11 @@
       "Bash(timeout 15 pnpm test:unit:*)",
       "Bash(pnpm test:ui:*)",
       "Skill(testing-best-practice)",
-      "Bash(pnpm vitest run:*)"
+      "Bash(pnpm vitest run:*)",
+      "Skill(frontend-desgin)",
+      "Bash(xargs cat:*)",
+      "Skill(frontend-design)",
+      "Skill(theme)"
     ],
     "deny": [],
     "ask": []

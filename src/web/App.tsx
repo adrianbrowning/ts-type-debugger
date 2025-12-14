@@ -6,7 +6,7 @@ import { Header } from './components/Header.tsx';
 import { MonacoCodeEditor } from './components/MonacoCodeEditor.tsx';
 import { CodePanel } from './components/CodePanel.tsx';
 import { StepDetailsPanel } from './components/StepDetailsPanel.tsx';
-import { THEME } from './theme.ts';
+import { useCssTheme } from './theme.ts';
 import { CustomTypes } from '../base.ts';
 
 /**
@@ -16,6 +16,7 @@ import { CustomTypes } from '../base.ts';
 const TYPE_KEYWORD_PATTERN = /^\s*type\s+\w+\s*=/i;
 
 export const App: React.FC = () => {
+  const theme = useCssTheme();
   const [code, setCode] = useState<string>(CustomTypes);
   const [typeName, setTypeName] = useState<string>('getter<"">');
   const [videoData, setVideoData] = useState<VideoData | null>(null);
@@ -72,8 +73,8 @@ export const App: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        backgroundColor: THEME.bg.primary,
-        color: THEME.text.primary,
+        backgroundColor: theme.bg.primary,
+        color: theme.text.primary,
         overflow: 'hidden',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
@@ -99,7 +100,7 @@ export const App: React.FC = () => {
         {editorVisible && !hasGenerated && (
           <div
             style={{
-              width: hasGenerated ? THEME.size.editorWidth : undefined,
+              width: hasGenerated ? theme.size.editorWidth : undefined,
               flex: hasGenerated ? undefined : 1,
               display: 'flex',
               flexDirection: 'column',
@@ -109,18 +110,18 @@ export const App: React.FC = () => {
             {/* Type Input Section - Top with horizontal layout */}
             <div
               style={{
-                padding: THEME.spacing.lg,
-                backgroundColor: THEME.bg.primary,
-                borderBottom: `1px solid ${THEME.border.subtle}`,
+                padding: theme.spacing.lg,
+                backgroundColor: theme.bg.primary,
+                borderBottom: `1px solid ${theme.border.subtle}`,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: THEME.spacing.md,
+                gap: theme.spacing.md,
               }}
             >
               <div
                 style={{
                   display: 'flex',
-                  gap: THEME.spacing.md,
+                  gap: theme.spacing.md,
                   alignItems: 'flex-start',
                 }}
               >
@@ -141,13 +142,13 @@ export const App: React.FC = () => {
                   placeholder='Enter type expression (e.g., _result or "a" extends string ? true : false)'
                   style={{
                     flex: 1,
-                    padding: THEME.spacing.md,
-                    backgroundColor: THEME.bg.editor,
-                    color: THEME.text.primary,
-                    border: `1px solid ${typeNameError ? THEME.accent.error : THEME.border.subtle}`,
-                    borderRadius: THEME.radius.md,
+                    padding: theme.spacing.md,
+                    backgroundColor: theme.bg.editor,
+                    color: theme.text.primary,
+                    border: `1px solid ${typeNameError ? theme.accent.error : theme.border.subtle}`,
+                    borderRadius: theme.radius.md,
                     fontFamily: '"Fira Code", monospace',
-                    fontSize: THEME.fontSize.md,
+                    fontSize: theme.fontSize.md,
                     boxSizing: 'border-box',
                     opacity: isLoading ? 0.6 : 1,
                     cursor: isLoading ? 'not-allowed' : 'text',
@@ -157,16 +158,19 @@ export const App: React.FC = () => {
                   onClick={handleGenerate}
                   disabled={isLoading || !typeName.trim() || !!typeNameError}
                   style={{
-                    padding: `${THEME.spacing.md} ${THEME.spacing.lg}`,
+                    padding: `${theme.spacing.md} ${theme.spacing.lg}`,
                     backgroundColor:
                       isLoading || !typeName.trim() || typeNameError
-                        ? THEME.text.disabled
-                        : THEME.accent.primary,
-                    color: THEME.text.primary,
+                        ? theme.text.disabled
+                        : theme.accent.primary,
+                    color:
+                      isLoading || !typeName.trim() || typeNameError
+                        ? theme.text.primary
+                        : theme.accent.btnText,
                     border: 'none',
-                    borderRadius: THEME.radius.md,
-                    fontSize: THEME.fontSize.md,
-                    fontWeight: THEME.fontWeight.semibold,
+                    borderRadius: theme.radius.md,
+                    fontSize: theme.fontSize.md,
+                    fontWeight: theme.fontWeight.semibold,
                     cursor:
                       isLoading || !typeName.trim() || typeNameError
                         ? 'not-allowed'
@@ -179,13 +183,13 @@ export const App: React.FC = () => {
                   onMouseOver={(e) => {
                     if (!isLoading && typeName.trim() && !typeNameError) {
                       (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                        THEME.accent.primaryAlt;
+                        theme.accent.primaryAlt;
                     }
                   }}
                   onMouseOut={(e) => {
                     if (!isLoading && typeName.trim() && !typeNameError) {
                       (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                        THEME.accent.primary;
+                        theme.accent.primary;
                     }
                   }}
                 >
@@ -196,12 +200,12 @@ export const App: React.FC = () => {
               {typeNameError && (
                 <div
                   style={{
-                    padding: THEME.spacing.md,
+                    padding: theme.spacing.md,
                     backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    border: `1px solid ${THEME.accent.error}`,
-                    borderRadius: THEME.radius.md,
-                    color: THEME.accent.error,
-                    fontSize: THEME.fontSize.sm,
+                    border: `1px solid ${theme.accent.error}`,
+                    borderRadius: theme.radius.md,
+                    color: theme.accent.error,
+                    fontSize: theme.fontSize.sm,
                   }}
                 >
                   {typeNameError}
@@ -211,12 +215,12 @@ export const App: React.FC = () => {
               {error && (
                 <div
                   style={{
-                    padding: THEME.spacing.md,
+                    padding: theme.spacing.md,
                     backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    border: `1px solid ${THEME.accent.error}`,
-                    borderRadius: THEME.radius.md,
-                    color: THEME.accent.error,
-                    fontSize: THEME.fontSize.sm,
+                    border: `1px solid ${theme.accent.error}`,
+                    borderRadius: theme.radius.md,
+                    color: theme.accent.error,
+                    fontSize: theme.fontSize.sm,
                   }}
                 >
                   {error}
@@ -240,7 +244,7 @@ export const App: React.FC = () => {
               display: 'flex',
               flexDirection: 'column',
               minWidth: 0,
-              borderRight: `1px solid ${THEME.border.subtle}`,
+              borderRight: `1px solid ${theme.border.subtle}`,
             }}
           >
             {videoData ? (
@@ -255,22 +259,22 @@ export const App: React.FC = () => {
                   display: 'flex',
                   flexDirection: 'column',
                   height: '100%',
-                  backgroundColor: THEME.bg.secondary,
+                  backgroundColor: theme.bg.secondary,
                 }}
               >
                 <div
                   style={{
-                    padding: `${THEME.spacing.lg} ${THEME.spacing.xl}`,
-                    borderBottom: `1px solid ${THEME.border.subtle}`,
-                    backgroundColor: THEME.bg.primary,
+                    padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+                    borderBottom: `1px solid ${theme.border.subtle}`,
+                    backgroundColor: theme.bg.primary,
                   }}
                 >
                   <h3
                     style={{
                       margin: 0,
-                      color: THEME.text.primary,
-                      fontSize: THEME.fontSize.xl,
-                      fontWeight: THEME.fontWeight.semibold,
+                      color: theme.text.primary,
+                      fontSize: theme.fontSize.xl,
+                      fontWeight: theme.fontWeight.semibold,
                     }}
                   >
                     Type Definition
@@ -282,7 +286,7 @@ export const App: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: THEME.text.secondary,
+                    color: theme.text.secondary,
                   }}
                 >
                   Generate video to see type definition
