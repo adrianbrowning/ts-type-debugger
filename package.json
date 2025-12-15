@@ -1,5 +1,5 @@
 {
-  "name": "ts-type-visualiser",
+  "name": "ts-type-debugger",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -40,10 +40,11 @@
     "@vitest/ui": "^4.0.15",
     "playwright": "^1.57.0",
     "remotion": "^4.0.0",
-    "vite": "^5.0.0",
+    "vite": "^7.0.0",
     "vitest": "^4.0.15"
   },
   "dependencies": {
+    "lz-string": "^1.5.0",
     "@monaco-editor/react": "^4.7.0",
     "@typescript/vfs": "^1.6.2",
     "react": "^18.2.0",

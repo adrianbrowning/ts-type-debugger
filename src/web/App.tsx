@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { VideoData, TypeInfo } from '../core/types.ts';
 import { generateTypeVideo } from '../core/typeDebugger.ts';
 import { usePlayback } from './hooks/usePlayback.ts';
@@ -8,6 +8,8 @@ import { CodePanel } from './components/CodePanel.tsx';
 import { StepDetailsPanel } from './components/StepDetailsPanel.tsx';
 import { useCssTheme } from './theme.ts';
 import { CustomTypes } from '../base.ts';
+import { useToast } from './hooks/useToast.tsx';
+import { buildShareUrl, getShareStateFromUrl } from './utils/urlSharing.ts';
 
 /**
  * Main app component with 3-panel layout
@@ -17,6 +19,7 @@ const TYPE_KEYWORD_PATTERN = /^\s*type\s+\w+\s*=/i;
 
 export const App: React.FC = () => {
   const theme = useCssTheme();
+  const { showToast } = useToast();
   const [code, setCode] = useState<string>(CustomTypes);
   const [typeName, setTypeName] = useState<string>('getter<"">');
   const [videoData, setVideoData] = useState<VideoData | null>(null);
@@ -27,6 +30,44 @@ export const App: React.FC = () => {
   const [hasGenerated, setHasGenerated] = useState(false);
 
   const playback = usePlayback(videoData);
+
+  // Load state from URL on mount
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const hasCodeParam = url.searchParams.has('code');
+    if (!hasCodeParam) return;
+
+    const sharedState = getShareStateFromUrl();
+    if (sharedState) {
+      setCode(sharedState.code);
+      setTypeName(sharedState.typeName);
+    } else {
+      showToast('Failed to load shared code', 'error');
+    }
+    // Clear the URL param after loading attempt
+    url.searchParams.delete('code');
+    window.history.replaceState({}, '', url.toString());
+  }, [showToast]);
+
+  // Keyboard shortcut: Cmd/Ctrl+S to share
+  useEffect(() => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        const shareUrl = buildShareUrl(typeName, code);
+        window.history.replaceState({}, '', shareUrl);
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          showToast('URL copied to clipboard', 'success');
+        } catch {
+          showToast('Failed to copy URL', 'error');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [typeName, code, showToast]);
 
   // Get active type for current step
   const activeType = useMemo<TypeInfo | null>(() => {

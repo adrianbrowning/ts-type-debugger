@@ -35,7 +35,10 @@
       "Skill(frontend-desgin)",
       "Bash(xargs cat:*)",
       "Skill(frontend-design)",
-      "Skill(theme)"
+      "Skill(theme)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(pnpm tsc:*)"
     ],
     "deny": [],
     "ask": []
