@@ -153,6 +153,34 @@ describe('Infer Keyword Visualization', () => {
     });
   });
 
+  describe('Step Order Verification', () => {
+    it('evaluates LHS/RHS before infer pattern matching', async () => {
+      const code = `
+        type InferTest<str extends string> = str extends \`\${infer head}.\${infer tail}\`
+          ? [head, tail]
+          : "N/A";
+        type Test = InferTest<"a.b">;
+      `;
+      const result = await generateTypeVideo(code, 'Test');
+      expect(result).toBeDefined();
+
+      const types = result!.steps.map(s => s.original.type);
+
+      // Find indices of key step types
+      const conditionIdx = types.indexOf('condition');
+      const evalLeftIdx = types.indexOf('conditional_evaluate_left');
+      const evalRightIdx = types.indexOf('conditional_evaluate_right');
+      const inferStartIdx = types.indexOf('infer_pattern_start');
+      const inferMatchIdx = types.indexOf('infer_pattern_match');
+
+      // Verify order: condition → eval_left → eval_right → infer_start → infer_match
+      expect(conditionIdx).toBeLessThan(evalLeftIdx);
+      expect(evalLeftIdx).toBeLessThan(evalRightIdx);
+      expect(evalRightIdx).toBeLessThan(inferStartIdx);
+      expect(inferStartIdx).toBeLessThan(inferMatchIdx);
+    });
+  });
+
   describe('Recursive Infer Patterns', () => {
     it('traces recursive template literal splitting', async () => {
       const code = `

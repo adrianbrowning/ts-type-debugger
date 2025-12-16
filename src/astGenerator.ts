@@ -451,6 +451,19 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
     position: getNodePosition(condType, context.sourceFile),
   });
 
+  // Log LHS/RHS evaluation BEFORE infer pattern matching
+  context.level++;
+  addTrace(context, 'conditional_evaluate_left', checkStr, {
+    position: getNodePosition(condType.checkType, context.sourceFile),
+  });
+  evaluateTypeNode(condType.checkType, context);
+
+  addTrace(context, 'conditional_evaluate_right', extendsStr, {
+    position: getNodePosition(condType.extendsType, context.sourceFile),
+  });
+  evaluateTypeNode(condType.extendsType, context);
+  context.level--;
+
   // If this conditional has infer, trace the pattern matching
   if (hasInfer) {
     // Log pattern matching start
@@ -655,21 +668,7 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   }
 
   // Non-discriminative or non-union case: standard evaluation
-  // Log left side (check type)
-  context.level++;
-  addTrace(context, 'conditional_evaluate_left', checkStr, {
-    position: getNodePosition(condType.checkType, context.sourceFile),
-  });
-  // Recursively evaluate check type to trace any nested generics
-  evaluateTypeNode(condType.checkType, context);
-
-  // Log right side (extends type)
-  addTrace(context, 'conditional_evaluate_right', extendsStr, {
-    position: getNodePosition(condType.extendsType, context.sourceFile),
-  });
-  // Recursively evaluate extends type to trace any nested generics
-  evaluateTypeNode(condType.extendsType, context);
-  context.level--;
+  // (LHS/RHS already evaluated above before infer block)
 
   // Log comparison operation (check extends extends)
   // Highlight only the comparison part: checkType extends extendsType (without branches)
