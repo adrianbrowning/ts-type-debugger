@@ -345,6 +345,7 @@ export const App: React.FC = () => {
               currentStepIndex={playback.currentStepIndex}
               totalSteps={videoData?.steps.length ?? 0}
               typeAliases={videoData?.typeAliases ?? []}
+              onJumpToStart={playback.jumpToStart}
               onPrevious={playback.previousStep}
               onNext={playback.nextStep}
               onStepInto={playback.stepInto}

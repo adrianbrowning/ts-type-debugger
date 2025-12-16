@@ -15,6 +15,7 @@ type StepDetailsPanelProps = {
   currentStepIndex: number;
   totalSteps: number;
   typeAliases: TypeInfo[];
+  onJumpToStart: () => void;
   onPrevious: () => void;
   onNext: () => void;
   onStepInto: () => void;
@@ -54,6 +55,7 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
   currentStepIndex,
   totalSteps,
   typeAliases,
+  onJumpToStart,
   onPrevious,
   onNext,
   onStepInto,
@@ -132,6 +134,7 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
       <DebugToolbar
         currentStepIndex={currentStepIndex}
         totalSteps={totalSteps}
+        onJumpToStart={onJumpToStart}
         onPrevious={onPrevious}
         onNext={onNext}
         onStepInto={onStepInto}

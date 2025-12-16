@@ -191,6 +191,11 @@ export function usePlayback(videoData: VideoData | null) {
     nextStep();
   }, [nextStep]);
 
+  // Jump to start: go to first step
+  const jumpToStart = useCallback(() => {
+    seekToStep(0);
+  }, [seekToStep]);
+
   return {
     currentStep,
     currentStepIndex: state.currentStepIndex,
@@ -203,6 +208,7 @@ export function usePlayback(videoData: VideoData | null) {
     previousStep,
     setSpeed,
     seekToStep,
+    jumpToStart,
     stepOver,
     stepOut,
     stepInto,

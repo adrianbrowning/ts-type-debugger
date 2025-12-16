@@ -6,7 +6,7 @@ import {checkTypeCondition, evalTypeString, extractInferredBindings} from "./eva
  */
 export interface TraceEntry {
   step: number;
-  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'template_literal_start' | 'template_union_distribute' | 'template_union_member' | 'template_union_member_result' | 'template_span_eval' | 'template_result' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce' | 'infer_pattern_start' | 'infer_pattern_match' | 'infer_binding' | 'infer_pattern_result';
+  type: 'type_alias_start' | 'type_alias_result' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'template_literal_start' | 'template_union_distribute' | 'template_union_member' | 'template_union_member_result' | 'template_span_eval' | 'template_result' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce' | 'infer_pattern_start' | 'infer_pattern_match' | 'infer_binding' | 'infer_pattern_result';
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
@@ -224,7 +224,7 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
   const isSemanticStep = semanticSteps.has(type);
 
   const entry: TraceEntry = {
-    step: context.trace.length + 1,
+    step: context.trace.length,
     type,
     expression,
     level: context.level,
@@ -1205,8 +1205,14 @@ export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Trace
     position: getNodePosition(targetAlias, ast),
   });
 
-  // Start evaluation
-  evaluateTypeNode(targetAlias.type, context);
+  // Start evaluation and capture result
+  const result = evaluateTypeNode(targetAlias.type, context);
+
+  // Add final trace entry with the resolved result
+  addTrace(context, 'type_alias_result', `${typeName} = ${result}`, {
+    position: getNodePosition(targetAlias, ast),
+    result,
+  });
 
   return context.trace;
 }

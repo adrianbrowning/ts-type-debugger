@@ -4,6 +4,7 @@ import { useCssTheme, type Theme } from '../theme.ts';
 type DebugToolbarProps = {
   currentStepIndex: number;
   totalSteps: number;
+  onJumpToStart: () => void;
   onPrevious: () => void;
   onNext: () => void;
   onStepInto: () => void;
@@ -58,6 +59,7 @@ function Separator({ theme }: { theme: Theme }) {
 export function DebugToolbar({
   currentStepIndex,
   totalSteps,
+  onJumpToStart,
   onPrevious,
   onNext,
   onStepInto,
@@ -87,6 +89,9 @@ export function DebugToolbar({
 
   return (
     <div style={containerStyle}>
+      <ToolbarButton label="Jump to Start" disabled={isAtFirstStep} onClick={onJumpToStart} theme={theme}>
+        ⏮
+      </ToolbarButton>
       <ToolbarButton label="Previous" disabled={isAtFirstStep} onClick={onPrevious} theme={theme}>
         ◀
       </ToolbarButton>

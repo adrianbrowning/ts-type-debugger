@@ -77,7 +77,7 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
                 gap: theme.spacing.sm,
               }}
             >
-              <span style={{ color: theme.accent.keyword, flexShrink: 0 }}>{parsed.name}</span>
+              <span style={{ color: theme.accent.primary, flexShrink: 0 }}>{parsed.name}</span>
               <span style={{ color: theme.text.secondary }}>=</span>
               <span style={{ color: theme.text.primary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {parsed.value}

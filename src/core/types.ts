@@ -69,6 +69,7 @@ export type VideoConfig = {
  */
 export const TRACE_TYPE_COLORS: Record<TraceEntry['type'], string> = {
   type_alias_start: '#94A3B8', // slate
+  type_alias_result: '#10B981', // green (final result)
   generic_call: '#3B82F6', // blue
   generic_def: '#8B5CF6', // purple
   generic_result: '#10B981', // green

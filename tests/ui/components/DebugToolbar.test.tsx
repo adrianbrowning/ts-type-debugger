@@ -7,6 +7,7 @@ describe('DebugToolbar Component', () => {
   const defaultProps = {
     currentStepIndex: 5,
     totalSteps: 23,
+    onJumpToStart: vi.fn(),
     onPrevious: vi.fn(),
     onNext: vi.fn(),
     onStepInto: vi.fn(),
@@ -18,6 +19,7 @@ describe('DebugToolbar Component', () => {
   it('renders all navigation buttons', () => {
     render(<DebugToolbar {...defaultProps} />);
 
+    expect(screen.getByRole('button', { name: /jump to start/i })).toBeDefined();
     expect(screen.getByRole('button', { name: /previous/i })).toBeDefined();
     expect(screen.getByRole('button', { name: /next/i })).toBeDefined();
     expect(screen.getByRole('button', { name: /into/i })).toBeDefined();
@@ -29,6 +31,18 @@ describe('DebugToolbar Component', () => {
     render(<DebugToolbar {...defaultProps} />);
 
     expect(screen.getByText(/step 5 \/ 23/i)).toBeDefined();
+  });
+
+  it('calls onJumpToStart when jump to start button clicked', async () => {
+    const user = userEvent.setup();
+    const onJumpToStart = vi.fn();
+
+    render(<DebugToolbar {...defaultProps} onJumpToStart={onJumpToStart} />);
+
+    const jumpButton = screen.getByRole('button', { name: /jump to start/i });
+    await user.click(jumpButton);
+
+    expect(onJumpToStart).toHaveBeenCalledOnce();
   });
 
   it('calls onPrevious when previous button clicked', async () => {
@@ -91,6 +105,13 @@ describe('DebugToolbar Component', () => {
     expect(onStepOut).toHaveBeenCalledOnce();
   });
 
+  it('disables jump to start button when at first step', () => {
+    render(<DebugToolbar {...defaultProps} currentStepIndex={0} />);
+
+    const jumpButton = screen.getByRole('button', { name: /jump to start/i });
+    expect(jumpButton.getAttribute('disabled')).toBe('');
+  });
+
   it('disables previous button when at first step', () => {
     render(<DebugToolbar {...defaultProps} currentStepIndex={0} />);
 
@@ -117,6 +138,13 @@ describe('DebugToolbar Component', () => {
 
     const stepOutButton = screen.getByRole('button', { name: /out/i });
     expect(stepOutButton.getAttribute('disabled')).toBeNull();
+  });
+
+  it('enables jump to start button when not at first step', () => {
+    render(<DebugToolbar {...defaultProps} currentStepIndex={5} />);
+
+    const jumpButton = screen.getByRole('button', { name: /jump to start/i });
+    expect(jumpButton.getAttribute('disabled')).toBeNull();
   });
 
   it('enables previous button when not at first step', () => {
