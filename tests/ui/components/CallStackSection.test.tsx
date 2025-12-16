@@ -53,18 +53,19 @@ describe('CallStackSection Component', () => {
       />
     );
 
-    expect(screen.getByText(/Loop2<"a" \| "b" \| "x">/)).toBeDefined();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
     expect(screen.getByText(/:5/)).toBeDefined();
   });
 
   it('displays nested call stack with proper indentation', () => {
+    // Use generic_call types which are included in CALL_STACK_TYPES
     const steps: VideoTraceStep[] = [
       createMockStep({
         stepIndex: 0,
         original: {
           step: 1,
           type: 'generic_call',
-          expression: 'Loop2<"a" | "b" | "x">',
+          expression: 'Outer<"a" | "b">',
           level: 0,
           position: { start: { line: 5, character: 0 }, end: { line: 5, character: 20 } },
         },
@@ -73,8 +74,8 @@ describe('CallStackSection Component', () => {
         stepIndex: 1,
         original: {
           step: 2,
-          type: 'condition',
-          expression: 'conditional',
+          type: 'generic_call',
+          expression: 'Inner<"x">',
           level: 1,
           position: { start: { line: 8, character: 0 }, end: { line: 8, character: 10 } },
         },
@@ -89,9 +90,9 @@ describe('CallStackSection Component', () => {
       />
     );
 
-    // Both frames should be visible
-    expect(screen.getByText(/Loop2<"a" \| "b" \| "x">/)).toBeDefined();
-    expect(screen.getByText(/conditional/)).toBeDefined();
+    // Both frames should be visible (buildCallStack extracts just type name)
+    expect(screen.getByText(/Outer/)).toBeDefined();
+    expect(screen.getByText(/Inner/)).toBeDefined();
   });
 
   it('calls onNavigateToStep when frame is clicked', async () => {
@@ -129,7 +130,7 @@ describe('CallStackSection Component', () => {
       />
     );
 
-    const frame = screen.getByText(/Loop2<"a" \| "b" \| "x">/);
+    const frame = screen.getByText(/Loop2/);
     await user.click(frame);
 
     expect(onNavigateToStep).toHaveBeenCalledWith(0);
@@ -217,7 +218,7 @@ describe('CallStackSection Component', () => {
       />
     );
 
-    expect(screen.getByText(/Loop2<"a" \| "b" \| "x">/)).toBeDefined();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
     expect(screen.queryByText(/:/)).toBeNull();
   });
 
@@ -235,13 +236,15 @@ describe('CallStackSection Component', () => {
   });
 
   it('displays multi-level nested stack', () => {
+    // buildCallStack only includes CALL_STACK_TYPES: type_alias_start, generic_call, generic_def
+    // So we need to use those types for multi-level nesting
     const steps: VideoTraceStep[] = [
       createMockStep({
         stepIndex: 0,
         original: {
           step: 1,
           type: 'generic_call',
-          expression: 'Loop2<"a">',
+          expression: 'Outer<"a">',
           level: 0,
           position: { start: { line: 5, character: 0 }, end: { line: 5, character: 10 } },
         },
@@ -250,8 +253,8 @@ describe('CallStackSection Component', () => {
         stepIndex: 1,
         original: {
           step: 2,
-          type: 'condition',
-          expression: 'conditional',
+          type: 'generic_call',
+          expression: 'Middle<"a">',
           level: 1,
           position: { start: { line: 8, character: 0 }, end: { line: 8, character: 10 } },
         },
@@ -260,8 +263,8 @@ describe('CallStackSection Component', () => {
         stepIndex: 2,
         original: {
           step: 3,
-          type: 'conditional_evaluate_left',
-          expression: 'T extends "a"',
+          type: 'generic_call',
+          expression: 'Inner<"a">',
           level: 2,
           position: { start: { line: 10, character: 0 }, end: { line: 10, character: 15 } },
         },
@@ -276,22 +279,24 @@ describe('CallStackSection Component', () => {
       />
     );
 
-    expect(screen.getByText(/Loop2<"a">/)).toBeDefined();
-    expect(screen.getByText(/conditional/)).toBeDefined();
-    expect(screen.getByText(/T extends "a"/)).toBeDefined();
+    // All three frames should be visible (buildCallStack extracts just type name from generic_call)
+    expect(screen.getByText(/Outer/)).toBeDefined();
+    expect(screen.getByText(/Middle/)).toBeDefined();
+    expect(screen.getByText(/Inner/)).toBeDefined();
   });
 
   it('handles navigation to frame at different depth', async () => {
     const user = userEvent.setup();
     const onNavigateToStep = vi.fn();
 
+    // Use generic_call types which are included in CALL_STACK_TYPES
     const steps: VideoTraceStep[] = [
       createMockStep({
         stepIndex: 0,
         original: {
           step: 1,
           type: 'generic_call',
-          expression: 'Loop2<"a">',
+          expression: 'Outer<"a">',
           level: 0,
         },
       }),
@@ -299,18 +304,9 @@ describe('CallStackSection Component', () => {
         stepIndex: 1,
         original: {
           step: 2,
-          type: 'condition',
-          expression: 'conditional',
+          type: 'generic_call',
+          expression: 'Inner<"a">',
           level: 1,
-        },
-      }),
-      createMockStep({
-        stepIndex: 2,
-        original: {
-          step: 3,
-          type: 'generic_result',
-          expression: 'result',
-          level: 2,
         },
       }),
     ];
@@ -318,13 +314,13 @@ describe('CallStackSection Component', () => {
     render(
       <CallStackSection
         steps={steps}
-        currentStepIndex={2}
+        currentStepIndex={1}
         onNavigateToStep={onNavigateToStep}
       />
     );
 
     // Click on the root frame
-    const rootFrame = screen.getByText(/Loop2<"a">/);
+    const rootFrame = screen.getByText(/Outer/);
     await user.click(rootFrame);
 
     expect(onNavigateToStep).toHaveBeenCalledWith(0);
