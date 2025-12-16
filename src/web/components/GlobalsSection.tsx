@@ -17,13 +17,24 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
   const theme = useCssTheme();
   const [showAll, setShowAll] = useState(false);
 
-  // Separate used and unused types
-  const usedTypes = typeAliases.filter(t => usedTypeNames.has(t.name));
-  const unusedTypes = typeAliases.filter(t => !usedTypeNames.has(t.name));
+  // Filter out internal types and separate used/unused
+  const filteredAliases = typeAliases.filter(t => !t.name.startsWith('__'));
+  const usedTypes = filteredAliases.filter(t => usedTypeNames.has(t.name));
+  const unusedTypes = filteredAliases.filter(t => !usedTypeNames.has(t.name));
 
   const displayedTypes = showAll ? [...usedTypes, ...unusedTypes] : usedTypes;
-  const badgeCount = showAll ? typeAliases.length : usedTypes.length;
+  const badgeCount = showAll ? filteredAliases.length : usedTypes.length;
   const unusedCount = unusedTypes.length;
+
+  // Extract type name (with generics) and value from full text
+  // e.g., "type Foo<T> = T extends string" -> { name: "Foo<T>", value: "T extends string" }
+  const parseTypeDecl = (text: string): { name: string; value: string } => {
+    const match = text.match(/^type\s+(\w+(?:<[^>]+>)?)\s*=\s*(.+)$/s);
+    if (match) {
+      return { name: match[1], value: match[2].trim() };
+    }
+    return { name: text, value: text };
+  };
 
   const toggleButton = (
     <button
@@ -52,6 +63,7 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
         {displayedTypes.map(type => {
           const isUsed = usedTypeNames.has(type.name);
           const opacity = showAll && !isUsed ? 0.5 : 1;
+          const parsed = parseTypeDecl(type.text);
           return (
             <div
               key={type.name}
@@ -59,12 +71,17 @@ export const GlobalsSection: React.FC<GlobalsSectionProps> = ({
               style={{
                 fontFamily: 'monospace',
                 fontSize: theme.fontSize.sm,
-                color: theme.text.primary,
                 cursor: onTypeClick ? 'pointer' : 'default',
                 opacity,
+                display: 'flex',
+                gap: theme.spacing.sm,
               }}
             >
-              {type.name}
+              <span style={{ color: theme.accent.keyword, flexShrink: 0 }}>{parsed.name}</span>
+              <span style={{ color: theme.text.secondary }}>=</span>
+              <span style={{ color: theme.text.primary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {parsed.value}
+              </span>
             </div>
           );
         })}

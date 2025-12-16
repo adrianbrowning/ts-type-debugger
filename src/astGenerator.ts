@@ -1,12 +1,12 @@
 import ts from 'typescript';
-import {checkTypeCondition, evalTypeString} from "./eval_local.ts";
+import {checkTypeCondition, evalTypeString, extractInferredBindings} from "./eval_local.ts";
 
 /**
  * Represents a single step in type evaluation trace
  */
 export interface TraceEntry {
   step: number;
-  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'template_literal_start' | 'template_union_distribute' | 'template_union_member' | 'template_union_member_result' | 'template_span_eval' | 'template_result' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce';
+  type: 'type_alias_start' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'template_literal_start' | 'template_union_distribute' | 'template_union_member' | 'template_union_member_result' | 'template_span_eval' | 'template_result' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce' | 'infer_pattern_start' | 'infer_pattern_match' | 'infer_binding' | 'infer_pattern_result';
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
@@ -162,6 +162,8 @@ interface EvalContext {
   currentUnionMember?: string; // Track which union member is being evaluated
   currentUnionResults?: string; // Track accumulating union results
   evaluatingArgs?: Set<string>; // Track type arguments being evaluated to prevent recursion
+  inferredBindings?: Map<string, string>; // Track inferred type variables during pattern matching
+  currentInferPattern?: string; // Track current pattern being matched
 }
 
 /**
@@ -178,6 +180,35 @@ function getNodePosition(node: ts.Node, sourceFile: ts.SourceFile): { start: { l
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Find all infer type nodes in a type node tree
+ * Returns array of infer variable names with their positions
+ */
+function findInferTypes(node: ts.TypeNode, sourceFile: ts.SourceFile): Array<{
+  name: string;
+  position: ReturnType<typeof getNodePosition>;
+  constraint?: string;
+}> {
+  const infers: Array<{ name: string; position: ReturnType<typeof getNodePosition>; constraint?: string }> = [];
+
+  function visit(n: ts.Node) {
+    if (n.kind === ts.SyntaxKind.InferType) {
+      const inferNode = n as ts.InferTypeNode;
+      const name = inferNode.typeParameter.name.text;
+      const constraint = inferNode.typeParameter.constraint?.getText(sourceFile);
+      infers.push({
+        name,
+        position: getNodePosition(n, sourceFile),
+        constraint,
+      });
+    }
+    ts.forEachChild(n, visit);
+  }
+
+  visit(node);
+  return infers;
 }
 
 /**
@@ -406,10 +437,73 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   const trueStr = condType.trueType.getText(context.sourceFile);
   const falseStr = condType.falseType.getText(context.sourceFile);
 
+  // Detect infer types in extends clause
+  const inferTypes = findInferTypes(condType.extendsType, context.sourceFile);
+  const hasInfer = inferTypes.length > 0;
+
+  // Track inferred bindings for cleanup later
+  let inferBindingsToCleanup: string[] = [];
+  // Track if infer pattern matched (used to skip checkTypeCondition)
+  let inferPatternMatched: boolean | undefined = undefined;
+
   // Log condition entry with position of the entire conditional expression
   addTrace(context, 'condition', `${checkStr} extends ${extendsStr} ? ${trueStr} : ${falseStr}`, {
     position: getNodePosition(condType, context.sourceFile),
   });
+
+  // If this conditional has infer, trace the pattern matching
+  if (hasInfer) {
+    // Log pattern matching start
+    addTrace(context, 'infer_pattern_start', `Pattern: ${extendsStr}`, {
+      position: getNodePosition(condType.extendsType, context.sourceFile),
+    });
+
+    // Get the resolved check value (substitute parameters)
+    const resolvedCheck = substituteParameters(checkStr, context.parameters);
+
+    // Extract inferred bindings
+    const bindings = extractInferredBindings(
+      resolvedCheck,
+      extendsStr,
+      inferTypes.map(i => i.name),
+      context.sourceFile.text
+    );
+
+    if (bindings) {
+      inferPatternMatched = true;
+      // Log successful pattern match
+      addTrace(context, 'infer_pattern_match', `${resolvedCheck} matches ${extendsStr}`, {
+        position: getNodePosition(condType.extendsType, context.sourceFile),
+        result: 'true',
+      });
+
+      // Log each inferred binding
+      for (const inferType of inferTypes) {
+        const value = bindings.get(inferType.name);
+        if (value !== undefined) {
+          addTrace(context, 'infer_binding', `${inferType.name} = ${value}`, {
+            position: inferType.position,
+            result: value,
+          });
+
+          // Inject binding into parameters for true branch
+          context.parameters.set(inferType.name, value);
+          inferBindingsToCleanup.push(inferType.name);
+        }
+      }
+
+      // Store bindings in context for visualization
+      context.inferredBindings = bindings;
+      context.currentInferPattern = extendsStr;
+    } else {
+      inferPatternMatched = false;
+      // Log failed pattern match
+      addTrace(context, 'infer_pattern_match', `${resolvedCheck} does not match ${extendsStr}`, {
+        position: getNodePosition(condType.extendsType, context.sourceFile),
+        result: 'false',
+      });
+    }
+  }
 
   // Check if this conditional should distribute over a union
   // First check for distributive (naked type parameter with union value)
@@ -542,6 +636,20 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
       const finalResult = context.currentUnionResults || results.join(' | ');
       context.currentUnionMember = oldUnionMember;
       context.currentUnionResults = oldUnionResults;
+
+      // Clean up inferred bindings and log result
+      if (hasInfer && inferBindingsToCleanup.length > 0) {
+        addTrace(context, 'infer_pattern_result', finalResult, {
+          position: getNodePosition(condType, context.sourceFile),
+          result: finalResult,
+        });
+        for (const name of inferBindingsToCleanup) {
+          context.parameters.delete(name);
+        }
+        context.inferredBindings = undefined;
+        context.currentInferPattern = undefined;
+      }
+
       return finalResult;
     }
   }
@@ -576,7 +684,10 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
     },
   });
 
-  const isTruthy = checkTypeCondition(substituteParameters(checkStr, context.parameters ), substituteParameters(extendsStr, context.parameters ), context.sourceFile.text)
+  // Use infer pattern match result if available, otherwise call checkTypeCondition
+  const isTruthy = inferPatternMatched !== undefined
+    ? inferPatternMatched
+    : checkTypeCondition(substituteParameters(checkStr, context.parameters ), substituteParameters(extendsStr, context.parameters ), context.sourceFile.text)
 
   // Get branch node for highlighting
   const branchNode = isTruthy ? condType.trueType : condType.falseType;
@@ -598,11 +709,20 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
     : evaluateTypeNode(condType.falseType, context);
   context.level--;
 
-  // Log final result assignment (highlight the type alias name)
-  if (context.currentNode) {
-    addTrace(context, 'result_assignment', result, {
-      position: getNodePosition(context.currentNode, context.sourceFile),
+  // Note: result_assignment was removed to avoid duplicate steps
+  // The generic_result step already captures the final result
+
+  // Clean up inferred bindings and log result
+  if (hasInfer && inferBindingsToCleanup.length > 0) {
+    addTrace(context, 'infer_pattern_result', result, {
+      position: getNodePosition(condType, context.sourceFile),
+      result,
     });
+    for (const name of inferBindingsToCleanup) {
+      context.parameters.delete(name);
+    }
+    context.inferredBindings = undefined;
+    context.currentInferPattern = undefined;
   }
 
   return result;
@@ -618,6 +738,14 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
  */
 export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode, context: EvalContext): string {
   const text = templateType.getText(context.sourceFile);
+
+  // Check if this template contains infer types (pattern matching context)
+  // In pattern context, we don't evaluate ${infer X} as regular interpolations
+  const inferTypes = findInferTypes(templateType, context.sourceFile);
+  if (inferTypes.length > 0) {
+    // This is a pattern template, return raw pattern string without evaluation
+    return text;
+  }
 
   // Log template literal start
   addTrace(context, 'template_literal_start', text, {

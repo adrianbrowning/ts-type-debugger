@@ -430,9 +430,94 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "stepIndex": 10,
   },
   {
-    "color": "#EC4899",
+    "color": "#9333EA",
     "duration": 30,
     "endFrame": 360,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "Pattern: \`\${infer head}.\${infer tail}\`",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "step": 12,
+      "type": "infer_pattern_start",
+    },
+    "startFrame": 330,
+    "stepIndex": 11,
+  },
+  {
+    "color": "#22C55E",
+    "duration": 30,
+    "endFrame": 390,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": """ does not match \`\${infer head}.\${infer tail}\`",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "result": "false",
+      "step": 13,
+      "type": "infer_pattern_match",
+    },
+    "startFrame": 360,
+    "stepIndex": 12,
+  },
+  {
+    "color": "#EC4899",
+    "duration": 30,
+    "endFrame": 420,
     "highlightLines": {
       "chars": {
         "end": 10,
@@ -465,92 +550,8 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 12,
-      "type": "conditional_evaluate_left",
-    },
-    "startFrame": 330,
-    "stepIndex": 11,
-  },
-  {
-    "color": "#EC4899",
-    "duration": 30,
-    "endFrame": 390,
-    "highlightLines": {
-      "chars": {
-        "end": 48,
-        "start": 19,
-      },
-      "end": 15,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "\`\${infer head}.\${infer tail}\`",
-      "level": 4,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 48,
-          "line": 16,
-        },
-        "start": {
-          "character": 19,
-          "line": 16,
-        },
-      },
-      "step": 13,
-      "type": "conditional_evaluate_right",
-    },
-    "startFrame": 360,
-    "stepIndex": 12,
-  },
-  {
-    "color": "#06B6D4",
-    "duration": 30,
-    "endFrame": 420,
-    "highlightLines": {
-      "chars": {
-        "end": 48,
-        "start": 19,
-      },
-      "end": 15,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "\`\${infer head}.\${infer tail}\`",
-      "level": 4,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 48,
-          "line": 16,
-        },
-        "start": {
-          "character": 19,
-          "line": 16,
-        },
-      },
       "step": 14,
-      "type": "template_literal_start",
+      "type": "conditional_evaluate_left",
     },
     "startFrame": 390,
     "stepIndex": 13,
@@ -561,90 +562,6 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "endFrame": 450,
     "highlightLines": {
       "chars": {
-        "end": 32,
-        "start": 22,
-      },
-      "end": 15,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "\${infer head}",
-      "level": 5,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 32,
-          "line": 16,
-        },
-        "start": {
-          "character": 22,
-          "line": 16,
-        },
-      },
-      "step": 15,
-      "type": "template_span_eval",
-    },
-    "startFrame": 420,
-    "stepIndex": 14,
-  },
-  {
-    "color": "#EC4899",
-    "duration": 30,
-    "endFrame": 480,
-    "highlightLines": {
-      "chars": {
-        "end": 46,
-        "start": 36,
-      },
-      "end": 15,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "\${infer tail}",
-      "level": 5,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 46,
-          "line": 16,
-        },
-        "start": {
-          "character": 36,
-          "line": 16,
-        },
-      },
-      "step": 16,
-      "type": "template_span_eval",
-    },
-    "startFrame": 450,
-    "stepIndex": 15,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 510,
-    "highlightLines": {
-      "chars": {
         "end": 48,
         "start": 19,
       },
@@ -655,7 +572,7 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "original": {
       "currentUnionMember": undefined,
       "currentUnionResults": undefined,
-      "expression": ""head.tail"",
+      "expression": "\`\${infer head}.\${infer tail}\`",
       "level": 4,
       "parameters": {
         "o": "{
@@ -675,17 +592,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "result": ""head.tail"",
-      "step": 17,
-      "type": "template_result",
+      "step": 15,
+      "type": "conditional_evaluate_right",
     },
-    "startFrame": 480,
-    "stepIndex": 16,
+    "startFrame": 420,
+    "stepIndex": 14,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 540,
+    "endFrame": 480,
     "highlightLines": {
       "chars": {
         "end": 48,
@@ -718,16 +634,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 18,
+      "step": 16,
       "type": "conditional_comparison",
     },
-    "startFrame": 510,
-    "stepIndex": 17,
+    "startFrame": 450,
+    "stepIndex": 15,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 570,
+    "endFrame": 510,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -757,16 +673,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "false",
-      "step": 19,
+      "step": 17,
       "type": "conditional_evaluation",
     },
-    "startFrame": 540,
-    "stepIndex": 18,
+    "startFrame": 480,
+    "stepIndex": 16,
   },
   {
     "color": "#EF4444",
     "duration": 30,
-    "endFrame": 600,
+    "endFrame": 540,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -799,16 +715,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 20,
+      "step": 18,
       "type": "branch_false",
     },
-    "startFrame": 570,
-    "stepIndex": 19,
+    "startFrame": 510,
+    "stepIndex": 17,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 630,
+    "endFrame": 570,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -839,16 +755,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 21,
+      "step": 19,
       "type": "condition",
     },
-    "startFrame": 600,
-    "stepIndex": 20,
+    "startFrame": 540,
+    "stepIndex": 18,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 660,
+    "endFrame": 600,
     "highlightLines": {
       "chars": {
         "end": 14,
@@ -881,16 +797,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 22,
+      "step": 20,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 630,
-    "stepIndex": 21,
+    "startFrame": 570,
+    "stepIndex": 19,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 690,
+    "endFrame": 630,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -923,16 +839,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 23,
+      "step": 21,
       "type": "conditional_evaluate_right",
     },
-    "startFrame": 660,
-    "stepIndex": 22,
+    "startFrame": 600,
+    "stepIndex": 20,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 720,
+    "endFrame": 660,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -974,16 +890,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 24,
+      "step": 22,
       "type": "generic_call",
     },
-    "startFrame": 690,
-    "stepIndex": 23,
+    "startFrame": 630,
+    "stepIndex": 21,
   },
   {
     "color": "#8B5CF6",
     "duration": 30,
-    "endFrame": 750,
+    "endFrame": 690,
     "highlightLines": {
       "chars": {
         "end": 76,
@@ -1014,16 +930,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 25,
+      "step": 23,
       "type": "generic_def",
     },
-    "startFrame": 720,
-    "stepIndex": 24,
+    "startFrame": 660,
+    "stepIndex": 22,
   },
   {
     "color": "#06B6D4",
     "duration": 30,
-    "endFrame": 780,
+    "endFrame": 720,
     "highlightLines": {
       "chars": {
         "end": 75,
@@ -1056,16 +972,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 26,
+      "step": 24,
       "type": "indexed_access",
     },
-    "startFrame": 750,
-    "stepIndex": 25,
+    "startFrame": 690,
+    "stepIndex": 23,
   },
   {
     "color": "#8B5CF6",
     "duration": 30,
-    "endFrame": 810,
+    "endFrame": 750,
     "highlightLines": {
       "chars": {
         "end": 66,
@@ -1098,16 +1014,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 27,
+      "step": 25,
       "type": "mapped_type_start",
     },
-    "startFrame": 780,
-    "stepIndex": 26,
+    "startFrame": 720,
+    "stepIndex": 24,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 840,
+    "endFrame": 780,
     "highlightLines": {
       "chars": {
         "end": 34,
@@ -1140,16 +1056,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 28,
+      "step": 26,
       "type": "mapped_type_constraint",
     },
-    "startFrame": 810,
-    "stepIndex": 27,
+    "startFrame": 750,
+    "stepIndex": 25,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 870,
+    "endFrame": 810,
     "highlightLines": {
       "chars": {
         "end": 66,
@@ -1183,16 +1099,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": ""User" | "Post"",
-      "step": 29,
+      "step": 27,
       "type": "mapped_type_constraint_result",
     },
-    "startFrame": 840,
-    "stepIndex": 28,
+    "startFrame": 780,
+    "stepIndex": 26,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 900,
+    "endFrame": 840,
     "highlightLines": {
       "chars": {
         "end": 34,
@@ -1226,16 +1142,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 30,
+      "step": 28,
       "type": "map_iteration",
     },
-    "startFrame": 870,
-    "stepIndex": 29,
+    "startFrame": 810,
+    "stepIndex": 27,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 930,
+    "endFrame": 870,
     "highlightLines": {
       "chars": {
         "end": 65,
@@ -1269,16 +1185,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 31,
+      "step": 29,
       "type": "condition",
     },
-    "startFrame": 900,
-    "stepIndex": 30,
+    "startFrame": 840,
+    "stepIndex": 28,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 960,
+    "endFrame": 900,
     "highlightLines": {
       "chars": {
         "end": 38,
@@ -1312,16 +1228,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 32,
+      "step": 30,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 930,
-    "stepIndex": 31,
+    "startFrame": 870,
+    "stepIndex": 29,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 990,
+    "endFrame": 930,
     "highlightLines": {
       "chars": {
         "end": 53,
@@ -1355,16 +1271,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 33,
+      "step": 31,
       "type": "conditional_evaluate_right",
     },
-    "startFrame": 960,
-    "stepIndex": 32,
+    "startFrame": 900,
+    "stepIndex": 30,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1020,
+    "endFrame": 960,
     "highlightLines": {
       "chars": {
         "end": 53,
@@ -1398,16 +1314,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 34,
+      "step": 32,
       "type": "conditional_comparison",
     },
-    "startFrame": 990,
-    "stepIndex": 33,
+    "startFrame": 930,
+    "stepIndex": 31,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1050,
+    "endFrame": 990,
     "highlightLines": {
       "chars": {
         "end": 57,
@@ -1442,16 +1358,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "true",
-      "step": 35,
+      "step": 33,
       "type": "conditional_evaluation",
     },
-    "startFrame": 1020,
-    "stepIndex": 34,
+    "startFrame": 960,
+    "stepIndex": 32,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 1080,
+    "endFrame": 1020,
     "highlightLines": {
       "chars": {
         "end": 57,
@@ -1485,59 +1401,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 36,
+      "step": 34,
       "type": "branch_true",
     },
-    "startFrame": 1050,
-    "stepIndex": 35,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 1110,
-    "highlightLines": {
-      "chars": {
-        "end": 65,
-        "start": 37,
-      },
-      "end": 6,
-      "start": 6,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": ""User"",
-      "level": 8,
-      "parameters": {
-        "k": ""User"",
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 65,
-          "line": 7,
-        },
-        "start": {
-          "character": 37,
-          "line": 7,
-        },
-      },
-      "step": 37,
-      "type": "result_assignment",
-    },
-    "startFrame": 1080,
-    "stepIndex": 36,
+    "startFrame": 990,
+    "stepIndex": 33,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 1140,
+    "endFrame": 1050,
     "highlightLines": {
       "chars": {
         "end": 34,
@@ -1571,16 +1444,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 38,
+      "step": 35,
       "type": "map_iteration",
     },
-    "startFrame": 1110,
-    "stepIndex": 37,
+    "startFrame": 1020,
+    "stepIndex": 34,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1170,
+    "endFrame": 1080,
     "highlightLines": {
       "chars": {
         "end": 65,
@@ -1614,16 +1487,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 39,
+      "step": 36,
       "type": "condition",
     },
-    "startFrame": 1140,
-    "stepIndex": 38,
+    "startFrame": 1050,
+    "stepIndex": 35,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 1200,
+    "endFrame": 1110,
     "highlightLines": {
       "chars": {
         "end": 38,
@@ -1657,16 +1530,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 40,
+      "step": 37,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 1170,
-    "stepIndex": 39,
+    "startFrame": 1080,
+    "stepIndex": 36,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 1230,
+    "endFrame": 1140,
     "highlightLines": {
       "chars": {
         "end": 53,
@@ -1700,16 +1573,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 41,
+      "step": 38,
       "type": "conditional_evaluate_right",
     },
-    "startFrame": 1200,
-    "stepIndex": 40,
+    "startFrame": 1110,
+    "stepIndex": 37,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1260,
+    "endFrame": 1170,
     "highlightLines": {
       "chars": {
         "end": 53,
@@ -1743,16 +1616,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 42,
+      "step": 39,
       "type": "conditional_comparison",
     },
-    "startFrame": 1230,
-    "stepIndex": 41,
+    "startFrame": 1140,
+    "stepIndex": 38,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1290,
+    "endFrame": 1200,
     "highlightLines": {
       "chars": {
         "end": 57,
@@ -1787,16 +1660,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "true",
-      "step": 43,
+      "step": 40,
       "type": "conditional_evaluation",
     },
-    "startFrame": 1260,
-    "stepIndex": 42,
+    "startFrame": 1170,
+    "stepIndex": 39,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 1320,
+    "endFrame": 1230,
     "highlightLines": {
       "chars": {
         "end": 57,
@@ -1830,59 +1703,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 44,
+      "step": 41,
       "type": "branch_true",
     },
-    "startFrame": 1290,
-    "stepIndex": 43,
+    "startFrame": 1200,
+    "stepIndex": 40,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 1350,
-    "highlightLines": {
-      "chars": {
-        "end": 65,
-        "start": 37,
-      },
-      "end": 6,
-      "start": 6,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": ""Post"",
-      "level": 8,
-      "parameters": {
-        "k": ""Post"",
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 65,
-          "line": 7,
-        },
-        "start": {
-          "character": 37,
-          "line": 7,
-        },
-      },
-      "step": 45,
-      "type": "result_assignment",
-    },
-    "startFrame": 1320,
-    "stepIndex": 44,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 1380,
+    "endFrame": 1260,
     "highlightLines": {
       "chars": {
         "end": 66,
@@ -1916,16 +1746,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "{"\\"User\\"":"\\"User\\"","\\"Post\\"":"\\"Post\\""}",
-      "step": 46,
+      "step": 42,
       "type": "mapped_type_result",
     },
-    "startFrame": 1350,
-    "stepIndex": 45,
+    "startFrame": 1230,
+    "stepIndex": 41,
   },
   {
     "color": "#8B5CF6",
     "duration": 30,
-    "endFrame": 1410,
+    "endFrame": 1290,
     "highlightLines": {
       "chars": {
         "end": 66,
@@ -1959,16 +1789,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": ""User" | "Post"",
-      "step": 47,
+      "step": 43,
       "type": "mapped_type_end",
     },
-    "startFrame": 1380,
-    "stepIndex": 46,
+    "startFrame": 1260,
+    "stepIndex": 42,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 1440,
+    "endFrame": 1320,
     "highlightLines": {
       "chars": {
         "end": 75,
@@ -2002,16 +1832,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": ""User" | "Post"",
-      "step": 48,
+      "step": 44,
       "type": "indexed_access_result",
     },
-    "startFrame": 1410,
-    "stepIndex": 47,
+    "startFrame": 1290,
+    "stepIndex": 43,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 1470,
+    "endFrame": 1350,
     "highlightLines": {
       "chars": {
         "end": 76,
@@ -2043,16 +1873,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": ""User" | "Post"",
-      "step": 49,
+      "step": 45,
       "type": "generic_result",
     },
-    "startFrame": 1440,
-    "stepIndex": 48,
+    "startFrame": 1320,
+    "stepIndex": 44,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1500,
+    "endFrame": 1380,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -2085,16 +1915,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 50,
+      "step": 46,
       "type": "conditional_comparison",
     },
-    "startFrame": 1470,
-    "stepIndex": 49,
+    "startFrame": 1350,
+    "stepIndex": 45,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1530,
+    "endFrame": 1410,
     "highlightLines": {
       "chars": {
         "end": 17,
@@ -2128,16 +1958,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "false",
-      "step": 51,
+      "step": 47,
       "type": "conditional_evaluation",
     },
-    "startFrame": 1500,
-    "stepIndex": 50,
+    "startFrame": 1380,
+    "stepIndex": 46,
   },
   {
     "color": "#EF4444",
     "duration": 30,
-    "endFrame": 1560,
+    "endFrame": 1440,
     "highlightLines": {
       "chars": {
         "end": 17,
@@ -2170,92 +2000,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 24,
         },
       },
-      "step": 52,
+      "step": 48,
       "type": "branch_false",
     },
-    "startFrame": 1530,
-    "stepIndex": 51,
+    "startFrame": 1410,
+    "stepIndex": 47,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 1590,
-    "highlightLines": {
-      "end": 23,
-      "start": 19,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "never",
-      "level": 4,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 17,
-          "line": 24,
-        },
-        "start": {
-          "character": 10,
-          "line": 20,
-        },
-      },
-      "step": 53,
-      "type": "result_assignment",
-    },
-    "startFrame": 1560,
-    "stepIndex": 52,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 1620,
-    "highlightLines": {
-      "end": 23,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "never",
-      "level": 3,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 17,
-          "line": 24,
-        },
-        "start": {
-          "character": 6,
-          "line": 16,
-        },
-      },
-      "step": 54,
-      "type": "result_assignment",
-    },
-    "startFrame": 1590,
-    "stepIndex": 53,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 1650,
+    "endFrame": 1470,
     "highlightLines": {
       "end": 23,
       "start": 14,
@@ -2285,16 +2039,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "never",
-      "step": 55,
+      "step": 49,
       "type": "generic_result",
     },
-    "startFrame": 1620,
-    "stepIndex": 54,
+    "startFrame": 1440,
+    "stepIndex": 48,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1680,
+    "endFrame": 1500,
     "highlightLines": {
       "chars": {
         "end": 82,
@@ -2322,16 +2076,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 25,
         },
       },
-      "step": 56,
+      "step": 50,
       "type": "conditional_comparison",
     },
-    "startFrame": 1650,
-    "stepIndex": 55,
+    "startFrame": 1470,
+    "stepIndex": 49,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1710,
+    "endFrame": 1530,
     "highlightLines": {
       "chars": {
         "end": 38,
@@ -2360,16 +2114,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "false",
-      "step": 57,
+      "step": 51,
       "type": "conditional_evaluation",
     },
-    "startFrame": 1680,
-    "stepIndex": 56,
+    "startFrame": 1500,
+    "stepIndex": 50,
   },
   {
     "color": "#EF4444",
     "duration": 30,
-    "endFrame": 1740,
+    "endFrame": 1560,
     "highlightLines": {
       "chars": {
         "end": 38,
@@ -2397,16 +2151,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 27,
         },
       },
-      "step": 58,
+      "step": 52,
       "type": "branch_false",
     },
-    "startFrame": 1710,
-    "stepIndex": 57,
+    "startFrame": 1530,
+    "stepIndex": 51,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 1770,
+    "endFrame": 1590,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -2435,16 +2189,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 27,
         },
       },
-      "step": 59,
+      "step": 53,
       "type": "generic_call",
     },
-    "startFrame": 1740,
-    "stepIndex": 58,
+    "startFrame": 1560,
+    "stepIndex": 52,
   },
   {
     "color": "#6366F1",
     "duration": 30,
-    "endFrame": 1800,
+    "endFrame": 1620,
     "highlightLines": {
       "end": 5,
       "start": 2,
@@ -2471,16 +2225,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 3,
         },
       },
-      "step": 60,
+      "step": 54,
       "type": "alias_reference",
     },
-    "startFrame": 1770,
-    "stepIndex": 59,
+    "startFrame": 1590,
+    "stepIndex": 53,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 1830,
+    "endFrame": 1650,
     "highlightLines": {
       "chars": {
         "end": 38,
@@ -2518,16 +2272,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 27,
         },
       },
-      "step": 61,
+      "step": 55,
       "type": "generic_call",
     },
-    "startFrame": 1800,
-    "stepIndex": 60,
+    "startFrame": 1620,
+    "stepIndex": 54,
   },
   {
     "color": "#8B5CF6",
     "duration": 30,
-    "endFrame": 1860,
+    "endFrame": 1680,
     "highlightLines": {
       "end": 23,
       "start": 14,
@@ -2565,16 +2319,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 15,
         },
       },
-      "step": 62,
+      "step": 56,
       "type": "generic_def",
     },
-    "startFrame": 1830,
-    "stepIndex": 61,
+    "startFrame": 1650,
+    "stepIndex": 55,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 1890,
+    "endFrame": 1710,
     "highlightLines": {
       "end": 23,
       "start": 15,
@@ -2609,16 +2363,101 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 63,
+      "step": 57,
       "type": "condition",
     },
-    "startFrame": 1860,
-    "stepIndex": 62,
+    "startFrame": 1680,
+    "stepIndex": 56,
+  },
+  {
+    "color": "#9333EA",
+    "duration": 30,
+    "endFrame": 1740,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": "Pattern: \`\${infer head}.\${infer tail}\`",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "step": 58,
+      "type": "infer_pattern_start",
+    },
+    "startFrame": 1710,
+    "stepIndex": 57,
+  },
+  {
+    "color": "#22C55E",
+    "duration": 30,
+    "endFrame": 1770,
+    "highlightLines": {
+      "chars": {
+        "end": 48,
+        "start": 19,
+      },
+      "end": 15,
+      "start": 15,
+    },
+    "isHighlight": true,
+    "original": {
+      "currentUnionMember": undefined,
+      "currentUnionResults": undefined,
+      "expression": """ does not match \`\${infer head}.\${infer tail}\`",
+      "level": 3,
+      "parameters": {
+        "o": "{
+      User: { id: number; name: string };
+      Post: { id: number; title: string };
+    }",
+        "path": """",
+        "prefix": """",
+      },
+      "position": {
+        "end": {
+          "character": 48,
+          "line": 16,
+        },
+        "start": {
+          "character": 19,
+          "line": 16,
+        },
+      },
+      "result": "false",
+      "step": 59,
+      "type": "infer_pattern_match",
+    },
+    "startFrame": 1740,
+    "stepIndex": 58,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 1920,
+    "endFrame": 1800,
     "highlightLines": {
       "chars": {
         "end": 10,
@@ -2651,16 +2490,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 64,
+      "step": 60,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 1890,
-    "stepIndex": 63,
+    "startFrame": 1770,
+    "stepIndex": 59,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 1950,
+    "endFrame": 1830,
     "highlightLines": {
       "chars": {
         "end": 48,
@@ -2693,185 +2532,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 65,
+      "step": 61,
       "type": "conditional_evaluate_right",
     },
-    "startFrame": 1920,
-    "stepIndex": 64,
-  },
-  {
-    "color": "#06B6D4",
-    "duration": 30,
-    "endFrame": 1980,
-    "highlightLines": {
-      "chars": {
-        "end": 48,
-        "start": 19,
-      },
-      "end": 15,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "\`\${infer head}.\${infer tail}\`",
-      "level": 4,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 48,
-          "line": 16,
-        },
-        "start": {
-          "character": 19,
-          "line": 16,
-        },
-      },
-      "step": 66,
-      "type": "template_literal_start",
-    },
-    "startFrame": 1950,
-    "stepIndex": 65,
-  },
-  {
-    "color": "#EC4899",
-    "duration": 30,
-    "endFrame": 2010,
-    "highlightLines": {
-      "chars": {
-        "end": 32,
-        "start": 22,
-      },
-      "end": 15,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "\${infer head}",
-      "level": 5,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 32,
-          "line": 16,
-        },
-        "start": {
-          "character": 22,
-          "line": 16,
-        },
-      },
-      "step": 67,
-      "type": "template_span_eval",
-    },
-    "startFrame": 1980,
-    "stepIndex": 66,
-  },
-  {
-    "color": "#EC4899",
-    "duration": 30,
-    "endFrame": 2040,
-    "highlightLines": {
-      "chars": {
-        "end": 46,
-        "start": 36,
-      },
-      "end": 15,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "\${infer tail}",
-      "level": 5,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 46,
-          "line": 16,
-        },
-        "start": {
-          "character": 36,
-          "line": 16,
-        },
-      },
-      "step": 68,
-      "type": "template_span_eval",
-    },
-    "startFrame": 2010,
-    "stepIndex": 67,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 2070,
-    "highlightLines": {
-      "chars": {
-        "end": 48,
-        "start": 19,
-      },
-      "end": 15,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": ""head.tail"",
-      "level": 4,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 48,
-          "line": 16,
-        },
-        "start": {
-          "character": 19,
-          "line": 16,
-        },
-      },
-      "result": ""head.tail"",
-      "step": 69,
-      "type": "template_result",
-    },
-    "startFrame": 2040,
-    "stepIndex": 68,
+    "startFrame": 1800,
+    "stepIndex": 60,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2100,
+    "endFrame": 1860,
     "highlightLines": {
       "chars": {
         "end": 48,
@@ -2904,16 +2574,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 16,
         },
       },
-      "step": 70,
+      "step": 62,
       "type": "conditional_comparison",
     },
-    "startFrame": 2070,
-    "stepIndex": 69,
+    "startFrame": 1830,
+    "stepIndex": 61,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2130,
+    "endFrame": 1890,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -2943,16 +2613,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "false",
-      "step": 71,
+      "step": 63,
       "type": "conditional_evaluation",
     },
-    "startFrame": 2100,
-    "stepIndex": 70,
+    "startFrame": 1860,
+    "stepIndex": 62,
   },
   {
     "color": "#EF4444",
     "duration": 30,
-    "endFrame": 2160,
+    "endFrame": 1920,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -2985,16 +2655,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 72,
+      "step": 64,
       "type": "branch_false",
     },
-    "startFrame": 2130,
-    "stepIndex": 71,
+    "startFrame": 1890,
+    "stepIndex": 63,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2190,
+    "endFrame": 1950,
     "highlightLines": {
       "end": 23,
       "start": 19,
@@ -3025,16 +2695,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 73,
+      "step": 65,
       "type": "condition",
     },
-    "startFrame": 2160,
-    "stepIndex": 72,
+    "startFrame": 1920,
+    "stepIndex": 64,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 2220,
+    "endFrame": 1980,
     "highlightLines": {
       "chars": {
         "end": 14,
@@ -3067,16 +2737,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 74,
+      "step": 66,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 2190,
-    "stepIndex": 73,
+    "startFrame": 1950,
+    "stepIndex": 65,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 2250,
+    "endFrame": 2010,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -3109,16 +2779,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 75,
+      "step": 67,
       "type": "conditional_evaluate_right",
     },
-    "startFrame": 2220,
-    "stepIndex": 74,
+    "startFrame": 1980,
+    "stepIndex": 66,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 2280,
+    "endFrame": 2040,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -3160,16 +2830,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 76,
+      "step": 68,
       "type": "generic_call",
     },
-    "startFrame": 2250,
-    "stepIndex": 75,
+    "startFrame": 2010,
+    "stepIndex": 67,
   },
   {
     "color": "#8B5CF6",
     "duration": 30,
-    "endFrame": 2310,
+    "endFrame": 2070,
     "highlightLines": {
       "chars": {
         "end": 76,
@@ -3200,16 +2870,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 77,
+      "step": 69,
       "type": "generic_def",
     },
-    "startFrame": 2280,
-    "stepIndex": 76,
+    "startFrame": 2040,
+    "stepIndex": 68,
   },
   {
     "color": "#06B6D4",
     "duration": 30,
-    "endFrame": 2340,
+    "endFrame": 2100,
     "highlightLines": {
       "chars": {
         "end": 75,
@@ -3242,16 +2912,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 78,
+      "step": 70,
       "type": "indexed_access",
     },
-    "startFrame": 2310,
-    "stepIndex": 77,
+    "startFrame": 2070,
+    "stepIndex": 69,
   },
   {
     "color": "#8B5CF6",
     "duration": 30,
-    "endFrame": 2370,
+    "endFrame": 2130,
     "highlightLines": {
       "chars": {
         "end": 66,
@@ -3284,16 +2954,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 79,
+      "step": 71,
       "type": "mapped_type_start",
     },
-    "startFrame": 2340,
-    "stepIndex": 78,
+    "startFrame": 2100,
+    "stepIndex": 70,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2400,
+    "endFrame": 2160,
     "highlightLines": {
       "chars": {
         "end": 34,
@@ -3326,16 +2996,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 80,
+      "step": 72,
       "type": "mapped_type_constraint",
     },
-    "startFrame": 2370,
-    "stepIndex": 79,
+    "startFrame": 2130,
+    "stepIndex": 71,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2430,
+    "endFrame": 2190,
     "highlightLines": {
       "chars": {
         "end": 66,
@@ -3369,16 +3039,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": ""User" | "Post"",
-      "step": 81,
+      "step": 73,
       "type": "mapped_type_constraint_result",
     },
-    "startFrame": 2400,
-    "stepIndex": 80,
+    "startFrame": 2160,
+    "stepIndex": 72,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 2460,
+    "endFrame": 2220,
     "highlightLines": {
       "chars": {
         "end": 34,
@@ -3412,16 +3082,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 82,
+      "step": 74,
       "type": "map_iteration",
     },
-    "startFrame": 2430,
-    "stepIndex": 81,
+    "startFrame": 2190,
+    "stepIndex": 73,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2490,
+    "endFrame": 2250,
     "highlightLines": {
       "chars": {
         "end": 65,
@@ -3455,16 +3125,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 83,
+      "step": 75,
       "type": "condition",
     },
-    "startFrame": 2460,
-    "stepIndex": 82,
+    "startFrame": 2220,
+    "stepIndex": 74,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 2520,
+    "endFrame": 2280,
     "highlightLines": {
       "chars": {
         "end": 38,
@@ -3498,16 +3168,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 84,
+      "step": 76,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 2490,
-    "stepIndex": 83,
+    "startFrame": 2250,
+    "stepIndex": 75,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 2550,
+    "endFrame": 2310,
     "highlightLines": {
       "chars": {
         "end": 53,
@@ -3541,16 +3211,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 85,
+      "step": 77,
       "type": "conditional_evaluate_right",
     },
-    "startFrame": 2520,
-    "stepIndex": 84,
+    "startFrame": 2280,
+    "stepIndex": 76,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2580,
+    "endFrame": 2340,
     "highlightLines": {
       "chars": {
         "end": 53,
@@ -3584,16 +3254,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 86,
+      "step": 78,
       "type": "conditional_comparison",
     },
-    "startFrame": 2550,
-    "stepIndex": 85,
+    "startFrame": 2310,
+    "stepIndex": 77,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2610,
+    "endFrame": 2370,
     "highlightLines": {
       "chars": {
         "end": 57,
@@ -3628,16 +3298,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "true",
-      "step": 87,
+      "step": 79,
       "type": "conditional_evaluation",
     },
-    "startFrame": 2580,
-    "stepIndex": 86,
+    "startFrame": 2340,
+    "stepIndex": 78,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 2640,
+    "endFrame": 2400,
     "highlightLines": {
       "chars": {
         "end": 57,
@@ -3671,59 +3341,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 88,
+      "step": 80,
       "type": "branch_true",
     },
-    "startFrame": 2610,
-    "stepIndex": 87,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 2670,
-    "highlightLines": {
-      "chars": {
-        "end": 65,
-        "start": 37,
-      },
-      "end": 6,
-      "start": 6,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": ""User"",
-      "level": 8,
-      "parameters": {
-        "k": ""User"",
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 65,
-          "line": 7,
-        },
-        "start": {
-          "character": 37,
-          "line": 7,
-        },
-      },
-      "step": 89,
-      "type": "result_assignment",
-    },
-    "startFrame": 2640,
-    "stepIndex": 88,
+    "startFrame": 2370,
+    "stepIndex": 79,
   },
   {
     "color": "#3B82F6",
     "duration": 30,
-    "endFrame": 2700,
+    "endFrame": 2430,
     "highlightLines": {
       "chars": {
         "end": 34,
@@ -3757,16 +3384,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 90,
+      "step": 81,
       "type": "map_iteration",
     },
-    "startFrame": 2670,
-    "stepIndex": 89,
+    "startFrame": 2400,
+    "stepIndex": 80,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2730,
+    "endFrame": 2460,
     "highlightLines": {
       "chars": {
         "end": 65,
@@ -3800,16 +3427,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 91,
+      "step": 82,
       "type": "condition",
     },
-    "startFrame": 2700,
-    "stepIndex": 90,
+    "startFrame": 2430,
+    "stepIndex": 81,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 2760,
+    "endFrame": 2490,
     "highlightLines": {
       "chars": {
         "end": 38,
@@ -3843,16 +3470,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 92,
+      "step": 83,
       "type": "conditional_evaluate_left",
     },
-    "startFrame": 2730,
-    "stepIndex": 91,
+    "startFrame": 2460,
+    "stepIndex": 82,
   },
   {
     "color": "#EC4899",
     "duration": 30,
-    "endFrame": 2790,
+    "endFrame": 2520,
     "highlightLines": {
       "chars": {
         "end": 53,
@@ -3886,16 +3513,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 93,
+      "step": 84,
       "type": "conditional_evaluate_right",
     },
-    "startFrame": 2760,
-    "stepIndex": 92,
+    "startFrame": 2490,
+    "stepIndex": 83,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2820,
+    "endFrame": 2550,
     "highlightLines": {
       "chars": {
         "end": 53,
@@ -3929,16 +3556,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 94,
+      "step": 85,
       "type": "conditional_comparison",
     },
-    "startFrame": 2790,
-    "stepIndex": 93,
+    "startFrame": 2520,
+    "stepIndex": 84,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 2850,
+    "endFrame": 2580,
     "highlightLines": {
       "chars": {
         "end": 57,
@@ -3973,16 +3600,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "true",
-      "step": 95,
+      "step": 86,
       "type": "conditional_evaluation",
     },
-    "startFrame": 2820,
-    "stepIndex": 94,
+    "startFrame": 2550,
+    "stepIndex": 85,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 2880,
+    "endFrame": 2610,
     "highlightLines": {
       "chars": {
         "end": 57,
@@ -4016,59 +3643,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 7,
         },
       },
-      "step": 96,
+      "step": 87,
       "type": "branch_true",
     },
-    "startFrame": 2850,
-    "stepIndex": 95,
+    "startFrame": 2580,
+    "stepIndex": 86,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 2910,
-    "highlightLines": {
-      "chars": {
-        "end": 65,
-        "start": 37,
-      },
-      "end": 6,
-      "start": 6,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": ""Post"",
-      "level": 8,
-      "parameters": {
-        "k": ""Post"",
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 65,
-          "line": 7,
-        },
-        "start": {
-          "character": 37,
-          "line": 7,
-        },
-      },
-      "step": 97,
-      "type": "result_assignment",
-    },
-    "startFrame": 2880,
-    "stepIndex": 96,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 2940,
+    "endFrame": 2640,
     "highlightLines": {
       "chars": {
         "end": 66,
@@ -4102,16 +3686,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "{"\\"User\\"":"\\"User\\"","\\"Post\\"":"\\"Post\\""}",
-      "step": 98,
+      "step": 88,
       "type": "mapped_type_result",
     },
-    "startFrame": 2910,
-    "stepIndex": 97,
+    "startFrame": 2610,
+    "stepIndex": 87,
   },
   {
     "color": "#8B5CF6",
     "duration": 30,
-    "endFrame": 2970,
+    "endFrame": 2670,
     "highlightLines": {
       "chars": {
         "end": 66,
@@ -4145,16 +3729,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": ""User" | "Post"",
-      "step": 99,
+      "step": 89,
       "type": "mapped_type_end",
     },
-    "startFrame": 2940,
-    "stepIndex": 98,
+    "startFrame": 2640,
+    "stepIndex": 88,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 3000,
+    "endFrame": 2700,
     "highlightLines": {
       "chars": {
         "end": 75,
@@ -4188,16 +3772,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": ""User" | "Post"",
-      "step": 100,
+      "step": 90,
       "type": "indexed_access_result",
     },
-    "startFrame": 2970,
-    "stepIndex": 99,
+    "startFrame": 2670,
+    "stepIndex": 89,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 3030,
+    "endFrame": 2730,
     "highlightLines": {
       "chars": {
         "end": 76,
@@ -4229,16 +3813,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": ""User" | "Post"",
-      "step": 101,
+      "step": 91,
       "type": "generic_result",
     },
-    "startFrame": 3000,
-    "stepIndex": 100,
+    "startFrame": 2700,
+    "stepIndex": 90,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 3060,
+    "endFrame": 2760,
     "highlightLines": {
       "chars": {
         "end": 31,
@@ -4271,16 +3855,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 20,
         },
       },
-      "step": 102,
+      "step": 92,
       "type": "conditional_comparison",
     },
-    "startFrame": 3030,
-    "stepIndex": 101,
+    "startFrame": 2730,
+    "stepIndex": 91,
   },
   {
     "color": "#F59E0B",
     "duration": 30,
-    "endFrame": 3090,
+    "endFrame": 2790,
     "highlightLines": {
       "chars": {
         "end": 17,
@@ -4314,16 +3898,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "false",
-      "step": 103,
+      "step": 93,
       "type": "conditional_evaluation",
     },
-    "startFrame": 3060,
-    "stepIndex": 102,
+    "startFrame": 2760,
+    "stepIndex": 92,
   },
   {
     "color": "#EF4444",
     "duration": 30,
-    "endFrame": 3120,
+    "endFrame": 2820,
     "highlightLines": {
       "chars": {
         "end": 17,
@@ -4356,92 +3940,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
           "line": 24,
         },
       },
-      "step": 104,
+      "step": 94,
       "type": "branch_false",
     },
-    "startFrame": 3090,
-    "stepIndex": 103,
+    "startFrame": 2790,
+    "stepIndex": 93,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 3150,
-    "highlightLines": {
-      "end": 23,
-      "start": 19,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "never",
-      "level": 4,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 17,
-          "line": 24,
-        },
-        "start": {
-          "character": 10,
-          "line": 20,
-        },
-      },
-      "step": 105,
-      "type": "result_assignment",
-    },
-    "startFrame": 3120,
-    "stepIndex": 104,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 3180,
-    "highlightLines": {
-      "end": 23,
-      "start": 15,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "never",
-      "level": 3,
-      "parameters": {
-        "o": "{
-      User: { id: number; name: string };
-      Post: { id: number; title: string };
-    }",
-        "path": """",
-        "prefix": """",
-      },
-      "position": {
-        "end": {
-          "character": 17,
-          "line": 24,
-        },
-        "start": {
-          "character": 6,
-          "line": 16,
-        },
-      },
-      "step": 106,
-      "type": "result_assignment",
-    },
-    "startFrame": 3150,
-    "stepIndex": 105,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 3210,
+    "endFrame": 2850,
     "highlightLines": {
       "end": 23,
       "start": 14,
@@ -4471,49 +3979,16 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "never",
-      "step": 107,
+      "step": 95,
       "type": "generic_result",
     },
-    "startFrame": 3180,
-    "stepIndex": 106,
+    "startFrame": 2820,
+    "stepIndex": 94,
   },
   {
     "color": "#10B981",
     "duration": 30,
-    "endFrame": 3240,
-    "highlightLines": {
-      "end": 26,
-      "start": 24,
-    },
-    "isHighlight": true,
-    "original": {
-      "currentUnionMember": undefined,
-      "currentUnionResults": undefined,
-      "expression": "never",
-      "level": 1,
-      "parameters": {
-        "path": """",
-      },
-      "position": {
-        "end": {
-          "character": 38,
-          "line": 27,
-        },
-        "start": {
-          "character": 39,
-          "line": 25,
-        },
-      },
-      "step": 108,
-      "type": "result_assignment",
-    },
-    "startFrame": 3210,
-    "stepIndex": 107,
-  },
-  {
-    "color": "#10B981",
-    "duration": 30,
-    "endFrame": 3270,
+    "endFrame": 2880,
     "highlightLines": {
       "end": 26,
       "start": 24,
@@ -4538,11 +4013,11 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
         },
       },
       "result": "never",
-      "step": 109,
+      "step": 96,
       "type": "generic_result",
     },
-    "startFrame": 3240,
-    "stepIndex": 108,
+    "startFrame": 2850,
+    "stepIndex": 95,
   },
 ]
 `;

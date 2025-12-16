@@ -7,6 +7,7 @@ import { IterationSection } from './IterationSection.tsx';
 import { ScopeSection } from './ScopeSection.tsx';
 import { GlobalsSection } from './GlobalsSection.tsx';
 import { CollapsibleSection } from './CollapsibleSection.tsx';
+import { InferPatternSection } from './InferPatternSection.tsx';
 
 type StepDetailsPanelProps = {
   currentStep: VideoTraceStep | null;
@@ -25,15 +26,19 @@ type StepDetailsPanelProps = {
 /**
  * Calculate used type names by scanning traces for type references
  */
-function calculateUsedTypeNames(steps: VideoTraceStep[]): Set<string> {
+function calculateUsedTypeNames(steps: VideoTraceStep[], typeAliases: TypeInfo[]): Set<string> {
   const usedNames = new Set<string>();
+  const knownTypeNames = new Set(typeAliases.map(t => t.name));
 
   for (const step of steps) {
     const expr = step.original.expression || '';
-    // Match type names (capitalized identifiers)
-    const matches = expr.match(/[A-Z][a-zA-Z0-9]*/g);
-    if (matches) {
-      matches.forEach(name => usedNames.add(name));
+    // Match identifiers that are known type names (case-sensitive)
+    for (const typeName of knownTypeNames) {
+      // Match whole word only
+      const regex = new RegExp(`\\b${typeName}\\b`);
+      if (regex.test(expr)) {
+        usedNames.add(typeName);
+      }
     }
   }
 
@@ -57,7 +62,7 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
   onSeekToStep,
 }) => {
   const theme = useCssTheme();
-  const usedTypeNames = useMemo(() => calculateUsedTypeNames(steps), [steps]);
+  const usedTypeNames = useMemo(() => calculateUsedTypeNames(steps, typeAliases), [steps, typeAliases]);
   const canStepOut = currentStep !== null;
 
   // Empty state
@@ -158,6 +163,13 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
             accumulatedResults={step.currentUnionResults}
           />
         )}
+
+        {/* Infer Pattern (for infer-related steps) */}
+        <InferPatternSection
+          stepType={step.type}
+          expression={step.expression}
+          result={step.result}
+        />
 
         {/* Scope */}
         <ScopeSection parameters={parameters} />

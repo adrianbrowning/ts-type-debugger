@@ -100,4 +100,8 @@ export const TRACE_TYPE_COLORS: Record<TraceEntry['type'], string> = {
   conditional_union_distribute: '#A855F7', // violet
   conditional_union_member: '#06B6D4', // cyan
   union_reduce: '#FBBF24', // amber (highlight for reduction)
+  infer_pattern_start: '#9333EA', // purple-600 (pattern)
+  infer_pattern_match: '#22C55E', // green-500 (match)
+  infer_binding: '#0EA5E9', // sky-500 (binding)
+  infer_pattern_result: '#10B981', // green (result)
 };

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { VideoData, TypeInfo } from '../core/types.ts';
 import { generateTypeVideo } from '../core/typeDebugger.ts';
 import { usePlayback } from './hooks/usePlayback.ts';
@@ -43,9 +43,7 @@ export const App: React.FC = () => {
     } else {
       showToast('Failed to load shared code', 'error');
     }
-    // Clear the URL param after loading attempt
-    url.searchParams.delete('code');
-    window.history.replaceState({}, '', url.toString());
+    // Keep URL params for re-sharing
   }, [showToast]);
 
   // Keyboard shortcut: Cmd/Ctrl+S to share
@@ -97,6 +95,7 @@ export const App: React.FC = () => {
 
       setVideoData(data);
       setHasGenerated(true);
+      setEditorVisible(false); // Auto-hide editor after successful debug
       setError(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -136,17 +135,19 @@ export const App: React.FC = () => {
           minHeight: 0,
         }}
       >
-        {/* Editor Panel (Hidden/Visible) */}
-        {editorVisible && !hasGenerated && (
-          <div
-            style={{
-              width: hasGenerated ? theme.size.editorWidth : undefined,
-              flex: hasGenerated ? undefined : 1,
-              display: 'flex',
-              flexDirection: 'column',
-              minWidth: 0,
-            }}
-          >
+        {/* Editor Panel (Hidden/Visible with CSS slide) */}
+        <div
+          style={{
+            width: !editorVisible && hasGenerated ? theme.size.editorWidth : undefined,
+            flex: editorVisible || !hasGenerated ? 1 : undefined,
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: !editorVisible && hasGenerated ? theme.size.editorWidth : undefined,
+            marginLeft: editorVisible ? 0 : hasGenerated ? `-${theme.size.editorWidth}` : 0,
+            transition: 'margin-left 0.3s ease-in-out',
+            overflow: 'hidden',
+          }}
+        >
             {/* Type Input Section - Top with horizontal layout */}
             <div
               style={{
@@ -273,11 +274,10 @@ export const App: React.FC = () => {
               onChange={setCode}
               isLoading={isLoading}
             />
-          </div>
-        )}
+        </div>
 
         {/* Type Definition Panel */}
-        {hasGenerated && (
+        {hasGenerated && !editorVisible && (
           <div
             style={{
               flex: 1,
@@ -337,7 +337,7 @@ export const App: React.FC = () => {
         )}
 
         {/* Step Details Panel */}
-        {hasGenerated && (
+        {hasGenerated && !editorVisible && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
             <StepDetailsPanel
               currentStep={playback.currentStep}

@@ -67,7 +67,8 @@ describe('buildCallStack', () => {
 
     expect(stack).toHaveLength(3);
     expect(stack[0]).toMatchObject({ name: 'Result', level: 0 });
-    expect(stack[1]).toMatchObject({ name: 'Foo<"a">', level: 1 });
+    // generic_call extracts just the type name without args for cleaner display
+    expect(stack[1]).toMatchObject({ name: 'Foo', level: 1 });
     expect(stack[2]).toMatchObject({ name: 'Foo<T>', level: 2 });
   });
 
@@ -98,7 +99,8 @@ describe('buildCallStack', () => {
     expect(stack[0]).toMatchObject({ name: 'Result', level: 0 });
   });
 
-  it('tracks conditional frames', () => {
+  it('filters out non-generic frames (condition, branch)', () => {
+    // Call stack should only show generic-related types, not conditions/branches
     const steps: VideoTraceStep[] = [
       createMockStep({
         stepIndex: 0,
@@ -116,12 +118,13 @@ describe('buildCallStack', () => {
 
     const stack = buildCallStack(steps, 2);
 
-    expect(stack).toHaveLength(3);
-    expect(stack[1].name).toContain('extends');
-    expect(stack[2].name).toContain('true');
+    // Only type_alias_start is included, conditions/branches are filtered out
+    expect(stack).toHaveLength(1);
+    expect(stack[0]).toMatchObject({ name: 'Result', level: 0 });
   });
 
-  it('tracks union distribution frames', () => {
+  it('filters out union distribution frames (not generic calls)', () => {
+    // Union distribution is shown in Iteration section, not call stack
     const steps: VideoTraceStep[] = [
       createMockStep({
         stepIndex: 0,
@@ -155,12 +158,12 @@ describe('buildCallStack', () => {
 
     const stack = buildCallStack(steps, 2);
 
-    expect(stack).toHaveLength(3);
-    expect(stack[0].name).toContain('"a" | "b"');
-    expect(stack[1].name).toContain('"a"');
+    // None of these types are generic calls, so stack is empty
+    expect(stack).toHaveLength(0);
   });
 
-  it('handles template literal frames', () => {
+  it('filters out template literal frames (not generic calls)', () => {
+    // Template literals are evaluated inline, not shown in call stack
     const steps: VideoTraceStep[] = [
       createMockStep({
         stepIndex: 0,
@@ -184,9 +187,8 @@ describe('buildCallStack', () => {
 
     const stack = buildCallStack(steps, 1);
 
-    expect(stack).toHaveLength(2);
-    expect(stack[0].name).toContain('`Prop');
-    expect(stack[1].name).toBe('T');
+    // Template literal types are not generic calls, so stack is empty
+    expect(stack).toHaveLength(0);
   });
 
   it('returns empty array for invalid step index', () => {
