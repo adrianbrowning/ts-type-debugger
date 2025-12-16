@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useCssTheme } from '../theme.ts';
-import { CustomTypes } from '../../base.ts';
 
 type InputFormProps = {
   onGenerate: (code: string, typeName: string) => Promise<void>;
@@ -13,8 +12,7 @@ type InputFormProps = {
  */
 export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, error }) => {
   const theme = useCssTheme();
-  const [code, setCode] = useState<string>(`type _result = getter<"">;
-` + CustomTypes);
+  const [code, setCode] = useState<string>('');
   const [typeName, setTypeName] = useState<string>('_result');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -130,7 +128,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
         </div>
       )}
 
-      {/* Generate button */}
+      {/* Debug button */}
       <button
         type="submit"
         disabled={isLoading || !code.trim() || !typeName.trim()}
@@ -146,9 +144,26 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
           cursor:
             isLoading || !code.trim() || !typeName.trim() ? 'not-allowed' : 'pointer',
           opacity: isLoading || !code.trim() || !typeName.trim() ? 0.6 : 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
         }}
       >
-        {isLoading ? 'Generating...' : 'Generate'}
+        {isLoading && (
+          <span
+            style={{
+              display: 'inline-block',
+              width: '14px',
+              height: '14px',
+              border: `2px solid ${theme.accent.btnText}`,
+              borderTopColor: 'transparent',
+              borderRadius: '50%',
+              animation: 'spin 0.8s linear infinite',
+            }}
+          />
+        )}
+        {isLoading ? 'Debugging...' : 'Debug'}
       </button>
     </form>
   );

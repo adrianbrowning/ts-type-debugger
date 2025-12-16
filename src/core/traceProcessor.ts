@@ -1,13 +1,13 @@
 import ts from 'typescript';
-import type { TraceEntry } from './astGenerator.ts';
+import type { TraceEntry } from '../astGenerator.ts';
 import { getSingletonHighlighter } from 'shiki';
 import type {
   VideoData,
   VideoConfig,
   VideoTraceStep,
   TypeInfo,
-} from './core/types.ts';
-import { TRACE_TYPE_COLORS } from './core/types.ts';
+} from './types.ts';
+import { TRACE_TYPE_COLORS } from './types.ts';
 
 // Re-export types for backward compatibility
 export type { VideoData, VideoConfig, VideoTraceStep, TypeInfo };

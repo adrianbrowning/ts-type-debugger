@@ -28,7 +28,7 @@ test.describe('Union Stepping E2E', () => {
 
     // Enter type expression
     await page.fill(TYPE_INPUT_SELECTOR, 'Loop2<"a" | "b" | "x">');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(3000);
 
@@ -42,7 +42,7 @@ test.describe('Union Stepping E2E', () => {
     await fillMonacoEditor(page, `type Test<T> = T extends "a" ? 1 : 2;`);
 
     await page.fill(TYPE_INPUT_SELECTOR, 'Test<"a" | "b">');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -57,7 +57,7 @@ test.describe('Union Stepping E2E', () => {
     await fillMonacoEditor(page, `type Test<T> = T extends any ? T[] : never;`);
 
     await page.fill(TYPE_INPUT_SELECTOR, 'Test<string | number>');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -70,7 +70,7 @@ test.describe('Union Stepping E2E', () => {
     await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
 
     await page.fill(TYPE_INPUT_SELECTOR, 'Loop2<"a" | "b" | "x">');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(3000);
 
@@ -83,7 +83,7 @@ test.describe('Union Stepping E2E', () => {
 
     // Just use the type input for this test
     await page.fill(TYPE_INPUT_SELECTOR, 'string');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 

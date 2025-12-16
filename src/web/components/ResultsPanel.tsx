@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCssTheme } from '../theme.ts';
 import type { VideoTraceStep } from '../../core/types.ts';
-import { formatResult, formatParameters } from '../../videoGenerator.ts';
+import {formatParameters, formatResult} from "../../core/traceProcessor.ts";
 
 type ResultsPanelProps = {
   currentStep: VideoTraceStep | null;

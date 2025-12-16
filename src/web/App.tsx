@@ -7,7 +7,6 @@ import { MonacoCodeEditor } from './components/MonacoCodeEditor.tsx';
 import { CodePanel } from './components/CodePanel.tsx';
 import { StepDetailsPanel } from './components/StepDetailsPanel.tsx';
 import { useCssTheme } from './theme.ts';
-import { CustomTypes } from '../base.ts';
 import { useToast } from './hooks/useToast.tsx';
 import { buildShareUrl, getShareStateFromUrl } from './utils/urlSharing.ts';
 
@@ -20,8 +19,8 @@ const TYPE_KEYWORD_PATTERN = /^\s*type\s+\w+\s*=/i;
 export const App: React.FC = () => {
   const theme = useCssTheme();
   const { showToast } = useToast();
-  const [code, setCode] = useState<string>(CustomTypes);
-  const [typeName, setTypeName] = useState<string>('getter<"">');
+  const [code, setCode] = useState<string>('');
+  const [typeName, setTypeName] = useState<string>('');
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -234,7 +233,7 @@ export const App: React.FC = () => {
                     }
                   }}
                 >
-                  {isLoading ? 'Generating...' : 'Generate'}
+                  {isLoading ? 'Debugging...' : 'Debug'}
                 </button>
               </div>
 

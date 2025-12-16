@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '../../utils/renderWithProviders.tsx';
 
 // Mock MonacoCodeEditor component
 const MockMonacoCodeEditor = ({ value, onChange }: any) => (

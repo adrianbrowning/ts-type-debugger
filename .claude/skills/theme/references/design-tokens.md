@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document contains all design tokens (CSS custom properties) for the TypeScript Type Visualizer design system. These tokens enable consistent theming and easy maintenance across the entire application.
+This document contains all design tokens (CSS custom properties) for the TS Type Debugger design system. These tokens enable consistent theming and easy maintenance across the entire application.
 
 ---
 
@@ -602,7 +602,7 @@ When adding new tokens:
   - Aligned font sizes to px units
   - Added full z-index scale
 - **v1.0** (2024): Initial token system
-  - Extracted from TypeScript Type Visualizer HTML mockups
+  - Extracted from TS Type Debugger HTML mockups
   - Dracula theme color scheme
 
 ---

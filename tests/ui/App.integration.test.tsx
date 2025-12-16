@@ -1,7 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '../utils/renderWithProviders.tsx';
 import userEvent from '@testing-library/user-event';
 import { App } from '../../src/web/App.tsx';
+
+// Helper to fill code before clicking Debug
+const fillCodeAndDebug = async (user: ReturnType<typeof userEvent.setup>) => {
+  // Fill in typeName (required field)
+  const typeInput = screen.getByPlaceholderText(/type/i);
+  await user.clear(typeInput);
+  await user.type(typeInput, 'string');
+
+  // Click Debug button (find by text content since accessible name may vary)
+  const debugButton = Array.from(document.querySelectorAll('button')).find(
+    (btn) => btn.textContent?.toLowerCase().includes('debug')
+  );
+  if (debugButton) {
+    await user.click(debugButton);
+  }
+};
 
 /**
  * Integration tests for App.tsx refactoring
@@ -13,7 +29,7 @@ describe('App Integration - UI Refactoring', () => {
   });
 
   describe('Editor visibility after generation', () => {
-    it('hides editor after Generate button is clicked', async () => {
+    it('hides editor after Debug button is clicked', async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -21,14 +37,13 @@ describe('App Integration - UI Refactoring', () => {
       const typeInput = screen.getByPlaceholderText(/type/i);
       expect(typeInput).toBeDefined();
 
-      // Find and click Generate button
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      // Fill code and click Debug
+      await fillCodeAndDebug(user);
 
       // Wait for generation to complete
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -41,12 +56,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -65,12 +79,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -90,12 +103,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -117,12 +129,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -144,12 +155,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -168,12 +178,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -189,12 +198,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -215,12 +223,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -244,12 +251,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );
@@ -273,12 +279,11 @@ describe('App Integration - UI Refactoring', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      const generateButton = screen.getByRole('button', { name: /generate/i });
-      await user.click(generateButton);
+      await fillCodeAndDebug(user);
 
       await waitFor(
         () => {
-          expect(screen.queryByText(/generating/i)).not.toBeInTheDocument();
+          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
         },
         { timeout: 5000 }
       );

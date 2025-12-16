@@ -7,7 +7,7 @@ import {
   traceTypeResolution,
   getNodeByName,
 } from '../astGenerator.ts';
-import { generateVideoData } from '../videoGenerator.ts';
+import { generateVideoData } from './traceProcessor.ts';
 import type { VideoData, VideoConfig } from './types.ts';
 
 /**

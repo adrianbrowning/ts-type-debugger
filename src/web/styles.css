@@ -354,3 +354,10 @@ input[type='range']::-moz-range-progress {
   color: var(--bg);
   border-color: var(--purple);
 }
+
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

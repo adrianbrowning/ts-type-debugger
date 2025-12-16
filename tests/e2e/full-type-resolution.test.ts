@@ -25,7 +25,7 @@ test.describe('Full Type Resolution E2E', () => {
 
     // Enter type expression in the type input
     await page.fill(TYPE_INPUT_SELECTOR, 'string');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     // Wait for visualization to load
     await page.waitForTimeout(3000);
@@ -39,7 +39,7 @@ test.describe('Full Type Resolution E2E', () => {
 
     // Enter conditional type in type input
     await page.fill(TYPE_INPUT_SELECTOR, '"a" extends string ? true : false');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -56,7 +56,7 @@ test.describe('Full Type Resolution E2E', () => {
 
     // Enter type expression
     await page.fill(TYPE_INPUT_SELECTOR, 'Test<"a" | "b">');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -69,7 +69,7 @@ test.describe('Full Type Resolution E2E', () => {
 
     // Enter mapped type in type input
     await page.fill(TYPE_INPUT_SELECTOR, '{ readonly [K in "a" | "b"]: string }');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -81,7 +81,7 @@ test.describe('Full Type Resolution E2E', () => {
 
     // Enter simple type in type input
     await page.fill(TYPE_INPUT_SELECTOR, 'string');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 

@@ -12,7 +12,6 @@ export default defineConfig({
       exclude: [
         'tests/**',
         'src/services/typescript/lib-bundle.ts',
-        'src/remotion/**',
         '**/*.test.ts',
         '**/*.test.tsx'
       ]

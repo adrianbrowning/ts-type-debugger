@@ -25,7 +25,7 @@ test.describe('Template Literal E2E', () => {
 
     await fillMonacoEditor(page, 'type Test<S> = `Prop ${S}`;');
     await page.fill(TYPE_INPUT_SELECTOR, 'Test<"a" | "b">');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -38,7 +38,7 @@ test.describe('Template Literal E2E', () => {
 
     await fillMonacoEditor(page, 'type Grid<A, B> = `${A}-${B}`;');
     await page.fill(TYPE_INPUT_SELECTOR, 'Grid<"a" | "b", 1 | 2>');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -51,7 +51,7 @@ test.describe('Template Literal E2E', () => {
 
     // Use type input for simple template literal
     await page.fill(TYPE_INPUT_SELECTOR, '`prefix_${"value"}`');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -65,7 +65,7 @@ test.describe('Template Literal E2E', () => {
 
     // Use type input for simple type
     await page.fill(TYPE_INPUT_SELECTOR, 'string');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
@@ -85,7 +85,7 @@ test.describe('Template Literal E2E', () => {
 
     // Use type input for simple type
     await page.fill(TYPE_INPUT_SELECTOR, 'string');
-    await page.click('button:has-text("Generate")');
+    await page.click('button:has-text("Debug")');
 
     await page.waitForTimeout(2000);
 
