@@ -17,5 +17,5 @@
     "erasableSyntaxOnly": true,
     "types": [ "node"]
   },
-  "include": ["src", "tests", "*.ts", "*.tsx", "remotion", "video-data.json"]
+  "include": ["src", "tests", "*.ts", "*.tsx"]
 }

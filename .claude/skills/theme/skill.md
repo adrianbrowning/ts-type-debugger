@@ -1,12 +1,12 @@
 ---
-description: Build components using the TypeScript Type Visualizer design system (Dracula theme). Use for UI styling, layouts, buttons, code display, debug components, and theming.
+description: Build components using the TS Type Debugger design system (Dracula theme). Use for UI styling, layouts, buttons, code display, debug components, and theming.
 ---
 
-# TypeScript Type Visualizer - Component Skills Guide
+# TS Type Debugger - Component Skills Guide
 
 ## Purpose
 
-This guide teaches you how to build components using the TypeScript Type Visualizer design system. Each section provides step-by-step instructions for implementing common UI patterns.
+This guide teaches you how to build components using the TS Type Debugger design system. Each section provides step-by-step instructions for implementing common UI patterns.
 
 ---
 

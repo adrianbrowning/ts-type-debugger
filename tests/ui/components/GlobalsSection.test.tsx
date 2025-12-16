@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../../utils/renderWithProviders.tsx';
 import userEvent from '@testing-library/user-event';
 import { GlobalsSection } from '../../../src/web/components/GlobalsSection';
 import type { TypeInfo } from '../../../src/core/types';

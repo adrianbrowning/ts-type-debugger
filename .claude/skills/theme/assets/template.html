@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TypeScript Type Visualizer - Template</title>
-  
+  <title>TS Type Debugger - Template</title>
+
   <!-- Google Fonts: Fira Code -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-  
+
   <style>
     /* ============================================
        DESIGN TOKENS
@@ -21,11 +21,11 @@
       --bg-highlight: #44475a;
       --current-line: #44475a;
       --selection: #44475a;
-      
+
       /* Text Colors */
       --foreground: #f8f8f2;
       --comment: #6272a4;
-      
+
       /* Accent Colors */
       --cyan: #8be9fd;
       --green: #50fa7b;
@@ -34,7 +34,7 @@
       --purple: #bd93f9;
       --red: #ff5555;
       --yellow: #f1fa8c;
-      
+
       /* UI Elements */
       --border: #44475a;
       --radius: 6px;
@@ -391,7 +391,7 @@
       .main-container {
         grid-template-columns: 1fr;
       }
-      
+
       .panel {
         border-right: none;
         border-bottom: 1px solid var(--border);
@@ -506,17 +506,17 @@
   <script>
     // Theme Management
     const THEME_KEY = 'ts-visualizer-theme';
-    
+
     function setTheme(theme) {
       // Update button states
       document.querySelectorAll('.header-actions .btn').forEach(btn => {
         btn.classList.remove('active');
       });
       document.getElementById(`theme-${theme}`).classList.add('active');
-      
+
       // Store preference
       localStorage.setItem(THEME_KEY, theme);
-      
+
       // Apply theme
       if (theme === 'system') {
         document.body.classList.remove('theme-light', 'theme-dark');
@@ -531,13 +531,13 @@
         document.body.classList.add('theme-dark');
       }
     }
-    
+
     // Initialize theme
     function initTheme() {
       const savedTheme = localStorage.getItem(THEME_KEY) || 'system';
       setTheme(savedTheme);
     }
-    
+
     // Listen for system theme changes
     if (window.matchMedia) {
       window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
@@ -546,15 +546,15 @@
         }
       });
     }
-    
+
     // Section Toggle
     function toggleSection(header) {
       const body = header.nextElementSibling;
       const toggle = header.querySelector('.section-toggle');
       const arrow = header.querySelector('span:first-child');
-      
+
       body.classList.toggle('collapsed');
-      
+
       if (body.classList.contains('collapsed')) {
         toggle.textContent = '[+]';
         arrow.textContent = arrow.textContent.replace('▼', '▶');
@@ -563,7 +563,7 @@
         arrow.textContent = arrow.textContent.replace('▶', '▼');
       }
     }
-    
+
     // Initialize on load
     initTheme();
   </script>

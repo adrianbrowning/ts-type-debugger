@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '../../utils/renderWithProviders.tsx';
 import userEvent from '@testing-library/user-event';
 import { App } from '../../../src/web/App.tsx';
 

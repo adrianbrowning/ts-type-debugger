@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render } from '../../utils/renderWithProviders.tsx';
 import { createMockVideoData, createMockTypeInfo } from '../../fixtures/mockVideoData.ts';
 
 // Mock CodePanel component

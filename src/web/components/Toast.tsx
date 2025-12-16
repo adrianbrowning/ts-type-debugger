@@ -32,7 +32,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ id, message, type, onDismiss }) =
       style={{
         padding: `${theme.spacing.md} ${theme.spacing.lg}`,
         backgroundColor: bgColor,
-        color: '#fff',
+        color: theme.accent.btnText,
         borderRadius: theme.radius.md,
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
         fontSize: theme.fontSize.sm,

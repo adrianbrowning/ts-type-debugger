@@ -1,6 +1,4 @@
 import ts from 'typescript';
-import {CustomTypes} from "./base.ts";
-import * as process from "node:process";
 import {checkTypeCondition, evalTypeString} from "./eval_local.ts";
 
 /**

@@ -80,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
           letterSpacing: '-0.5px',
         }}
       >
-        TypeScript Type Visualizer
+        TS Type Debugger
       </h1>
 
       <div style={{ display: 'flex', gap: theme.spacing.md, alignItems: 'center' }}>
