@@ -1159,6 +1159,19 @@ export function evaluateTypeNode(typeNode: ts.TypeNode, context: EvalContext): s
     const members = typeNode.types.map(t => evaluateTypeNode(t, context));
     context.level--;
     result = members.join(' & ');
+  } else if (ts.isTupleTypeNode(typeNode)) {
+    context.level++;
+    const elements = typeNode.elements.map(el => {
+      // Handle named tuple elements: [name: Type]
+      if (ts.isNamedTupleMember(el)) {
+        const name = el.name.getText(context.sourceFile);
+        const type = evaluateTypeNode(el.type, context);
+        return `${name}: ${type}`;
+      }
+      return evaluateTypeNode(el, context);
+    });
+    context.level--;
+    result = `[${elements.join(', ')}]`;
   } else {
     // Fallback for simple types
     result = typeNode.getText(context.sourceFile);

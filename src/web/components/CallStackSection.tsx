@@ -58,11 +58,13 @@ export const CallStackSection: React.FC<CallStackSectionProps> = ({
                 color: isTopFrame ? theme.text.primary : theme.text.secondary,
               }}
             >
-              <span>
-                {frame.name}
-                {frame.line !== undefined && `:${frame.line}`}
-                {isRootFrame && ' (entry)'}
-              </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: theme.spacing.md }}>
+                <span>{frame.name}</span>
+                <span style={{ color: theme.text.tertiary }}>
+                  {frame.line !== undefined && `: ${frame.line}`}
+                  {isRootFrame && ' (entry)'}
+                </span>
+              </div>
             </div>
           );
         })}

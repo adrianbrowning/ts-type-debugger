@@ -104,7 +104,7 @@ export function DebugToolbar({
       </ToolbarButton>
       <Separator theme={theme} />
       <ToolbarButton label="Step Over" onClick={onStepOver} theme={theme}>
-        ⏭ Over
+        ↷ Over
       </ToolbarButton>
       <Separator theme={theme} />
       <ToolbarButton label="Step Out" disabled={!canStepOut} onClick={onStepOut} theme={theme}>
