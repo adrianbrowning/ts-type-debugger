@@ -135,3 +135,76 @@ export function evalTypeString(contextOrExpr: string, expr?: string): string {
     evalCache.set(cacheKey, result);
     return result;
 }
+
+/**
+ * Extract inferred type bindings from a conditional type pattern
+ * @param checkValue The value being checked (e.g., "foo.bar" or the substituted type)
+ * @param extendsPattern The pattern with infer keywords (e.g., `${infer Head}.${infer Tail}`)
+ * @param inferNames Array of infer variable names to extract
+ * @param additionalContext Optional additional type definitions for context
+ * @returns Map of infer name to extracted value, or null if pattern doesn't match
+ */
+export function extractInferredBindings(
+    checkValue: string,
+    extendsPattern: string,
+    inferNames: string[],
+    additionalContext?: string
+): Map<string, string> | null {
+    if (inferNames.length === 0) return new Map();
+
+    // First check if pattern matches at all
+    const matchCode = additionalContext
+        ? `${additionalContext}\ntype _Match = ${checkValue} extends ${extendsPattern} ? true : false;`
+        : `type _Match = ${checkValue} extends ${extendsPattern} ? true : false;`;
+
+    const fsMap = loadLibs();
+    const fileName = "/infer.ts";
+
+    // Build code that extracts each infer variable
+    // Wrap in parentheses to handle complex types like functions
+    let code = additionalContext ? `${additionalContext}\n` : '';
+    code += `type _Match = (${checkValue}) extends (${extendsPattern}) ? true : false;\n`;
+    for (const name of inferNames) {
+        code += `type _Infer_${name} = (${checkValue}) extends (${extendsPattern}) ? ${name} : never;\n`;
+    }
+
+    fsMap.set(fileName, code);
+
+    const system = createSystem(fsMap);
+    const env = createVirtualTypeScriptEnvironment(system, [fileName], ts, {
+        rootDir: "/",
+        target: ts.ScriptTarget.ESNext,
+    });
+    const checker = env.languageService.getProgram()!.getTypeChecker();
+    const source = env.languageService.getProgram()!.getSourceFile(fileName)!;
+
+    // Helper to get type string for a type alias
+    function getTypeAliasValue(aliasName: string): string | null {
+        let node: ts.TypeAliasDeclaration | undefined;
+        ts.forEachChild(source, child => {
+            if (ts.isTypeAliasDeclaration(child) && child.name.escapedText === aliasName) {
+                node = child;
+            }
+        });
+        if (!node) return null;
+
+        const type = checker.getTypeAtLocation(node);
+        if (type.isStringLiteral()) return JSON.stringify(type.value);
+        return checker.typeToString(type);
+    }
+
+    // Check if pattern matches
+    const matchResult = getTypeAliasValue('_Match');
+    if (matchResult !== 'true') return null;
+
+    // Extract each infer binding
+    const bindings = new Map<string, string>();
+    for (const name of inferNames) {
+        const value = getTypeAliasValue(`_Infer_${name}`);
+        if (value !== null && value !== 'never') {
+            bindings.set(name, value);
+        }
+    }
+
+    return bindings;
+}

@@ -1,4 +1,4 @@
-import {CustomTypes} from "./base.ts";
+import {CustomTypes} from "../tests/base.ts";
 // import {buildTrace} from "./buildTrace.ts";
 import {generateAST, traceTypeResolution} from "./astGenerator.ts";
 import {generateTypeVideo} from "./core/typeDebugger.ts";

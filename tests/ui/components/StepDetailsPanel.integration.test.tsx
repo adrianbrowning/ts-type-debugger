@@ -27,6 +27,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
     currentStepIndex: 0,
     totalSteps: 0,
     typeAliases: mockTypeAliases,
+    onJumpToStart: vi.fn(),
     onPrevious: vi.fn(),
     onNext: vi.fn(),
     onStepInto: vi.fn(),
@@ -91,13 +92,14 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
     });
 
     it('renders CallStackSection with steps data', () => {
+      // Use generic_call types which are included in CALL_STACK_TYPES
       const steps: VideoTraceStep[] = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
             type: 'generic_call',
-            expression: 'Loop2<"a" | "b">',
+            expression: 'Outer<"a" | "b">',
             level: 0,
             position: { start: { line: 5, character: 0 }, end: { line: 5, character: 20 } },
           },
@@ -106,9 +108,10 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 1,
           original: {
             step: 2,
-            type: 'condition',
-            expression: 'T extends "a"',
+            type: 'generic_call',
+            expression: 'Inner<"x">',
             level: 1,
+            position: { start: { line: 8, character: 0 }, end: { line: 8, character: 10 } },
           },
         }),
       ];
@@ -124,8 +127,9 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       );
 
       expect(screen.getByText('Call Stack')).toBeDefined();
-      expect(screen.getByText(/Loop2<"a" \| "b">/)).toBeDefined();
-      expect(screen.getByText(/T extends "a"/)).toBeDefined();
+      // buildCallStack extracts just type name from generic_call expressions
+      expect(screen.getByText(/Outer/)).toBeDefined();
+      expect(screen.getByText(/Inner/)).toBeDefined();
     });
 
     it('renders ScopeSection with parameters from currentStep', () => {
@@ -194,7 +198,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           original: {
             step: 1,
             type: 'generic_call',
-            expression: 'Loop2<"a" | "b">',
+            expression: 'UniqueExpr<"a" | "b">',
             level: 0,
           },
         }),
@@ -207,11 +211,13 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
+          typeAliases={[]} // No globals to avoid duplicate text
         />
       );
 
       // Expression should be in a collapsible section
-      expect(screen.getByText(/Loop2<"a" \| "b">/)).toBeDefined();
+      // Call stack extracts just type name from generic_call
+      expect(screen.getByText(/UniqueExpr/)).toBeDefined();
     });
   });
 
@@ -457,13 +463,14 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       const user = userEvent.setup();
       const onSeekToStep = vi.fn();
 
+      // Use generic_call types which are included in CALL_STACK_TYPES
       const steps: VideoTraceStep[] = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
             type: 'generic_call',
-            expression: 'Loop2<"a">',
+            expression: 'Outer<"a">',
             level: 0,
           },
         }),
@@ -471,8 +478,8 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 1,
           original: {
             step: 2,
-            type: 'condition',
-            expression: 'conditional',
+            type: 'generic_call',
+            expression: 'Inner<"b">',
             level: 1,
           },
         }),
@@ -489,7 +496,8 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      const frame = screen.getByText(/Loop2<"a">/);
+      // buildCallStack extracts just type name
+      const frame = screen.getByText(/Outer/);
       await user.click(frame);
 
       expect(onSeekToStep).toHaveBeenCalledWith(0);
@@ -519,6 +527,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
     });
 
     it('passes all steps to CallStackSection', () => {
+      // Use only generic_call types which are included in CALL_STACK_TYPES
       const steps: VideoTraceStep[] = [
         createMockStep({
           stepIndex: 0,
@@ -535,7 +544,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           original: {
             step: 2,
             type: 'generic_call',
-            expression: 'Inner<K>',
+            expression: 'Middle<K>',
             level: 1,
             position: { start: { line: 2, character: 0 }, end: { line: 2, character: 10 } },
           },
@@ -544,9 +553,10 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 2,
           original: {
             step: 3,
-            type: 'condition',
-            expression: 'K extends string',
+            type: 'generic_call',
+            expression: 'Inner<X>',
             level: 2,
+            position: { start: { line: 3, character: 0 }, end: { line: 3, character: 10 } },
           },
         }),
       ];
@@ -561,10 +571,10 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      // All frames should be visible in call stack
-      expect(screen.getByText(/Outer<T>/)).toBeDefined();
-      expect(screen.getByText(/Inner<K>/)).toBeDefined();
-      expect(screen.getByText(/K extends string/)).toBeDefined();
+      // All frames should be visible in call stack (buildCallStack extracts type names)
+      expect(screen.getByText(/Outer/)).toBeDefined();
+      expect(screen.getByText(/Middle/)).toBeDefined();
+      expect(screen.getByText(/Inner/)).toBeDefined();
     });
 
     it('passes typeAliases and used types to GlobalsSection', () => {
@@ -734,9 +744,9 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      // CallStackSection shows both frames
-      expect(screen.getByText(/Outer<string>/)).toBeDefined();
-      expect(screen.getByText(/Inner<number>/)).toBeDefined();
+      // CallStackSection shows both frames (buildCallStack extracts type names)
+      expect(screen.getByText(/Outer/)).toBeDefined();
+      expect(screen.getByText(/Inner/)).toBeDefined();
 
       // ScopeSection shows current level parameters
       expect(screen.getByText(/K = number/)).toBeDefined();

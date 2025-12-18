@@ -18,7 +18,7 @@ exports[`Type Resolution Tracing > captures complete trace with snapshots 1`] = 
         "line": 2,
       },
     },
-    "step": 1,
+    "step": 0,
     "type": "type_alias_start",
   },
   {
@@ -40,7 +40,7 @@ exports[`Type Resolution Tracing > captures complete trace with snapshots 1`] = 
         "line": 2,
       },
     },
-    "step": 2,
+    "step": 1,
     "type": "generic_call",
   },
   {
@@ -61,7 +61,7 @@ exports[`Type Resolution Tracing > captures complete trace with snapshots 1`] = 
         "line": 1,
       },
     },
-    "step": 3,
+    "step": 2,
     "type": "generic_def",
   },
   {
@@ -83,8 +83,28 @@ exports[`Type Resolution Tracing > captures complete trace with snapshots 1`] = 
       },
     },
     "result": "number",
-    "step": 4,
+    "step": 3,
     "type": "generic_result",
+  },
+  {
+    "currentUnionMember": undefined,
+    "currentUnionResults": undefined,
+    "expression": "Result = number",
+    "level": 0,
+    "parameters": undefined,
+    "position": {
+      "end": {
+        "character": 31,
+        "line": 2,
+      },
+      "start": {
+        "character": 0,
+        "line": 2,
+      },
+    },
+    "result": "number",
+    "step": 4,
+    "type": "type_alias_result",
   },
 ]
 `;

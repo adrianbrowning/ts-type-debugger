@@ -143,11 +143,10 @@ export const CodePanel: React.FC<CodePanelProps> = ({
                 const absoluteLineNum = activeType.startLine + idx + 1;
                 const highlightedLine = activeType.highlightedLines?.[idx];
                 return (
-                  <div key={idx} style={{ display: 'flex' }}>
+                  <div key={idx} style={{ display: 'flex', gap: theme.spacing.lg }}>
                     <span
                       style={{
                         color: theme.text.tertiary,
-                        marginRight: theme.spacing.lg,
                         minWidth: '40px',
                         textAlign: 'right',
                         userSelect: 'none',

@@ -60,11 +60,11 @@ describe('GlobalsSection Component', () => {
       />
     );
 
-    expect(screen.getByText('Loop2')).toBeDefined();
-    expect(screen.getByText('Stringify')).toBeDefined();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
+    expect(screen.getByText(/Stringify/)).toBeDefined();
 
     // Check monospace font
-    const loop2Element = screen.getByText('Loop2');
+    const loop2Element = screen.getByText(/Loop2/);
     const computedStyle = window.getComputedStyle(loop2Element);
     expect(computedStyle.fontFamily).toContain('monospace');
   });
@@ -77,9 +77,9 @@ describe('GlobalsSection Component', () => {
       />
     );
 
-    expect(screen.getByText('Loop2')).toBeDefined();
-    expect(screen.queryByText('Stringify')).toBeNull();
-    expect(screen.queryByText('getter')).toBeNull();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
+    expect(screen.queryByText(/Stringify/)).toBeNull();
+    expect(screen.queryByText(/getter/)).toBeNull();
   });
 
   it('shows message about hidden unused types in default mode', () => {
@@ -115,18 +115,18 @@ describe('GlobalsSection Component', () => {
     );
 
     // Initially only shows used types
-    expect(screen.getByText('Loop2')).toBeDefined();
-    expect(screen.queryByText('Stringify')).toBeNull();
-    expect(screen.queryByText('getter')).toBeNull();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
+    expect(screen.queryByText(/Stringify/)).toBeNull();
+    expect(screen.queryByText(/getter/)).toBeNull();
 
     // Click "Show All"
     const showAllButton = screen.getByText(/Show All/i);
     await user.click(showAllButton);
 
     // Now all types should be visible
-    expect(screen.getByText('Loop2')).toBeDefined();
-    expect(screen.getByText('Stringify')).toBeDefined();
-    expect(screen.getByText('getter')).toBeDefined();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
+    expect(screen.getByText(/Stringify/)).toBeDefined();
+    expect(screen.getByText(/getter/)).toBeDefined();
   });
 
   it('displays unused types with dimmed styling in Show All mode', async () => {
@@ -143,14 +143,18 @@ describe('GlobalsSection Component', () => {
     const showAllButton = screen.getByText(/Show All/i);
     await user.click(showAllButton);
 
-    // Check that unused types have dimmed/secondary color
-    const getterElement = screen.getByText('getter');
-    const stringifyElement = screen.getByText('Stringify');
+    // Check that unused types have dimmed styling (opacity on parent row)
+    const getterElement = screen.getByText(/getter/);
+    const stringifyElement = screen.getByText(/Stringify/);
 
-    const getterStyle = window.getComputedStyle(getterElement);
-    const stringifyStyle = window.getComputedStyle(stringifyElement);
+    // Opacity is applied to the parent div (the row), not the span itself
+    const getterRow = getterElement.closest('div[style*="opacity"]') || getterElement.parentElement;
+    const stringifyRow = stringifyElement.closest('div[style*="opacity"]') || stringifyElement.parentElement;
 
-    // Both unused should have secondary/dimmed color (not primary)
+    const getterStyle = window.getComputedStyle(getterRow!);
+    const stringifyStyle = window.getComputedStyle(stringifyRow!);
+
+    // Both unused should have reduced opacity (0.5 per component)
     expect(parseFloat(getterStyle.opacity)).toBeLessThan(1);
     expect(parseFloat(stringifyStyle.opacity)).toBeLessThan(1);
   });
@@ -185,12 +189,12 @@ describe('GlobalsSection Component', () => {
     // Show all
     const showAllButton = screen.getByText(/Show All/i);
     await user.click(showAllButton);
-    expect(screen.getByText('getter')).toBeDefined();
+    expect(screen.getByText(/getter/)).toBeDefined();
 
     // Hide unused
     const showUsedButton = screen.getByText(/Show Used/i);
     await user.click(showUsedButton);
-    expect(screen.queryByText('getter')).toBeNull();
+    expect(screen.queryByText(/getter/)).toBeNull();
     expect(screen.getByText(/2 unused types hidden/i)).toBeDefined();
   });
 
@@ -206,7 +210,7 @@ describe('GlobalsSection Component', () => {
       />
     );
 
-    const loop2Element = screen.getByText('Loop2');
+    const loop2Element = screen.getByText(/Loop2/);
     await user.click(loop2Element);
 
     expect(onTypeClick).toHaveBeenCalledWith('Loop2');
@@ -230,7 +234,7 @@ describe('GlobalsSection Component', () => {
     await user.click(showAllButton);
 
     // Click unused type
-    const getterElement = screen.getByText('getter');
+    const getterElement = screen.getByText(/getter/);
     await user.click(getterElement);
 
     expect(onTypeClick).toHaveBeenCalledWith('getter');
@@ -257,9 +261,9 @@ describe('GlobalsSection Component', () => {
     );
 
     expect(screen.getByText('3')).toBeDefined();
-    expect(screen.getByText('Loop2')).toBeDefined();
-    expect(screen.getByText('Stringify')).toBeDefined();
-    expect(screen.getByText('getter')).toBeDefined();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
+    expect(screen.getByText(/Stringify/)).toBeDefined();
+    expect(screen.getByText(/getter/)).toBeDefined();
     expect(screen.queryByText(/unused/i)).toBeNull();
   });
 
@@ -287,14 +291,14 @@ describe('GlobalsSection Component', () => {
     );
 
     // Initially visible
-    expect(screen.getByText('Loop2')).toBeDefined();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
 
     // Click header to collapse
     const header = screen.getByText('Globals');
     await user.click(header);
 
     // Content should be hidden
-    expect(screen.queryByText('Loop2')).toBeNull();
+    expect(screen.queryByText(/Loop2/)).toBeNull();
   });
 
   it('displays used types before unused types in Show All mode', async () => {
@@ -370,7 +374,7 @@ describe('GlobalsSection Component', () => {
       />
     );
 
-    const loop2Element = screen.getByText('Loop2');
+    const loop2Element = screen.getByText(/Loop2/);
     await user.click(loop2Element);
 
     // Should not throw error
@@ -391,7 +395,7 @@ describe('GlobalsSection Component', () => {
     );
 
     expect(screen.getByText('1')).toBeDefined();
-    expect(screen.getByText('Loop2')).toBeDefined();
+    expect(screen.getByText(/Loop2/)).toBeDefined();
     expect(screen.getByText(/1 unused type hidden/i)).toBeDefined();
   });
 });

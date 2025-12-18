@@ -1,4 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import SplitPane, { Pane } from 'split-pane-react';
+import 'split-pane-react/esm/themes/default.css';
 import type { VideoData, TypeInfo } from '../core/types.ts';
 import { generateTypeVideo } from '../core/typeDebugger.ts';
 import { usePlayback } from './hooks/usePlayback.ts';
@@ -27,6 +29,7 @@ export const App: React.FC = () => {
   const [editorVisible, setEditorVisible] = useState(true);
   const [typeNameError, setTypeNameError] = useState<string | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const [paneSizes, setPaneSizes] = useState<(string | number)[]>(['50%', 'auto']);
 
   const playback = usePlayback(videoData);
 
@@ -43,9 +46,7 @@ export const App: React.FC = () => {
     } else {
       showToast('Failed to load shared code', 'error');
     }
-    // Clear the URL param after loading attempt
-    url.searchParams.delete('code');
-    window.history.replaceState({}, '', url.toString());
+    // Keep URL params for re-sharing
   }, [showToast]);
 
   // Keyboard shortcut: Cmd/Ctrl+S to share
@@ -97,6 +98,7 @@ export const App: React.FC = () => {
 
       setVideoData(data);
       setHasGenerated(true);
+      setEditorVisible(false); // Auto-hide editor after successful debug
       setError(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -136,17 +138,19 @@ export const App: React.FC = () => {
           minHeight: 0,
         }}
       >
-        {/* Editor Panel (Hidden/Visible) */}
-        {editorVisible && !hasGenerated && (
-          <div
-            style={{
-              width: hasGenerated ? theme.size.editorWidth : undefined,
-              flex: hasGenerated ? undefined : 1,
-              display: 'flex',
-              flexDirection: 'column',
-              minWidth: 0,
-            }}
-          >
+        {/* Editor Panel (Hidden/Visible with CSS slide) */}
+        <div
+          style={{
+            width: !editorVisible && hasGenerated ? theme.size.editorWidth : undefined,
+            flex: editorVisible || !hasGenerated ? 1 : undefined,
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: !editorVisible && hasGenerated ? theme.size.editorWidth : undefined,
+            marginLeft: editorVisible ? 0 : hasGenerated ? `-${theme.size.editorWidth}` : 0,
+            transition: 'margin-left 0.3s ease-in-out',
+            overflow: 'hidden',
+          }}
+        >
             {/* Type Input Section - Top with horizontal layout */}
             <div
               style={{
@@ -273,86 +277,112 @@ export const App: React.FC = () => {
               onChange={setCode}
               isLoading={isLoading}
             />
-          </div>
-        )}
+        </div>
 
-        {/* Type Definition Panel */}
-        {hasGenerated && (
-          <div
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              minWidth: 0,
-              borderRight: `1px solid ${theme.border.subtle}`,
-            }}
-          >
-            {videoData ? (
-              <CodePanel
-                currentStep={playback.currentStep}
-                activeType={activeType}
-                sourceCode={videoData.sourceCode}
-              />
-            ) : (
+        {/* Resizable Debug Panels */}
+        {hasGenerated && !editorVisible && (
+          <SplitPane
+            split="vertical"
+            sizes={paneSizes}
+            onChange={setPaneSizes}
+            sashRender={() => (
               <div
                 style={{
+                  width: 4,
+                  height: '100%',
+                  backgroundColor: theme.border.subtle,
+                  cursor: 'col-resize',
+                  transition: 'background-color 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.accent.primary;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.border.subtle;
+                }}
+              />
+            )}
+          >
+            {/* Type Definition Panel */}
+            <Pane minSize={200}>
+              <div
+                style={{
+                  height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  height: '100%',
-                  backgroundColor: theme.bg.secondary,
+                  minWidth: 0,
+                  borderRight: `1px solid ${theme.border.subtle}`,
                 }}
               >
-                <div
-                  style={{
-                    padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
-                    borderBottom: `1px solid ${theme.border.subtle}`,
-                    backgroundColor: theme.bg.primary,
-                  }}
-                >
-                  <h3
+                {videoData ? (
+                  <CodePanel
+                    currentStep={playback.currentStep}
+                    activeType={activeType}
+                    sourceCode={videoData.sourceCode}
+                  />
+                ) : (
+                  <div
                     style={{
-                      margin: 0,
-                      color: theme.text.primary,
-                      fontSize: theme.fontSize.xl,
-                      fontWeight: theme.fontWeight.semibold,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      height: '100%',
+                      backgroundColor: theme.bg.secondary,
                     }}
                   >
-                    Type Definition
-                  </h3>
-                </div>
-                <div
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: theme.text.secondary,
-                  }}
-                >
-                  Generate video to see type definition
-                </div>
+                    <div
+                      style={{
+                        padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+                        borderBottom: `1px solid ${theme.border.subtle}`,
+                        backgroundColor: theme.bg.primary,
+                      }}
+                    >
+                      <h3
+                        style={{
+                          margin: 0,
+                          color: theme.text.primary,
+                          fontSize: theme.fontSize.xl,
+                          fontWeight: theme.fontWeight.semibold,
+                        }}
+                      >
+                        Type Definition
+                      </h3>
+                    </div>
+                    <div
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: theme.text.secondary,
+                      }}
+                    >
+                      Generate video to see type definition
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        )}
+            </Pane>
 
-        {/* Step Details Panel */}
-        {hasGenerated && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <StepDetailsPanel
-              currentStep={playback.currentStep}
-              steps={videoData?.steps ?? []}
-              currentStepIndex={playback.currentStepIndex}
-              totalSteps={videoData?.steps.length ?? 0}
-              typeAliases={videoData?.typeAliases ?? []}
-              onPrevious={playback.previousStep}
-              onNext={playback.nextStep}
-              onStepInto={playback.stepInto}
-              onStepOver={playback.stepOver}
-              onStepOut={playback.stepOut}
-              onSeekToStep={playback.seekToStep}
-            />
-          </div>
+            {/* Step Details Panel */}
+            <Pane minSize={200}>
+              <div style={{ height: '100%', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                <StepDetailsPanel
+                  currentStep={playback.currentStep}
+                  steps={videoData?.steps ?? []}
+                  currentStepIndex={playback.currentStepIndex}
+                  totalSteps={videoData?.steps.length ?? 0}
+                  typeAliases={videoData?.typeAliases ?? []}
+                  onJumpToStart={playback.jumpToStart}
+                  onPrevious={playback.previousStep}
+                  onNext={playback.nextStep}
+                  onStepInto={playback.stepInto}
+                  onStepOver={playback.stepOver}
+                  onStepOut={playback.stepOut}
+                  onSeekToStep={playback.seekToStep}
+                />
+              </div>
+            </Pane>
+          </SplitPane>
         )}
       </div>
     </div>
