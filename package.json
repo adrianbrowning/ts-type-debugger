@@ -16,7 +16,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint:ts": "tsc --noEmit"
+    "lint:ts": "tsc --noEmit",
+    "lint:esl": "eslint --config eslint.config.ts \"src/**/*.{j,t}s{,x}\" --cache --max-warnings=0",
+    "lint:s": "eslint --config eslint.config.style.ts \"src/**/*.{j,t}s{,x}\" --cache --max-warnings=0",
+    "lint:fix": "pnpm lint:s --fix",
+    "knip": "knip",
+    "lint": "pnpm lint:ts; pnpm lint:fix"
   },
   "keywords": [],
   "author": "Adrian Elton-Browning",
@@ -24,6 +29,9 @@
   "packageManager": "pnpm@10.20.0",
   "type": "module",
   "devDependencies": {
+    "@commitlint/cli": "20.0.0",
+    "@commitlint/config-conventional": "20.0.0",
+    "@gingacodemonkey/config": "^0.0.31",
     "@playwright/test": "^1.57.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -35,6 +43,10 @@
     "@vitest/browser-playwright": "^4.0.15",
     "@vitest/coverage-v8": "^4.0.15",
     "@vitest/ui": "^4.0.15",
+    "eslint": "^9.39.2",
+    "husky": "9.0.6",
+    "knip": "5.70.1",
+    "lint-staged": "15.2.10",
     "playwright": "^1.57.0",
     "vite": "^7.0.0",
     "vitest": "^4.0.15"
@@ -48,5 +60,12 @@
     "shiki": "^3.15.0",
     "split-pane-react": "^0.1.3",
     "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "minimumReleaseAge": 4320
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.0.0"
   }
 }
