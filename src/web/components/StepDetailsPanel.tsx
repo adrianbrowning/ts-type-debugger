@@ -118,7 +118,7 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
 
   const step = currentStep.original;
   const parameters = step.parameters || {};
-  const hasResult = step.result !== undefined && step.result !== null;
+  const hasResult = step.result !== undefined;
 
   return (
     <div
