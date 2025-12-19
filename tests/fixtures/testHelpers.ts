@@ -1,12 +1,12 @@
-import type { TraceEntry } from '../../src/astGenerator.ts';
-import { expect } from 'vitest';
+import { expect } from "vitest";
+import type { TraceEntry } from "../../src/astGenerator.ts";
 
 /**
  * Find trace entry by type
  */
 export function findTraceByType(
-  trace: TraceEntry[],
-  type: TraceEntry['type']
+  trace: Array<TraceEntry>,
+  type: TraceEntry["type"]
 ): TraceEntry | undefined {
   return trace.find(t => t.type === type);
 }
@@ -15,16 +15,16 @@ export function findTraceByType(
  * Filter trace entries by type
  */
 export function filterTracesByType(
-  trace: TraceEntry[],
-  type: TraceEntry['type']
-): TraceEntry[] {
+  trace: Array<TraceEntry>,
+  type: TraceEntry["type"]
+): Array<TraceEntry> {
   return trace.filter(t => t.type === type);
 }
 
 /**
  * Get all trace types in order
  */
-export function getTraceTypes(trace: TraceEntry[]): TraceEntry['type'][] {
+export function getTraceTypes(trace: Array<TraceEntry>): Array<TraceEntry["type"]> {
   return trace.map(t => t.type);
 }
 
@@ -32,8 +32,8 @@ export function getTraceTypes(trace: TraceEntry[]): TraceEntry['type'][] {
  * Verify trace contains expected types in order
  */
 export function assertTraceSequence(
-  trace: TraceEntry[],
-  expectedTypes: TraceEntry['type'][]
+  trace: Array<TraceEntry>,
+  expectedTypes: Array<TraceEntry["type"]>
 ): void {
   const actualTypes = getTraceTypes(trace);
   const subsequence = actualTypes.filter(t => expectedTypes.includes(t));
@@ -45,8 +45,8 @@ export function assertTraceSequence(
  * Count occurrences of trace type
  */
 export function countTraceType(
-  trace: TraceEntry[],
-  type: TraceEntry['type']
+  trace: Array<TraceEntry>,
+  type: TraceEntry["type"]
 ): number {
   return filterTracesByType(trace, type).length;
 }
@@ -55,8 +55,8 @@ export function countTraceType(
  * Assert trace contains type at least once
  */
 export function assertTraceContains(
-  trace: TraceEntry[],
-  type: TraceEntry['type']
+  trace: Array<TraceEntry>,
+  type: TraceEntry["type"]
 ): void {
   const found = findTraceByType(trace, type);
   expect(found).toBeDefined();
@@ -66,8 +66,8 @@ export function assertTraceContains(
  * Assert trace does not contain type
  */
 export function assertTraceNotContains(
-  trace: TraceEntry[],
-  type: TraceEntry['type']
+  trace: Array<TraceEntry>,
+  type: TraceEntry["type"]
 ): void {
   const found = findTraceByType(trace, type);
   expect(found).toBeUndefined();
