@@ -1,20 +1,20 @@
-import ts from 'typescript';
-import {checkTypeCondition, evalTypeString, extractInferredBindings} from "./eval_local.ts";
+import ts from "typescript";
+import { checkTypeCondition, evalTypeString, extractInferredBindings } from "./eval_local.ts";
 
 /**
  * Represents a single step in type evaluation trace
  */
 export interface TraceEntry {
   step: number;
-  type: 'type_alias_start' | 'type_alias_result' | 'generic_call' | 'generic_def' | 'generic_result' | 'condition' | 'conditional_evaluate_left' | 'conditional_evaluate_right' | 'conditional_comparison' | 'conditional_evaluation' | 'branch_true' | 'branch_false' | 'result_assignment' | 'template_literal' | 'template_literal_start' | 'template_union_distribute' | 'template_union_member' | 'template_union_member_result' | 'template_span_eval' | 'template_result' | 'alias_reference' | 'substitution' | 'mapped_type_start' | 'mapped_type_constraint' | 'mapped_type_constraint_result' | 'map_iteration' | 'mapped_type_result' | 'mapped_type_end' | 'indexed_access' | 'indexed_access_result' | 'conditional_union_distribute' | 'conditional_union_member' | 'union_reduce' | 'infer_pattern_start' | 'infer_pattern_match' | 'infer_binding' | 'infer_pattern_result';
+  type: "type_alias_start" | "type_alias_result" | "generic_call" | "generic_def" | "generic_result" | "condition" | "conditional_evaluate_left" | "conditional_evaluate_right" | "conditional_comparison" | "conditional_evaluation" | "branch_true" | "branch_false" | "result_assignment" | "template_literal" | "template_literal_start" | "template_union_distribute" | "template_union_member" | "template_union_member_result" | "template_span_eval" | "template_result" | "alias_reference" | "substitution" | "mapped_type_start" | "mapped_type_constraint" | "mapped_type_constraint_result" | "map_iteration" | "mapped_type_result" | "mapped_type_end" | "indexed_access" | "indexed_access_result" | "conditional_union_distribute" | "conditional_union_member" | "union_reduce" | "infer_pattern_start" | "infer_pattern_match" | "infer_binding" | "infer_pattern_result";
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
   result?: string;
   level: number;
   position?: {
-    start: { line: number; character: number };
-    end: { line: number; character: number };
+    start: { line: number; character: number; };
+    end: { line: number; character: number; };
   };
   currentUnionMember?: string;
   currentUnionResults?: string;
@@ -26,7 +26,7 @@ export interface TraceEntry {
  * @param fileName Optional filename for diagnostics
  * @returns TypeScript AST (SourceFile node)
  */
-export function generateAST(code: string, fileName = 'generated.ts'): ts.SourceFile {
+export function generateAST(code: string, fileName = "generated.ts"): ts.SourceFile {
   return ts.createSourceFile(
     fileName,
     code,
@@ -42,7 +42,7 @@ export function generateAST(code: string, fileName = 'generated.ts'): ts.SourceF
  */
 export function visitNodes(node: ts.Node, visitor: (n: ts.Node) => void): void {
   visitor(node);
-  ts.forEachChild(node, (child) => visitNodes(child, visitor));
+  ts.forEachChild(node, child => visitNodes(child, visitor));
 }
 
 /**
@@ -51,22 +51,23 @@ export function visitNodes(node: ts.Node, visitor: (n: ts.Node) => void): void {
  * @param maxDepth Max recursion depth
  */
 export function printAST(ast: ts.SourceFile, maxDepth = 10): string {
-  const lines: string[] = [];
+  const lines: Array<string> = [];
 
   function print(node: ts.Node, depth = 0) {
     if (depth > maxDepth) return;
 
-    const indent = '  '.repeat(depth);
+    const indent = "  ".repeat(depth);
     const kind = ts.SyntaxKind[node.kind];
-    const text = node.getText(ast).slice(0, 40).replace(/\n/g, ' ');
+    const text = node.getText(ast).slice(0, 40)
+      .replace(/\n/g, " ");
 
-    lines.push(`${indent}${kind}${text ? ` "${text}..."` : ''}`);
+    lines.push(`${indent}${kind}${text ? ` "${text}..."` : ""}`);
 
-    ts.forEachChild(node, (child) => print(child, depth + 1));
+    ts.forEachChild(node, child => print(child, depth + 1));
   }
 
   print(ast);
-  return lines.join('\n');
+  return lines.join("\n");
 }
 
 /**
@@ -74,10 +75,10 @@ export function printAST(ast: ts.SourceFile, maxDepth = 10): string {
  * @param ast SourceFile AST
  * @param kind SyntaxKind to filter by
  */
-export function findNodes(ast: ts.SourceFile, kind: ts.SyntaxKind): ts.Node[] {
-  const results: ts.Node[] = [];
+export function findNodes(ast: ts.SourceFile, kind: ts.SyntaxKind): Array<ts.Node> {
+  const results: Array<ts.Node> = [];
 
-  visitNodes(ast, (node) => {
+  visitNodes(ast, node => {
     if (node.kind === kind) {
       results.push(node);
     }
@@ -95,7 +96,7 @@ export function findNodes(ast: ts.SourceFile, kind: ts.SyntaxKind): ts.Node[] {
 export function getNodeByName(ast: ts.SourceFile, name: string): ts.Node | undefined {
   let result: ts.Node | undefined;
 
-  visitNodes(ast, (node) => {
+  visitNodes(ast, node => {
     if (result) return; // Early exit once found
 
     if (
@@ -120,8 +121,8 @@ export function getNodeByName(ast: ts.SourceFile, name: string): ts.Node | undef
  * @param ast SourceFile AST
  * @returns Array of type alias nodes
  */
-export function getTypeAliases(ast: ts.SourceFile): ts.TypeAliasDeclaration[] {
-  return findNodes(ast, ts.SyntaxKind.TypeAliasDeclaration) as ts.TypeAliasDeclaration[];
+export function getTypeAliases(ast: ts.SourceFile): Array<ts.TypeAliasDeclaration> {
+  return findNodes(ast, ts.SyntaxKind.TypeAliasDeclaration) as Array<ts.TypeAliasDeclaration>;
 }
 
 /**
@@ -132,7 +133,7 @@ export function getTypeAliases(ast: ts.SourceFile): ts.TypeAliasDeclaration[] {
  */
 export function getTypeAliasByName(ast: ts.SourceFile, name: string): ts.TypeAliasDeclaration | undefined {
   const aliases = getTypeAliases(ast);
-  return aliases.find((alias) => alias.name.text === name);
+  return aliases.find(alias => alias.name.text === name);
 }
 
 /**
@@ -153,7 +154,7 @@ const MAX_RECURSION_DEPTH = 1000;
 
 interface EvalContext {
   sourceFile: ts.SourceFile;
-  trace: TraceEntry[];
+  trace: Array<TraceEntry>;
   level: number;
   depth: number; // Track recursion depth for circular type detection
   parameters: Map<string, string>;
@@ -169,7 +170,7 @@ interface EvalContext {
 /**
  * Helper to get position info from AST node
  */
-function getNodePosition(node: ts.Node, sourceFile: ts.SourceFile): { start: { line: number; character: number }; end: { line: number; character: number } } | undefined {
+function getNodePosition(node: ts.Node, sourceFile: ts.SourceFile): { start: { line: number; character: number; }; end: { line: number; character: number; }; } | undefined {
   try {
     const start = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
     const end = sourceFile.getLineAndCharacterOfPosition(node.getEnd());
@@ -177,7 +178,8 @@ function getNodePosition(node: ts.Node, sourceFile: ts.SourceFile): { start: { l
       start: { line: start.line + 1, character: start.character },
       end: { line: end.line + 1, character: end.character },
     };
-  } catch {
+  }
+  catch {
     return undefined;
   }
 }
@@ -191,7 +193,7 @@ function findInferTypes(node: ts.TypeNode, sourceFile: ts.SourceFile): Array<{
   position: ReturnType<typeof getNodePosition>;
   constraint?: string;
 }> {
-  const infers: Array<{ name: string; position: ReturnType<typeof getNodePosition>; constraint?: string }> = [];
+  const infers: Array<{ name: string; position: ReturnType<typeof getNodePosition>; constraint?: string; }> = [];
 
   function visit(n: ts.Node) {
     if (n.kind === ts.SyntaxKind.InferType) {
@@ -214,11 +216,11 @@ function findInferTypes(node: ts.TypeNode, sourceFile: ts.SourceFile): Array<{
 /**
  * Add trace entry helper
  */
-function addTrace(context: EvalContext, type: TraceEntry['type'], expression: string, opts: Partial<TraceEntry> = {}): void {
+function addTrace(context: EvalContext, type: TraceEntry["type"], expression: string, opts: Partial<TraceEntry> = {}): void {
   // For result steps without explicit position, use current node context
   // Exclude semantic steps that don't correspond to specific code locations
-  const resultTypes = new Set(['mapped_type_constraint_result', 'mapped_type_result', 'mapped_type_end', 'indexed_access_result', 'template_literal', 'template_result']);
-  const semanticSteps = new Set(['conditional_evaluation']); // No auto-position for these
+  const resultTypes = new Set([ "mapped_type_constraint_result", "mapped_type_result", "mapped_type_end", "indexed_access_result", "template_literal", "template_result" ]);
+  const semanticSteps = new Set([ "conditional_evaluation" ]); // No auto-position for these
 
   const shouldUseContextNode = resultTypes.has(type) && !opts.position && context.currentNode;
   const isSemanticStep = semanticSteps.has(type);
@@ -250,6 +252,120 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
 }
 
 /**
+ * Evaluates type arguments with recursion prevention
+ */
+function evaluateTypeArguments(
+  typeRef: ts.TypeReferenceNode,
+  context: EvalContext
+): Array<string> {
+  const typeArgs = typeRef.typeArguments?.map(arg => arg.getText(context.sourceFile)) || [];
+  const evaluatedArgs: Array<string> = [];
+
+  if (!typeRef.typeArguments) {
+    return typeArgs.map(arg => {
+      if (context.parameters.has(arg)) {
+        return context.parameters.get(arg)!;
+      }
+      return arg;
+    });
+  }
+
+  // Initialize evaluatingArgs set if not present
+  if (!context.evaluatingArgs) {
+    context.evaluatingArgs = new Set();
+  }
+
+  for (const argNode of typeRef.typeArguments) {
+    const argText = argNode.getText(context.sourceFile);
+
+    if (ts.isTypeReferenceNode(argNode)) {
+      const argTypeName = argNode.typeName.getText(context.sourceFile);
+      // Check if it's a parameter reference first
+      if (!argNode.typeArguments?.length && context.parameters.has(argTypeName)) {
+        evaluatedArgs.push(context.parameters.get(argTypeName)!);
+      }
+      else if (context.evaluatingArgs.has(argText)) {
+        // Prevent infinite recursion - use text form if already evaluating
+        evaluatedArgs.push(argText);
+      }
+      else {
+        // Evaluate the nested generic/reference
+        context.evaluatingArgs.add(argText);
+        context.level++;
+        const evaluated = evaluateGenericCall(argNode, context);
+        context.level--;
+        context.evaluatingArgs.delete(argText);
+        evaluatedArgs.push(evaluated);
+      }
+    }
+    else {
+      // For non-reference types, evaluate them
+      context.level++;
+      const evaluated = evaluateTypeNode(argNode, context);
+      context.level--;
+      evaluatedArgs.push(evaluated);
+    }
+  }
+
+  return evaluatedArgs.length > 0 ? evaluatedArgs : typeArgs.map(arg => {
+    if (context.parameters.has(arg)) {
+      return context.parameters.get(arg)!;
+    }
+    return arg;
+  });
+}
+
+/**
+ * Binds type parameters to arguments with defaults
+ */
+function bindTypeParameters(
+  aliasDecl: ts.TypeAliasDeclaration,
+  substitutedArgs: Array<string>,
+  context: EvalContext
+): Map<string, string> {
+  const oldParams = new Map(context.parameters);
+
+  aliasDecl.typeParameters?.forEach((param, i) => {
+    const paramName = param.name.text;
+    let argValue: string;
+
+    if (substitutedArgs[i]) {
+      argValue = substitutedArgs[i];
+    }
+    else if (param.default) {
+      argValue = param.default.getText(context.sourceFile);
+    }
+    else {
+      argValue = "unknown";
+    }
+
+    context.parameters.set(paramName, argValue);
+  });
+
+  return oldParams;
+}
+
+/**
+ * Extracts generic parameters from type alias declaration
+ */
+function extractGenericParams(
+  aliasDecl: ts.TypeAliasDeclaration,
+  context: EvalContext
+): Record<string, string> {
+  const genericParams: Record<string, string> = {};
+
+  aliasDecl.typeParameters?.forEach(p => {
+    const paramName = p.name.text;
+    const argValue = context.parameters.get(paramName);
+    if (argValue) {
+      genericParams[paramName] = argValue;
+    }
+  });
+
+  return genericParams;
+}
+
+/**
  * Evaluates a generic type instantiation and records trace steps
  * @param typeRef The generic type reference with arguments
  * @param context Evaluation context
@@ -263,7 +379,7 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   context.depth++;
   if (context.depth > MAX_RECURSION_DEPTH) {
     context.depth--;
-    return typeArgs.length > 0 ? `${typeName}<${typeArgs.join(', ')}>` : typeName;
+    return typeArgs.length > 0 ? `${typeName}<${typeArgs.join(", ")}>` : typeName;
   }
 
   // First check if typeName is a parameter (e.g., `t` when inside `type T<t> = t`)
@@ -274,55 +390,10 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   }
 
   // Evaluate type arguments - this traces nested generics
-  const evaluatedArgs: string[] = [];
-  if (typeRef.typeArguments) {
-    // Initialize evaluatingArgs set if not present
-    if (!context.evaluatingArgs) {
-      context.evaluatingArgs = new Set();
-    }
-
-    for (const argNode of typeRef.typeArguments) {
-      const argText = argNode.getText(context.sourceFile);
-
-      // If it's a type reference (potentially a generic), evaluate it to trace
-      if (ts.isTypeReferenceNode(argNode)) {
-        const argTypeName = argNode.typeName.getText(context.sourceFile);
-        // Check if it's a parameter reference first
-        if (!argNode.typeArguments?.length && context.parameters.has(argTypeName)) {
-          evaluatedArgs.push(context.parameters.get(argTypeName)!);
-        } else if (context.evaluatingArgs.has(argText)) {
-          // Prevent infinite recursion - use text form if already evaluating
-          evaluatedArgs.push(argText);
-        } else {
-          // Evaluate the nested generic/reference
-          context.evaluatingArgs.add(argText);
-          context.level++;
-          const evaluated = evaluateGenericCall(argNode, context);
-          context.level--;
-          context.evaluatingArgs.delete(argText);
-          evaluatedArgs.push(evaluated);
-        }
-      } else {
-        // For non-reference types, evaluate them
-        context.level++;
-        const evaluated = evaluateTypeNode(argNode, context);
-        context.level--;
-        evaluatedArgs.push(evaluated);
-      }
-    }
-  }
-
-  // Substitute any parameters in the type arguments (for non-evaluated string args)
-  const substitutedArgs = evaluatedArgs.length > 0 ? evaluatedArgs : typeArgs.map(arg => {
-    // If arg is a parameter name that's in scope, replace it with its bound value
-    if (context.parameters.has(arg)) {
-      return context.parameters.get(arg)!;
-    }
-    return arg;
-  });
+  const substitutedArgs = evaluateTypeArguments(typeRef, context);
 
   // Log generic call
-  addTrace(context, 'generic_call', `${typeName}<${substitutedArgs.join(', ')}>`, {
+  addTrace(context, "generic_call", `${typeName}<${substitutedArgs.join(", ")}>`, {
     args: substitutedArgs.reduce((acc, arg, i) => ({ ...acc, [`arg${i}`]: arg }), {}),
     position: getNodePosition(typeRef, context.sourceFile),
   });
@@ -332,13 +403,13 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   if (!aliasDecl) {
     // Built-in or unknown type - return as-is
     context.depth--;
-    return typeArgs.length > 0 ? `${typeName}<${substitutedArgs.join(', ')}>` : typeName;
+    return typeArgs.length > 0 ? `${typeName}<${substitutedArgs.join(", ")}>` : typeName;
   }
 
   // Non-generic type alias - still need to evaluate its body
   if (!aliasDecl.typeParameters) {
     // Log alias reference
-    addTrace(context, 'alias_reference', `${typeName} = ${aliasDecl.type.getText(context.sourceFile)}`, {
+    addTrace(context, "alias_reference", `${typeName} = ${aliasDecl.type.getText(context.sourceFile)}`, {
       position: getNodePosition(aliasDecl, context.sourceFile),
     });
 
@@ -352,45 +423,12 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   }
 
   // Bind parameters to arguments FIRST
-  const oldParams = new Map(context.parameters);
-  aliasDecl.typeParameters.forEach((param, i) => {
-    const paramName = param.name.text;
-    let argValue: string;
-
-    if (substitutedArgs[i]) {
-      // Use provided argument (already substituted)
-      argValue = substitutedArgs[i];
-    } else if (param.default) {
-      // Use default value from type parameter definition
-      argValue = param.default.getText(context.sourceFile);
-    } else {
-      // No argument and no default
-      argValue = 'unknown';
-    }
-
-    context.parameters.set(paramName, argValue);
-  });
-
-  // Log generic definition (now with parameters in scope)
-  const paramList = aliasDecl.typeParameters
-    .map((p, i) => {
-      const paramName = p.name.text;
-      const argValue = context.parameters.get(paramName);
-      return `${paramName}${argValue ? ` = ${argValue}` : ''}`;
-    })
-    .join(', ');
+  const oldParams = bindTypeParameters(aliasDecl, substitutedArgs, context);
 
   // For generic_def, only show the parameters defined by THIS generic, not all in-scope params
-  const genericParams: Record<string, string> = {};
-  aliasDecl.typeParameters.forEach((p) => {
-    const paramName = p.name.text;
-    const argValue = context.parameters.get(paramName);
-    if (argValue) {
-      genericParams[paramName] = argValue;
-    }
-  });
+  const genericParams = extractGenericParams(aliasDecl, context);
 
-  addTrace(context, 'generic_def', aliasDecl.getText(context.sourceFile), {
+  addTrace(context, "generic_def", aliasDecl.getText(context.sourceFile), {
     position: getNodePosition(aliasDecl, context.sourceFile),
     parameters: Object.keys(genericParams).length > 0 ? genericParams : undefined,
   });
@@ -401,7 +439,7 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   context.level--;
 
   // Log the result of this generic call
-  addTrace(context, 'generic_result', `${typeName} => ${result}`, {
+  addTrace(context, "generic_result", `${typeName} => ${result}`, {
     result: result,
     parameters: Object.keys(genericParams).length > 0 ? genericParams : undefined,
     position: getNodePosition(aliasDecl, context.sourceFile),
@@ -415,21 +453,311 @@ export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: Eval
   return result;
 }
 
-    /**
+/**
    * Substitute parameter references in a type expression
     */
-  function substituteParameters(expr: string, parameters: Map<string, string>): string {
-        let result = expr;
-        // Replace parameter references with their bound values
-        // Sort by length (descending) to replace longer names first
-        const sortedParams = Array.from(parameters.entries()).sort((a, b) => b[0].length - a[0].length);
-        for (const [paramName, paramValue] of sortedParams) {
-          // Use word boundary to avoid partial matches
-          const regex = new RegExp(`\\b${paramName}\\b`, 'g');
-          result = result.replace(regex, paramValue);
-        }
-        return result;
+function substituteParameters(expr: string, parameters: Map<string, string>): string {
+  let result = expr;
+  // Replace parameter references with their bound values
+  // Sort by length (descending) to replace longer names first
+  const sortedParams = Array.from(parameters.entries()).sort((a, b) => b[0].length - a[0].length);
+  for (const [ paramName, paramValue ] of sortedParams) {
+    // Use word boundary to avoid partial matches
+    const regex = new RegExp(`\\b${paramName}\\b`, "g");
+    result = result.replace(regex, paramValue);
+  }
+  return result;
+}
+
+/**
+ * Helper: Calculate position for conditional comparison highlight
+ */
+function calculateConditionalPosition(
+  condType: ts.ConditionalTypeNode,
+  context: EvalContext
+): { start: { line: number; character: number; }; end: { line: number; character: number; }; } {
+  const comparisonStart = condType.checkType.getStart(context.sourceFile);
+  const comparisonEnd = condType.extendsType.getEnd();
+  const comparisonPosStart = context.sourceFile.getLineAndCharacterOfPosition(comparisonStart);
+  const comparisonPosEnd = context.sourceFile.getLineAndCharacterOfPosition(comparisonEnd);
+  return {
+    start: { line: comparisonPosStart.line + 1, character: comparisonPosStart.character },
+    end: { line: comparisonPosEnd.line + 1, character: comparisonPosEnd.character },
+  };
+}
+
+/**
+ * Helper: Clean up inferred bindings and log result
+ */
+function cleanupInferBindings(
+  hasInfer: boolean,
+  inferBindingsToCleanup: Array<string>,
+  result: string,
+  context: EvalContext,
+  condType: ts.ConditionalTypeNode
+): void {
+  if (hasInfer && inferBindingsToCleanup.length > 0) {
+    addTrace(context, "infer_pattern_result", result, {
+      position: getNodePosition(condType, context.sourceFile),
+      result,
+    });
+    for (const name of inferBindingsToCleanup) {
+      context.parameters.delete(name);
+    }
+    context.inferredBindings = undefined;
+    context.currentInferPattern = undefined;
+  }
+}
+
+/**
+ * Helper: Evaluate infer pattern matching and inject bindings
+ */
+function evaluateInferPattern(
+  condType: ts.ConditionalTypeNode,
+  context: EvalContext,
+  checkStr: string,
+  extendsStr: string,
+  inferTypes: Array<{ name: string; position: ReturnType<typeof getNodePosition>; constraint?: string; }>
+): { inferPatternMatched: boolean | undefined; inferBindingsToCleanup: Array<string>; } {
+  const inferBindingsToCleanup: Array<string> = [];
+
+  // Log pattern matching start
+  addTrace(context, "infer_pattern_start", `Pattern: ${extendsStr}`, {
+    position: getNodePosition(condType.extendsType, context.sourceFile),
+  });
+
+  // Get the resolved check value (substitute parameters)
+  const resolvedCheck = substituteParameters(checkStr, context.parameters);
+
+  // Extract inferred bindings
+  const bindings = extractInferredBindings(
+    resolvedCheck,
+    extendsStr,
+    inferTypes.map(i => i.name),
+    context.sourceFile.text
+  );
+
+  if (bindings) {
+    // Log successful pattern match
+    addTrace(context, "infer_pattern_match", `${resolvedCheck} matches ${extendsStr}`, {
+      position: getNodePosition(condType.extendsType, context.sourceFile),
+      result: "true",
+    });
+
+    // Log each inferred binding
+    for (const inferType of inferTypes) {
+      const value = bindings.get(inferType.name);
+      if (value !== undefined) {
+        addTrace(context, "infer_binding", `${inferType.name} = ${value}`, {
+          position: inferType.position,
+          result: value,
+        });
+
+        // Inject binding into parameters for true branch
+        context.parameters.set(inferType.name, value);
+        inferBindingsToCleanup.push(inferType.name);
       }
+    }
+
+    // Store bindings in context for visualization
+    context.inferredBindings = bindings;
+    context.currentInferPattern = extendsStr;
+
+    return { inferPatternMatched: true, inferBindingsToCleanup };
+  }
+  else {
+    // Log failed pattern match
+    addTrace(context, "infer_pattern_match", `${resolvedCheck} does not match ${extendsStr}`, {
+      position: getNodePosition(condType.extendsType, context.sourceFile),
+      result: "false",
+    });
+
+    return { inferPatternMatched: false, inferBindingsToCleanup };
+  }
+}
+
+/**
+ * Helper: Reduce union result and log if changed
+ */
+function reduceUnionResult(
+  context: EvalContext,
+  accumulatedUnion: string,
+  branchNode: ts.TypeNode,
+  member: string
+): string {
+  let reducedUnion;
+  try {
+    reducedUnion = evalTypeString(context.sourceFile.text, accumulatedUnion);
+  }
+  catch {
+    // If reduction fails, keep the unreduced version
+    reducedUnion = accumulatedUnion;
+  }
+
+  // Log reduction if it changed
+  if (reducedUnion !== accumulatedUnion) {
+    addTrace(context, "union_reduce", `${accumulatedUnion} => ${reducedUnion}`, {
+      position: getNodePosition(branchNode, context.sourceFile),
+      currentUnionMember: member,
+      currentUnionResults: reducedUnion,
+      result: reducedUnion,
+    });
+  }
+
+  return reducedUnion;
+}
+
+/**
+ * Helper: Evaluate a single union member
+ */
+function evaluateSingleUnionMember(
+  condType: ts.ConditionalTypeNode,
+  context: EvalContext,
+  unionParam: string,
+  member: string,
+  checkStr: string,
+  extendsStr: string,
+  trueStr: string,
+  falseStr: string,
+  results: Array<string>
+): string {
+  // Set the union member context
+  context.currentUnionMember = member;
+
+  // Temporarily bind the parameter to this member
+  const oldValue = context.parameters.get(unionParam)!;
+  context.parameters.set(unionParam, member);
+
+  // Log which member we're evaluating
+  addTrace(context, "conditional_union_member", `Evaluating for ${unionParam} = ${member}`, {
+    position: getNodePosition(condType.checkType, context.sourceFile),
+    currentUnionMember: member,
+    currentUnionResults: results.length > 0 ? results.join(" | ") : undefined,
+  });
+
+  // Check if this member satisfies the condition
+  const memberCheckStr = substituteParameters(checkStr, context.parameters);
+  const memberExtendsStr = substituteParameters(extendsStr, context.parameters);
+  const memberIsTruthy = checkTypeCondition(memberCheckStr, memberExtendsStr, context.sourceFile.text);
+
+  // Log detailed comparison steps for this member (same as non-union case)
+  context.level++;
+  addTrace(context, "conditional_evaluate_left", memberCheckStr, {
+    position: getNodePosition(condType.checkType, context.sourceFile),
+    currentUnionMember: member,
+  });
+  // Recursively evaluate check type to trace any nested generics
+  evaluateTypeNode(condType.checkType, context);
+
+  addTrace(context, "conditional_evaluate_right", memberExtendsStr, {
+    position: getNodePosition(condType.extendsType, context.sourceFile),
+    currentUnionMember: member,
+  });
+  // Recursively evaluate extends type to trace any nested generics
+  evaluateTypeNode(condType.extendsType, context);
+  context.level--;
+
+  // Highlight only the comparison part for this member
+  const position = calculateConditionalPosition(condType, context);
+  addTrace(context, "conditional_comparison", `${memberCheckStr} extends ${memberExtendsStr}`, {
+    position,
+    currentUnionMember: member,
+  });
+
+  // Log evaluation result for this member
+  const branchNode = memberIsTruthy ? condType.trueType : condType.falseType;
+  addTrace(context, "conditional_evaluation", `${memberIsTruthy}`, {
+    position: getNodePosition(branchNode, context.sourceFile),
+    currentUnionMember: member,
+    result: memberIsTruthy ? "true" : "false",
+  });
+
+  // Log which branch is taken for this member
+  addTrace(context, memberIsTruthy ? "branch_true" : "branch_false", memberIsTruthy ? trueStr : falseStr, {
+    position: getNodePosition(branchNode, context.sourceFile),
+    currentUnionMember: member,
+    currentUnionResults: results.length > 0 ? results.join(" | ") : undefined,
+  });
+
+  // Evaluate the appropriate branch for this member
+  context.level++;
+  const memberResult = memberIsTruthy
+    ? evaluateTypeNode(condType.trueType, context)
+    : evaluateTypeNode(condType.falseType, context);
+  context.level--;
+
+  // Restore the parameter
+  context.parameters.set(unionParam, oldValue);
+
+  return memberResult;
+}
+
+/**
+ * Helper: Distribute conditional evaluation over union members
+ */
+function evaluateUnionDistribution(
+  condType: ts.ConditionalTypeNode,
+  context: EvalContext,
+  unionParam: string,
+  checkStr: string,
+  extendsStr: string,
+  trueStr: string,
+  falseStr: string
+): string | null {
+  if (!context.parameters.has(unionParam)) {
+    return null;
+  }
+
+  const paramValue = context.parameters.get(unionParam)!;
+  const unionMembers = parseUnionType(paramValue);
+
+  // Only distribute if we have a union (multiple members)
+  if (unionMembers.length <= 1) {
+    return null;
+  }
+
+  // Log union distribution
+  addTrace(context, "conditional_union_distribute", `Union ${unionParam} = ${paramValue}`, {
+    position: getNodePosition(condType.checkType, context.sourceFile),
+  });
+
+  // Evaluate conditional for each union member
+  const results: Array<string> = [];
+  const oldUnionMember = context.currentUnionMember;
+  const oldUnionResults = context.currentUnionResults;
+
+  for (const member of unionMembers) {
+    const memberResult = evaluateSingleUnionMember(
+      condType,
+      context,
+      unionParam,
+      member,
+      checkStr,
+      extendsStr,
+      trueStr,
+      falseStr,
+      results
+    );
+
+    results.push(memberResult);
+
+    // Update accumulated results for visualization
+    const accumulatedUnion = results.join(" | ");
+    context.currentUnionResults = accumulatedUnion;
+
+    // Reduce the union (remove never, simplify) after each member
+    const branchNode = context.currentUnionMember === member ? condType.trueType : condType.falseType;
+    const reducedUnion = reduceUnionResult(context, accumulatedUnion, branchNode, member);
+    context.currentUnionResults = reducedUnion;
+  }
+
+  // Final reduced result
+  const finalResult = context.currentUnionResults || results.join(" | ");
+  context.currentUnionMember = oldUnionMember;
+  context.currentUnionResults = oldUnionResults;
+
+  return finalResult;
+}
 
 /**
  * Evaluates a conditional type and traces the branch taken
@@ -448,264 +776,64 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
   const inferTypes = findInferTypes(condType.extendsType, context.sourceFile);
   const hasInfer = inferTypes.length > 0;
 
-  // Track inferred bindings for cleanup later
-  let inferBindingsToCleanup: string[] = [];
-  // Track if infer pattern matched (used to skip checkTypeCondition)
-  let inferPatternMatched: boolean | undefined = undefined;
-
-  // Log condition entry with position of the entire conditional expression
-  addTrace(context, 'condition', `${checkStr} extends ${extendsStr} ? ${trueStr} : ${falseStr}`, {
+  // Log condition entry
+  addTrace(context, "condition", `${checkStr} extends ${extendsStr} ? ${trueStr} : ${falseStr}`, {
     position: getNodePosition(condType, context.sourceFile),
   });
 
   // Log LHS/RHS evaluation BEFORE infer pattern matching
   context.level++;
-  addTrace(context, 'conditional_evaluate_left', checkStr, {
+  addTrace(context, "conditional_evaluate_left", checkStr, {
     position: getNodePosition(condType.checkType, context.sourceFile),
   });
   evaluateTypeNode(condType.checkType, context);
 
-  addTrace(context, 'conditional_evaluate_right', extendsStr, {
+  addTrace(context, "conditional_evaluate_right", extendsStr, {
     position: getNodePosition(condType.extendsType, context.sourceFile),
   });
   evaluateTypeNode(condType.extendsType, context);
   context.level--;
 
-  // If this conditional has infer, trace the pattern matching
+  // Handle infer pattern matching
+  let inferPatternMatched: boolean | undefined = undefined;
+  let inferBindingsToCleanup: Array<string> = [];
   if (hasInfer) {
-    // Log pattern matching start
-    addTrace(context, 'infer_pattern_start', `Pattern: ${extendsStr}`, {
-      position: getNodePosition(condType.extendsType, context.sourceFile),
-    });
-
-    // Get the resolved check value (substitute parameters)
-    const resolvedCheck = substituteParameters(checkStr, context.parameters);
-
-    // Extract inferred bindings
-    const bindings = extractInferredBindings(
-      resolvedCheck,
-      extendsStr,
-      inferTypes.map(i => i.name),
-      context.sourceFile.text
-    );
-
-    if (bindings) {
-      inferPatternMatched = true;
-      // Log successful pattern match
-      addTrace(context, 'infer_pattern_match', `${resolvedCheck} matches ${extendsStr}`, {
-        position: getNodePosition(condType.extendsType, context.sourceFile),
-        result: 'true',
-      });
-
-      // Log each inferred binding
-      for (const inferType of inferTypes) {
-        const value = bindings.get(inferType.name);
-        if (value !== undefined) {
-          addTrace(context, 'infer_binding', `${inferType.name} = ${value}`, {
-            position: inferType.position,
-            result: value,
-          });
-
-          // Inject binding into parameters for true branch
-          context.parameters.set(inferType.name, value);
-          inferBindingsToCleanup.push(inferType.name);
-        }
-      }
-
-      // Store bindings in context for visualization
-      context.inferredBindings = bindings;
-      context.currentInferPattern = extendsStr;
-    } else {
-      inferPatternMatched = false;
-      // Log failed pattern match
-      addTrace(context, 'infer_pattern_match', `${resolvedCheck} does not match ${extendsStr}`, {
-        position: getNodePosition(condType.extendsType, context.sourceFile),
-        result: 'false',
-      });
-    }
+    const inferResult = evaluateInferPattern(condType, context, checkStr, extendsStr, inferTypes);
+    inferPatternMatched = inferResult.inferPatternMatched;
+    inferBindingsToCleanup = inferResult.inferBindingsToCleanup;
   }
 
-  // Check if this conditional should distribute over a union
-  // First check for distributive (naked type parameter with union value)
-  // Then discriminative determines if each member gets different treatment
+  // Check for union distribution
   const distributiveParam = getDistributiveParameter(condType.checkType, context.sourceFile);
   const discriminativeParam = getDiscriminativeParameter(condType.checkType, condType.extendsType, context.sourceFile);
-
-  // Use distributive param if available, fall back to discriminative for backwards compat
   const unionParam = distributiveParam || discriminativeParam;
 
-  if (unionParam && context.parameters.has(unionParam)) {
-    const paramValue = context.parameters.get(unionParam)!;
-    const unionMembers = parseUnionType(paramValue);
-
-    // Only distribute if we have a union (multiple members)
-    if (unionMembers.length > 1) {
-      // Log union distribution
-      addTrace(context, 'conditional_union_distribute', `Union ${unionParam} = ${paramValue}`, {
-        position: getNodePosition(condType.checkType, context.sourceFile),
-      });
-
-      // Evaluate conditional for each union member
-      const results: string[] = [];
-      const oldUnionMember = context.currentUnionMember;
-      const oldUnionResults = context.currentUnionResults;
-
-      for (const member of unionMembers) {
-        // Set the union member context
-        context.currentUnionMember = member;
-
-        // Temporarily bind the parameter to this member
-        const oldValue = context.parameters.get(unionParam)!;
-        context.parameters.set(unionParam, member);
-
-        // Log which member we're evaluating
-        addTrace(context, 'conditional_union_member', `Evaluating for ${unionParam} = ${member}`, {
-          position: getNodePosition(condType.checkType, context.sourceFile),
-          currentUnionMember: member,
-          currentUnionResults: results.length > 0 ? results.join(' | ') : undefined,
-        });
-
-        // Check if this member satisfies the condition
-        const memberCheckStr = substituteParameters(checkStr, context.parameters);
-        const memberExtendsStr = substituteParameters(extendsStr, context.parameters);
-        const memberIsTruthy = checkTypeCondition(memberCheckStr, memberExtendsStr, context.sourceFile.text);
-
-        // Log detailed comparison steps for this member (same as non-union case)
-        context.level++;
-        addTrace(context, 'conditional_evaluate_left', memberCheckStr, {
-          position: getNodePosition(condType.checkType, context.sourceFile),
-          currentUnionMember: member,
-        });
-        // Recursively evaluate check type to trace any nested generics
-        evaluateTypeNode(condType.checkType, context);
-
-        addTrace(context, 'conditional_evaluate_right', memberExtendsStr, {
-          position: getNodePosition(condType.extendsType, context.sourceFile),
-          currentUnionMember: member,
-        });
-        // Recursively evaluate extends type to trace any nested generics
-        evaluateTypeNode(condType.extendsType, context);
-        context.level--;
-
-        // Highlight only the comparison part for this member
-        const memberComparisonStart = condType.checkType.getStart(context.sourceFile);
-        const memberComparisonEnd = condType.extendsType.getEnd();
-        const memberComparisonPosStart = context.sourceFile.getLineAndCharacterOfPosition(memberComparisonStart);
-        const memberComparisonPosEnd = context.sourceFile.getLineAndCharacterOfPosition(memberComparisonEnd);
-        addTrace(context, 'conditional_comparison', `${memberCheckStr} extends ${memberExtendsStr}`, {
-          position: {
-            start: { line: memberComparisonPosStart.line + 1, character: memberComparisonPosStart.character },
-            end: { line: memberComparisonPosEnd.line + 1, character: memberComparisonPosEnd.character },
-          },
-          currentUnionMember: member,
-        });
-
-        // Log evaluation result for this member
-        const branchNode = memberIsTruthy ? condType.trueType : condType.falseType;
-        addTrace(context, 'conditional_evaluation', `${memberIsTruthy}`, {
-          position: getNodePosition(branchNode, context.sourceFile),
-          currentUnionMember: member,
-          result: memberIsTruthy ? 'true' : 'false',
-        });
-
-        // Log which branch is taken for this member
-        addTrace(context, memberIsTruthy ? 'branch_true' : 'branch_false', memberIsTruthy ? trueStr : falseStr, {
-          position: getNodePosition(branchNode, context.sourceFile),
-          currentUnionMember: member,
-          currentUnionResults: results.length > 0 ? results.join(' | ') : undefined,
-        });
-
-        // Evaluate the appropriate branch for this member
-        context.level++;
-        const memberResult = memberIsTruthy
-          ? evaluateTypeNode(condType.trueType, context)
-          : evaluateTypeNode(condType.falseType, context);
-        context.level--;
-
-        results.push(memberResult);
-
-        // Update accumulated results for visualization
-        const accumulatedUnion = results.join(' | ');
-        context.currentUnionResults = accumulatedUnion;
-
-        // Reduce the union (remove never, simplify) after each member
-        let reducedUnion;
-        try {
-          reducedUnion = evalTypeString(context.sourceFile.text, accumulatedUnion);
-        } catch {
-          // If reduction fails, keep the unreduced version
-          reducedUnion = accumulatedUnion;
-        }
-
-        // Log reduction if it changed
-        if (reducedUnion !== accumulatedUnion) {
-          addTrace(context, 'union_reduce', `${accumulatedUnion} => ${reducedUnion}`, {
-            position: getNodePosition(branchNode, context.sourceFile),
-            currentUnionMember: member,
-            currentUnionResults: reducedUnion,
-            result: reducedUnion,
-          });
-          context.currentUnionResults = reducedUnion;
-        }
-
-        // Restore the parameter
-        context.parameters.set(unionParam, oldValue);
-      }
-
-      // Final reduced result
-      const finalResult = context.currentUnionResults || results.join(' | ');
-      context.currentUnionMember = oldUnionMember;
-      context.currentUnionResults = oldUnionResults;
-
-      // Clean up inferred bindings and log result
-      if (hasInfer && inferBindingsToCleanup.length > 0) {
-        addTrace(context, 'infer_pattern_result', finalResult, {
-          position: getNodePosition(condType, context.sourceFile),
-          result: finalResult,
-        });
-        for (const name of inferBindingsToCleanup) {
-          context.parameters.delete(name);
-        }
-        context.inferredBindings = undefined;
-        context.currentInferPattern = undefined;
-      }
-
-      return finalResult;
+  if (unionParam) {
+    const unionResult = evaluateUnionDistribution(condType, context, unionParam, checkStr, extendsStr, trueStr, falseStr);
+    if (unionResult !== null) {
+      cleanupInferBindings(hasInfer, inferBindingsToCleanup, unionResult, context, condType);
+      return unionResult;
     }
   }
 
-  // Non-discriminative or non-union case: standard evaluation
-  // (LHS/RHS already evaluated above before infer block)
-
-  // Log comparison operation (check extends extends)
-  // Highlight only the comparison part: checkType extends extendsType (without branches)
-  const comparisonStart = condType.checkType.getStart(context.sourceFile);
-  const comparisonEnd = condType.extendsType.getEnd();
-  const comparisonPosStart = context.sourceFile.getLineAndCharacterOfPosition(comparisonStart);
-  const comparisonPosEnd = context.sourceFile.getLineAndCharacterOfPosition(comparisonEnd);
-  addTrace(context, 'conditional_comparison', `${checkStr} extends ${extendsStr}`, {
-    position: {
-      start: { line: comparisonPosStart.line + 1, character: comparisonPosStart.character },
-      end: { line: comparisonPosEnd.line + 1, character: comparisonPosEnd.character },
-    },
+  // Non-union case: standard evaluation
+  addTrace(context, "conditional_comparison", `${checkStr} extends ${extendsStr}`, {
+    position: calculateConditionalPosition(condType, context),
   });
 
   // Use infer pattern match result if available, otherwise call checkTypeCondition
   const isTruthy = inferPatternMatched !== undefined
     ? inferPatternMatched
-    : checkTypeCondition(substituteParameters(checkStr, context.parameters ), substituteParameters(extendsStr, context.parameters ), context.sourceFile.text)
+    : checkTypeCondition(substituteParameters(checkStr, context.parameters), substituteParameters(extendsStr, context.parameters), context.sourceFile.text);
 
-  // Get branch node for highlighting
   const branchNode = isTruthy ? condType.trueType : condType.falseType;
 
-  // Log evaluation result (point to the branch that was selected)
-  addTrace(context, 'conditional_evaluation', `${isTruthy}`, {
+  addTrace(context, "conditional_evaluation", `${isTruthy}`, {
     position: getNodePosition(branchNode, context.sourceFile),
-    result: isTruthy ? 'true' : 'false',
+    result: isTruthy ? "true" : "false",
   });
 
-  // Log branch taken
-  addTrace(context, isTruthy ? 'branch_true' : 'branch_false', isTruthy ? trueStr : falseStr, {
+  addTrace(context, isTruthy ? "branch_true" : "branch_false", isTruthy ? trueStr : falseStr, {
     position: getNodePosition(branchNode, context.sourceFile),
   });
 
@@ -715,21 +843,7 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
     : evaluateTypeNode(condType.falseType, context);
   context.level--;
 
-  // Note: result_assignment was removed to avoid duplicate steps
-  // The generic_result step already captures the final result
-
-  // Clean up inferred bindings and log result
-  if (hasInfer && inferBindingsToCleanup.length > 0) {
-    addTrace(context, 'infer_pattern_result', result, {
-      position: getNodePosition(condType, context.sourceFile),
-      result,
-    });
-    for (const name of inferBindingsToCleanup) {
-      context.parameters.delete(name);
-    }
-    context.inferredBindings = undefined;
-    context.currentInferPattern = undefined;
-  }
+  cleanupInferBindings(hasInfer, inferBindingsToCleanup, result, context, condType);
 
   return result;
 }
@@ -754,7 +868,7 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
   }
 
   // Log template literal start
-  addTrace(context, 'template_literal_start', text, {
+  addTrace(context, "template_literal_start", text, {
     position: getNodePosition(templateType, context.sourceFile),
   });
 
@@ -767,7 +881,7 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
   // If no interpolations, return as simple string literal
   if (spans.length === 0) {
     const result = `"${head}"`;
-    addTrace(context, 'template_result', result, {
+    addTrace(context, "template_result", result, {
       position: getNodePosition(templateType, context.sourceFile),
       result,
     });
@@ -777,22 +891,19 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
   // Evaluate each span's type and collect results
   // Each span can resolve to a union, so we need cartesian product
   type SpanResult = {
-    values: string[];       // evaluated values (could be union members)
-    followingText: string;  // literal text after this span
+    values: Array<string>; // evaluated values (could be union members)
+    followingText: string; // literal text after this span
   };
 
-  const spanResults: SpanResult[] = [];
+  const spanResults: Array<SpanResult> = [];
 
   context.level++;
   for (const span of spans) {
     // Evaluate the type inside ${}
     const spanTypeStr = span.type.getText(context.sourceFile);
 
-    // Substitute parameters first
-    const substitutedStr = substituteParameters(spanTypeStr, context.parameters);
-
     // Log span evaluation
-    addTrace(context, 'template_span_eval', `\${${spanTypeStr}}`, {
+    addTrace(context, "template_span_eval", `\${${spanTypeStr}}`, {
       position: getNodePosition(span.type, context.sourceFile),
     });
 
@@ -803,7 +914,8 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
     let resolvedType: string;
     try {
       resolvedType = evalTypeString(context.sourceFile.text, evaluatedType);
-    } catch {
+    }
+    catch {
       resolvedType = evaluatedType;
     }
 
@@ -823,18 +935,93 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
   if (hasUnion) {
     // Log union distribution
     const unionSpans = spanResults
-      .map((sr, i) => sr.values.length > 1 ? `\${${spans[i].type.getText(context.sourceFile)}} = ${sr.values.join(' | ')}` : null)
+      .map((sr, i) => sr.values.length > 1 ? `\${${spans[i]?.type.getText(context.sourceFile)}} = ${sr.values.join(" | ")}` : null)
       .filter(Boolean)
-      .join(', ');
+      .join(", ");
 
-    addTrace(context, 'template_union_distribute', `Union in ${unionSpans}`, {
+    addTrace(context, "template_union_distribute", `Union in ${unionSpans}`, {
       position: getNodePosition(templateType, context.sourceFile),
     });
   }
 
   // Generate cartesian product of all combinations
   // Track all final results separately from trace accumulation
-  const allResults: string[] = [];
+  const allResults: Array<string> = [];
+
+  // Helper: Remove quotes from string literals
+  const cleanLiteralValue = (value: string): string => {
+    if ((value.startsWith("\"") && value.endsWith("\"")) ||
+        (value.startsWith("'") && value.endsWith("'"))) {
+      return value.slice(1, -1);
+    }
+    return value;
+  };
+
+  // Helper: Save state, add trace, restore state
+  const traceUnionCombination = (
+    value: string,
+    spanIndex: number,
+    resultsBefore: number,
+    recurse: () => void
+  ): void => {
+    const oldUnionMember = context.currentUnionMember;
+    const oldUnionResults = context.currentUnionResults;
+
+    context.currentUnionMember = value;
+    context.currentUnionResults = allResults.length > 0 ? allResults.join(" | ") : undefined;
+
+    const spanType = spans[spanIndex]?.type;
+    addTrace(context, "template_union_member", `Evaluating for ${value}`, {
+      position: spanType ? getNodePosition(spanType, context.sourceFile) : undefined,
+      currentUnionMember: value,
+      currentUnionResults: allResults.length > 0 ? allResults.join(" | ") : undefined,
+    });
+
+    recurse();
+
+    // Log the result(s) that were added
+    const newResults = allResults.slice(resultsBefore);
+    if (newResults.length > 0) {
+      const newAccumulated = allResults.join(" | ");
+      context.currentUnionMember = value;
+      context.currentUnionResults = newAccumulated;
+
+      const spanTypeForResult = spans[spanIndex]?.type;
+      addTrace(context, "template_union_member_result", `=> ${newResults.join(" | ")}`, {
+        position: spanTypeForResult ? getNodePosition(spanTypeForResult, context.sourceFile) : undefined,
+        currentUnionMember: value,
+        currentUnionResults: newAccumulated,
+        result: newResults.join(" | "),
+      });
+    }
+
+    context.currentUnionMember = oldUnionMember;
+    context.currentUnionResults = oldUnionResults;
+  };
+
+  // Helper: Process single value (with or without tracing)
+  const processValue = (
+    value: string,
+    prefix: string,
+    span: SpanResult,
+    spanIndex: number,
+    recurse: (newPrefix: string) => void
+  ): void => {
+    const cleanValue = cleanLiteralValue(value);
+    const newPrefix = prefix + cleanValue + span.followingText;
+
+    // Check if we need tracing for this value
+    const needsTrace = hasUnion && span.values.length > 1;
+    if (!needsTrace) {
+      recurse(newPrefix);
+      return;
+    }
+
+    const resultsBefore = allResults.length;
+    traceUnionCombination(value, spanIndex, resultsBefore, () => {
+      recurse(newPrefix);
+    });
+  };
 
   // Recursive function to generate all combinations
   const generateCombinations = (
@@ -842,77 +1029,35 @@ export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode
     spanIndex: number
   ): void => {
     if (spanIndex >= spanResults.length) {
-      // Base case: we've processed all spans - add final result
       allResults.push(`"${prefix}"`);
       return;
     }
 
     const span = spanResults[spanIndex];
+    if (!span) return;
 
     for (const value of span.values) {
-      // Clean value (remove quotes if present for string literals)
-      let cleanValue = value;
-      if ((value.startsWith('"') && value.endsWith('"')) ||
-          (value.startsWith("'") && value.endsWith("'"))) {
-        cleanValue = value.slice(1, -1);
-      }
-
-      const newPrefix = prefix + cleanValue + span.followingText;
-
-      // If union and tracking, log member evaluation
-      if (hasUnion && span.values.length > 1) {
-        const oldUnionMember = context.currentUnionMember;
-        const oldUnionResults = context.currentUnionResults;
-        const resultsBefore = allResults.length;
-
-        context.currentUnionMember = value;
-        context.currentUnionResults = allResults.length > 0 ? allResults.join(' | ') : undefined;
-
-        addTrace(context, 'template_union_member', `Evaluating for ${value}`, {
-          position: getNodePosition(spans[spanIndex].type, context.sourceFile),
-          currentUnionMember: value,
-          currentUnionResults: allResults.length > 0 ? allResults.join(' | ') : undefined,
-        });
-
+      processValue(value, prefix, span, spanIndex, newPrefix => {
         generateCombinations(newPrefix, spanIndex + 1);
-
-        // After recursion completes, log the result(s) that were added
-        const newResults = allResults.slice(resultsBefore);
-        if (newResults.length > 0) {
-          const newAccumulated = allResults.join(' | ');
-          context.currentUnionMember = value;
-          context.currentUnionResults = newAccumulated;
-
-          addTrace(context, 'template_union_member_result', `=> ${newResults.join(' | ')}`, {
-            position: getNodePosition(spans[spanIndex].type, context.sourceFile),
-            currentUnionMember: value,
-            currentUnionResults: newAccumulated,
-            result: newResults.join(' | '),
-          });
-        }
-
-        context.currentUnionMember = oldUnionMember;
-        context.currentUnionResults = oldUnionResults;
-      } else {
-        generateCombinations(newPrefix, spanIndex + 1);
-      }
+      });
     }
   };
 
   generateCombinations(head, 0);
 
   // Join as union
-  let finalResult = allResults.join(' | ');
+  let finalResult = allResults.join(" | ");
 
   // Reduce the union using real TS type checker
   try {
     finalResult = evalTypeString(context.sourceFile.text, finalResult);
-  } catch {
+  }
+  catch {
     // Keep unreduced if evaluation fails
   }
 
   // Log final result
-  addTrace(context, 'template_result', finalResult, {
+  addTrace(context, "template_result", finalResult, {
     position: getNodePosition(templateType, context.sourceFile),
     result: finalResult,
   });
@@ -960,14 +1105,14 @@ function getDiscriminativeParameter(checkNode: ts.TypeNode, extendsNode: ts.Type
   //   str extends any ? ... (any matches everything)
 
   // Broad types that are non-discriminative
-  const nonDiscriminativeTypes = new Set(['string', 'number', 'boolean', 'any', 'unknown', 'symbol', 'bigint', 'never', '{}', 'object', 'string | number', 'PropertyKey']);
+  const nonDiscriminativeTypes = new Set([ "string", "number", "boolean", "any", "unknown", "symbol", "bigint", "never", "{}", "object", "string | number", "PropertyKey" ]);
 
   if (nonDiscriminativeTypes.has(extendsStr)) {
     return null;
   }
 
   // If extends type starts with a quote (string literal) or has specific structure, it's discriminative
-  if (extendsStr.startsWith('"') || extendsStr.startsWith("'") || extendsStr.startsWith('{') || extendsStr.startsWith('[')) {
+  if (extendsStr.startsWith("\"") || extendsStr.startsWith("'") || extendsStr.startsWith("{") || extendsStr.startsWith("[")) {
     return checkStr;
   }
 
@@ -978,22 +1123,9 @@ function getDiscriminativeParameter(checkNode: ts.TypeNode, extendsNode: ts.Type
  * Parse a union type string into its component types
  * Handles "A | B | C" format
  */
-function parseUnionType(typeStr: string): string[] {
-  const parts = typeStr.split(' | ').map(p => p.trim());
+function parseUnionType(typeStr: string): Array<string> {
+  const parts = typeStr.split(" | ").map(p => p.trim());
   return parts.filter(p => p.length > 0);
-}
-
-/**
- * Simple type compatibility check (simplified - real TS would do full type checking)
- */
-function isTypeCompatible(check: string, extendsType: string): boolean {
-  // Basic heuristics
-  if (extendsType === 'string' && (check.startsWith('"') || check.startsWith("'"))) {
-    return true;
-  }
-  if (check === extendsType) return true;
-  if (extendsType === 'any') return true;
-  return false;
 }
 
 /**
@@ -1001,7 +1133,7 @@ function isTypeCompatible(check: string, extendsType: string): boolean {
  */
 function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext): string {
   const mappedStr = mappedType.getText(context.sourceFile);
-  addTrace(context, 'mapped_type_start', mappedStr, {
+  addTrace(context, "mapped_type_start", mappedStr, {
     position: getNodePosition(mappedType, context.sourceFile),
   });
 
@@ -1010,13 +1142,13 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
   const loopVarName = typeParam.name.text;
 
   // Log constraint evaluation
-  const constraintStr = typeParam.constraint?.getText(context.sourceFile) || 'string | number | symbol';
-  addTrace(context, 'mapped_type_constraint', `${loopVarName} in ${constraintStr}`, {
+  const constraintStr = typeParam.constraint?.getText(context.sourceFile) || "string | number | symbol";
+  addTrace(context, "mapped_type_constraint", `${loopVarName} in ${constraintStr}`, {
     position: getNodePosition(typeParam.constraint || mappedType, context.sourceFile),
   });
 
   // Evaluate the constraint to get iteration keys
-  let keys: string[] = [];
+  let keys: Array<string> = [];
   if (typeParam.constraint) {
     // First trace through the constraint evaluation (for visibility)
     context.level++;
@@ -1031,28 +1163,29 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
     let realResult: string;
     try {
       realResult = evalTypeString(context.sourceFile.text, constraintStr);
-    } catch {
+    }
+    catch {
       // Fallback to traced result if evaluation fails
       realResult = constraintResult;
     }
     keys = parseUnionType(realResult);
 
     // Log the resolved constraint
-    addTrace(context, 'mapped_type_constraint_result', `${loopVarName} in (${keys.join(' | ')})`, {
+    addTrace(context, "mapped_type_constraint_result", `${loopVarName} in (${keys.join(" | ")})`, {
       result: realResult,
     });
   }
 
   // Evaluate mapped type body for each key and build object entries
   const mappedEntries: Record<string, string> = {};
-  const mappedResults: string[] = [];
+  const mappedResults: Array<string> = [];
   const oldParams = new Map(context.parameters);
 
   for (const key of keys) {
     // Bind loop variable to current key
     context.parameters.set(loopVarName, key);
 
-    addTrace(context, 'map_iteration', `${loopVarName} = ${key}`, {
+    addTrace(context, "map_iteration", `${loopVarName} = ${key}`, {
       position: getNodePosition(typeParam, context.sourceFile),
     });
 
@@ -1072,13 +1205,13 @@ function evaluateMappedType(mappedType: ts.MappedTypeNode, context: EvalContext)
 
   // Log the constructed object type
   const objStr = JSON.stringify(mappedEntries);
-  addTrace(context, 'mapped_type_result', `Constructed object: ${objStr}`, {
+  addTrace(context, "mapped_type_result", `Constructed object: ${objStr}`, {
     result: objStr,
   });
 
   // Return union of all mapped values
-  const resultStr = mappedResults.join(' | ');
-  addTrace(context, 'mapped_type_end', `mapped type union: ${resultStr}`, {
+  const resultStr = mappedResults.join(" | ");
+  addTrace(context, "mapped_type_end", `mapped type union: ${resultStr}`, {
     result: resultStr,
   });
 
@@ -1092,7 +1225,7 @@ function evaluateIndexedAccess(indexedType: ts.IndexedAccessTypeNode, context: E
   const objTypeStr = indexedType.objectType.getText(context.sourceFile);
   const indexTypeStr = indexedType.indexType.getText(context.sourceFile);
 
-  addTrace(context, 'indexed_access', `${objTypeStr}[${indexTypeStr}]`, {
+  addTrace(context, "indexed_access", `${objTypeStr}[${indexTypeStr}]`, {
     position: getNodePosition(indexedType, context.sourceFile),
   });
 
@@ -1116,13 +1249,14 @@ function evaluateIndexedAccess(indexedType: ts.IndexedAccessTypeNode, context: E
   let finalResult;
   try {
     finalResult = evalTypeString(context.sourceFile.text, fullExpr);
-  } catch {
+  }
+  catch {
     // Fallback to unresolved form if evaluation fails
     finalResult = fullExpr;
   }
 
   // Log the result of indexing
-  addTrace(context, 'indexed_access_result', `Extracted: ${finalResult}`, {
+  addTrace(context, "indexed_access_result", `Extracted: ${finalResult}`, {
     result: finalResult,
   });
 
@@ -1148,25 +1282,32 @@ export function evaluateTypeNode(typeNode: ts.TypeNode, context: EvalContext): s
 
   if (ts.isTypeReferenceNode(typeNode)) {
     result = evaluateGenericCall(typeNode, context);
-  } else if (ts.isConditionalTypeNode(typeNode)) {
+  }
+  else if (ts.isConditionalTypeNode(typeNode)) {
     result = evaluateConditional(typeNode, context);
-  } else if (ts.isTemplateLiteralTypeNode(typeNode)) {
+  }
+  else if (ts.isTemplateLiteralTypeNode(typeNode)) {
     result = evaluateTemplateLiteral(typeNode, context);
-  } else if (ts.isMappedTypeNode(typeNode)) {
+  }
+  else if (ts.isMappedTypeNode(typeNode)) {
     result = evaluateMappedType(typeNode, context);
-  } else if (ts.isIndexedAccessTypeNode(typeNode)) {
+  }
+  else if (ts.isIndexedAccessTypeNode(typeNode)) {
     result = evaluateIndexedAccess(typeNode, context);
-  } else if (ts.isUnionTypeNode(typeNode)) {
+  }
+  else if (ts.isUnionTypeNode(typeNode)) {
     context.level++;
     const members = typeNode.types.map(t => evaluateTypeNode(t, context));
     context.level--;
-    result = members.join(' | ');
-  } else if (ts.isIntersectionTypeNode(typeNode)) {
+    result = members.join(" | ");
+  }
+  else if (ts.isIntersectionTypeNode(typeNode)) {
     context.level++;
     const members = typeNode.types.map(t => evaluateTypeNode(t, context));
     context.level--;
-    result = members.join(' & ');
-  } else if (ts.isTupleTypeNode(typeNode)) {
+    result = members.join(" & ");
+  }
+  else if (ts.isTupleTypeNode(typeNode)) {
     context.level++;
     const elements = typeNode.elements.map(el => {
       // Handle named tuple elements: [name: Type]
@@ -1178,8 +1319,9 @@ export function evaluateTypeNode(typeNode: ts.TypeNode, context: EvalContext): s
       return evaluateTypeNode(el, context);
     });
     context.level--;
-    result = `[${elements.join(', ')}]`;
-  } else {
+    result = `[${elements.join(", ")}]`;
+  }
+  else {
     // Fallback for simple types
     result = typeNode.getText(context.sourceFile);
   }
@@ -1196,7 +1338,7 @@ export function evaluateTypeNode(typeNode: ts.TypeNode, context: EvalContext): s
  * @param typeName Name of the type to trace
  * @returns Array of trace entries showing evaluation steps
  */
-export function traceTypeResolution(ast: ts.SourceFile, typeName: string): TraceEntry[] {
+export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Array<TraceEntry> {
   // Build map of all type aliases
   const allTypeAliases = new Map<string, ts.TypeAliasDeclaration>();
   const typeAliases = getTypeAliases(ast);
@@ -1221,7 +1363,7 @@ export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Trace
   };
 
   // Add initial trace entry for the type alias definition
-  addTrace(context, 'type_alias_start', targetAlias.getText(ast), {
+  addTrace(context, "type_alias_start", targetAlias.getText(ast), {
     position: getNodePosition(targetAlias, ast),
   });
 
@@ -1229,7 +1371,7 @@ export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Trace
   const result = evaluateTypeNode(targetAlias.type, context);
 
   // Add final trace entry with the resolved result
-  addTrace(context, 'type_alias_result', `${typeName} = ${result}`, {
+  addTrace(context, "type_alias_result", `${typeName} = ${result}`, {
     position: getNodePosition(targetAlias, ast),
     result,
   });
@@ -1268,32 +1410,3 @@ export function parseConditionalType(
     falseType: condType.falseType.getText(sourceFile),
   };
 }
-//
-// // Example code
-// const ast = generateAST("type _result = getter<\"\">;\n" + CustomTypes);
-//
-// const resultNode = getNodeByName(ast, '_result');
-// if(!resultNode) process.exit(1);
-//
-// console.log('=== Type Evaluation Trace for _result ===\n');
-// const trace = traceTypeResolution(ast, '_result');
-// console.dir(trace, { depth: null });
-// trace.forEach(entry => {
-//   const indent = '  '.repeat(entry.level);
-//   console.log(`${indent}Step ${entry.step}: [${entry.type}] ${entry.expression}`);
-//
-//   if (entry.position) {
-//     const { start, end } = entry.position;
-//     console.log(`${indent}  Location: Line ${start.line}:${start.character} - ${end.line}:${end.character}`);
-//   }
-//   if (entry.parameters && Object.keys(entry.parameters).length > 0) {
-//     console.log(`${indent}  Parameters: ${JSON.stringify(entry.parameters)}`);
-//   }
-//   if (entry.args && Object.keys(entry.args).length > 0) {
-//     console.log(`${indent}  Args: ${JSON.stringify(entry.args)}`);
-//   }
-//   if (entry.result) {
-//     console.log(`${indent}  Result: ${entry.result}`);
-//   }
-//   console.log();
-// });

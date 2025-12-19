@@ -5,6 +5,7 @@ import { generateTypeVideo } from "../core/typeDebugger.ts";
 import type { VideoData, TypeInfo } from "../core/types.ts";
 import { CodePanel } from "./components/CodePanel.tsx";
 import { Header } from "./components/Header.tsx";
+import { InputSection } from "./components/InputSection.tsx";
 import { MonacoCodeEditor } from "./components/MonacoCodeEditor.tsx";
 import { StepDetailsPanel } from "./components/StepDetailsPanel.tsx";
 import { usePlayback } from "./hooks/usePlayback.ts";
@@ -181,6 +182,12 @@ export const App: React.FC = () => {
     void handleGenerateAsync();
   }, [ handleGenerateAsync ]);
 
+  // Precompute visibility states
+  const shouldShowDebugPanels = hasGenerated && !editorVisible;
+  const editorWidth = !editorVisible && hasGenerated ? theme.size.editorWidth : undefined;
+  const editorFlex = editorVisible || !hasGenerated ? 1 : undefined;
+  const editorMinWidth = !editorVisible && hasGenerated ? theme.size.editorWidth : undefined;
+
   return (
     <div
       style={{
@@ -213,118 +220,26 @@ export const App: React.FC = () => {
         {/* Editor Panel (Hidden/Visible with CSS slide) */}
         <div
           style={{
-            width: !editorVisible && hasGenerated ? theme.size.editorWidth : undefined,
-            flex: editorVisible || !hasGenerated ? 1 : undefined,
+            width: editorWidth,
+            flex: editorFlex,
             display: "flex",
             flexDirection: "column",
-            minWidth: !editorVisible && hasGenerated ? theme.size.editorWidth : undefined,
+            minWidth: editorMinWidth,
             marginLeft: editorMarginLeft,
             transition: "margin-left 0.3s ease-in-out",
             overflow: "hidden",
           }}
         >
-          {/* Type Input Section - Top with horizontal layout */}
-          <div
-            style={{
-              padding: theme.spacing.lg,
-              backgroundColor: theme.bg.primary,
-              borderBottom: `1px solid ${theme.border.subtle}`,
-              display: "flex",
-              flexDirection: "column",
-              gap: theme.spacing.md,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                gap: theme.spacing.md,
-                alignItems: "flex-start",
-              }}
-            >
-              <input
-                type="text"
-                value={typeName}
-                onChange={handleTypeNameChange}
-                disabled={isLoading}
-                placeholder='Enter type expression (e.g., _result or "a" extends string ? true : false)'
-                style={{
-                  flex: 1,
-                  padding: theme.spacing.md,
-                  backgroundColor: theme.bg.editor,
-                  color: theme.text.primary,
-                  border: `1px solid ${typeNameError ? theme.accent.error : theme.border.subtle}`,
-                  borderRadius: theme.radius.md,
-                  fontFamily: "\"Fira Code\", monospace",
-                  fontSize: theme.fontSize.md,
-                  boxSizing: "border-box",
-                  opacity: isLoading ? 0.6 : 1,
-                  cursor: isLoading ? "not-allowed" : "text",
-                }}
-              />
-              <button
-                type="button"
-                onClick={handleGenerate}
-                disabled={isLoading || !typeName.trim() || !!typeNameError}
-                style={{
-                  padding: `${theme.spacing.md} ${theme.spacing.lg}`,
-                  backgroundColor:
-                      isLoading || !typeName.trim() || typeNameError
-                        ? theme.text.disabled
-                        : theme.accent.primary,
-                  color:
-                      isLoading || !typeName.trim() || typeNameError
-                        ? theme.text.primary
-                        : theme.accent.btnText,
-                  border: "none",
-                  borderRadius: theme.radius.md,
-                  fontSize: theme.fontSize.md,
-                  fontWeight: theme.fontWeight.semibold,
-                  cursor:
-                      isLoading || !typeName.trim() || typeNameError
-                        ? "not-allowed"
-                        : "pointer",
-                  opacity: isLoading || !typeName.trim() || typeNameError ? 0.6 : 1,
-                  transition: "background-color 0.2s ease",
-                  whiteSpace: "nowrap",
-                  flexShrink: 0,
-                }}
-                onMouseOver={handleButtonMouseOver}
-                onMouseOut={handleButtonMouseOut}
-              >
-                {isLoading ? "Debugging..." : "Debug"}
-              </button>
-            </div>
-
-            {typeNameError && (
-              <div
-                style={{
-                  padding: theme.spacing.md,
-                  backgroundColor: "rgba(239, 68, 68, 0.1)",
-                  border: `1px solid ${theme.accent.error}`,
-                  borderRadius: theme.radius.md,
-                  color: theme.accent.error,
-                  fontSize: theme.fontSize.sm,
-                }}
-              >
-                {typeNameError}
-              </div>
-            )}
-
-            {error && (
-              <div
-                style={{
-                  padding: theme.spacing.md,
-                  backgroundColor: "rgba(239, 68, 68, 0.1)",
-                  border: `1px solid ${theme.accent.error}`,
-                  borderRadius: theme.radius.md,
-                  color: theme.accent.error,
-                  fontSize: theme.fontSize.sm,
-                }}
-              >
-                {error}
-              </div>
-            )}
-          </div>
+          <InputSection
+            typeName={typeName}
+            onTypeNameChange={handleTypeNameChange}
+            typeNameError={typeNameError}
+            isLoading={isLoading}
+            onGenerate={handleGenerate}
+            error={error}
+            onButtonMouseOver={handleButtonMouseOver}
+            onButtonMouseOut={handleButtonMouseOut}
+          />
 
           <MonacoCodeEditor
             code={code}
@@ -334,7 +249,7 @@ export const App: React.FC = () => {
         </div>
 
         {/* Resizable Debug Panels */}
-        {hasGenerated && !editorVisible && (
+        {shouldShowDebugPanels && (
           <SplitPane
             split="vertical"
             sizes={paneSizes}
