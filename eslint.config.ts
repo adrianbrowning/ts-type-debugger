@@ -7,6 +7,12 @@ export const additionalRules: Array<Linter.Config> = [
             "sonarjs/no-nested-template-literals": "off",
             "sonarjs/slow-regex": "off"
         }
+    },
+    {
+        files: ["tests/**/*.ts", "tests/**/*.tsx"],
+     rules: {
+            "react/jsx-props-no-spreading": "off"
+     }
     }
 ];
 

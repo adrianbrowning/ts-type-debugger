@@ -17,8 +17,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint:ts": "tsc --noEmit",
-    "lint:esl": "eslint --config eslint.config.ts \"src/**/*.{j,t}s{,x}\" --cache --max-warnings=0",
-    "lint:s": "eslint --config eslint.config.style.ts \"src/**/*.{j,t}s{,x}\" --cache --max-warnings=0",
+    "_esl": "eslint \"{src,tests}/**/*.{j,t}s{,x}\" --cache --max-warnings=0 ",
+    "lint:esl": "pnpm _esl --config eslint.config.ts",
+    "lint:s": "pnpm _esl --config eslint.config.style.ts",
     "lint:fix": "pnpm lint:s --fix",
     "knip": "knip",
     "lint": "pnpm lint:ts; pnpm lint:fix"
