@@ -1,62 +1,63 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '../../utils/renderWithProviders.tsx';
-import userEvent from '@testing-library/user-event';
-import { GlobalsSection } from '../../../src/web/components/GlobalsSection';
-import type { TypeInfo } from '../../../src/core/types';
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
+import type { TypeInfo } from "../../../src/core/types";
+import { GlobalsSection } from "../../../src/web/components/GlobalsSection";
+import { render } from "../../utils/renderWithProviders.tsx";
 
-describe('GlobalsSection Component', () => {
-  const mockTypeAliases: TypeInfo[] = [
+describe("GlobalsSection Component", () => {
+  const mockTypeAliases: Array<TypeInfo> = [
     {
-      name: 'Loop2',
-      text: 'type Loop2<T> = T extends "a" ? 1 : 2',
-      lines: ['type Loop2<T> = T extends "a" ? 1 : 2'],
+      name: "Loop2",
+      text: "type Loop2<T> = T extends \"a\" ? 1 : 2",
+      lines: [ "type Loop2<T> = T extends \"a\" ? 1 : 2" ],
       startLine: 1,
       endLine: 1,
     },
     {
-      name: 'Stringify',
-      text: 'type Stringify<T> = `${T & string}`',
-      lines: ['type Stringify<T> = `${T & string}`'],
+      name: "Stringify",
+      text: "type Stringify<T> = `${T & string}`",
+      lines: [ "type Stringify<T> = `${T & string}`" ],
       startLine: 2,
       endLine: 2,
     },
     {
-      name: 'getter',
-      text: 'type getter<T> = T["key"]',
-      lines: ['type getter<T> = T["key"]'],
+      name: "getter",
+      text: "type getter<T> = T[\"key\"]",
+      lines: [ "type getter<T> = T[\"key\"]" ],
       startLine: 3,
       endLine: 3,
     },
   ];
 
-  it('renders CollapsibleSection with "Globals" title', () => {
+  it("renders CollapsibleSection with \"Globals\" title", () => {
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2', 'Stringify'])}
+        usedTypeNames={new Set([ "Loop2", "Stringify" ])}
       />
     );
 
-    expect(screen.getByText('Globals')).toBeDefined();
+    expect(screen.getByText("Globals")).toBeDefined();
   });
 
-  it('displays badge with count of used types in "Show Used" mode', () => {
+  it("displays badge with count of used types in \"Show Used\" mode", () => {
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2', 'Stringify'])}
+        usedTypeNames={new Set([ "Loop2", "Stringify" ])}
       />
     );
 
-    expect(screen.getByText('Globals')).toBeDefined();
-    expect(screen.getByText('2')).toBeDefined();
+    expect(screen.getByText("Globals")).toBeDefined();
+    expect(screen.getByText("2")).toBeDefined();
   });
 
-  it('lists all used type names in monospace font', () => {
-    const { container } = render(
+  it("lists all used type names in monospace font", () => {
+    render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2', 'Stringify'])}
+        usedTypeNames={new Set([ "Loop2", "Stringify" ])}
       />
     );
 
@@ -66,14 +67,14 @@ describe('GlobalsSection Component', () => {
     // Check monospace font
     const loop2Element = screen.getByText(/Loop2/);
     const computedStyle = window.getComputedStyle(loop2Element);
-    expect(computedStyle.fontFamily).toContain('monospace');
+    expect(computedStyle.fontFamily).toContain("monospace");
   });
 
-  it('does not display unused types by default (Show Used mode)', () => {
+  it("does not display unused types by default (Show Used mode)", () => {
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
@@ -82,35 +83,35 @@ describe('GlobalsSection Component', () => {
     expect(screen.queryByText(/getter/)).toBeNull();
   });
 
-  it('shows message about hidden unused types in default mode', () => {
+  it("shows message about hidden unused types in default mode", () => {
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
     expect(screen.getByText(/2 unused types hidden/i)).toBeDefined();
   });
 
-  it('displays "Show All" toggle button in header', () => {
+  it("displays \"Show All\" toggle button in header", () => {
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
     expect(screen.getByText(/Show All/i)).toBeDefined();
   });
 
-  it('toggles to show all types when "Show All" clicked', async () => {
+  it("toggles to show all types when \"Show All\" clicked", async () => {
     const user = userEvent.setup();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
@@ -129,13 +130,13 @@ describe('GlobalsSection Component', () => {
     expect(screen.getByText(/getter/)).toBeDefined();
   });
 
-  it('displays unused types with dimmed styling in Show All mode', async () => {
+  it("displays unused types with dimmed styling in Show All mode", async () => {
     const user = userEvent.setup();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
@@ -148,8 +149,8 @@ describe('GlobalsSection Component', () => {
     const stringifyElement = screen.getByText(/Stringify/);
 
     // Opacity is applied to the parent div (the row), not the span itself
-    const getterRow = getterElement.closest('div[style*="opacity"]') || getterElement.parentElement;
-    const stringifyRow = stringifyElement.closest('div[style*="opacity"]') || stringifyElement.parentElement;
+    const getterRow = getterElement.closest("div[style*=\"opacity\"]") || getterElement.parentElement;
+    const stringifyRow = stringifyElement.closest("div[style*=\"opacity\"]") || stringifyElement.parentElement;
 
     const getterStyle = window.getComputedStyle(getterRow!);
     const stringifyStyle = window.getComputedStyle(stringifyRow!);
@@ -159,13 +160,13 @@ describe('GlobalsSection Component', () => {
     expect(parseFloat(stringifyStyle.opacity)).toBeLessThan(1);
   });
 
-  it('toggles button text to "Show Used" after showing all', async () => {
+  it("toggles button text to \"Show Used\" after showing all", async () => {
     const user = userEvent.setup();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
@@ -176,13 +177,13 @@ describe('GlobalsSection Component', () => {
     expect(screen.queryByText(/Show All/i)).toBeNull();
   });
 
-  it('hides unused types again when "Show Used" clicked', async () => {
+  it("hides unused types again when \"Show Used\" clicked", async () => {
     const user = userEvent.setup();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
@@ -198,14 +199,14 @@ describe('GlobalsSection Component', () => {
     expect(screen.getByText(/2 unused types hidden/i)).toBeDefined();
   });
 
-  it('calls onTypeClick with type name when type clicked', async () => {
+  it("calls onTypeClick with type name when type clicked", async () => {
     const user = userEvent.setup();
     const onTypeClick = vi.fn();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2', 'Stringify'])}
+        usedTypeNames={new Set([ "Loop2", "Stringify" ])}
         onTypeClick={onTypeClick}
       />
     );
@@ -213,18 +214,18 @@ describe('GlobalsSection Component', () => {
     const loop2Element = screen.getByText(/Loop2/);
     await user.click(loop2Element);
 
-    expect(onTypeClick).toHaveBeenCalledWith('Loop2');
+    expect(onTypeClick).toHaveBeenCalledWith("Loop2");
     expect(onTypeClick).toHaveBeenCalledTimes(1);
   });
 
-  it('allows clicking unused types in Show All mode', async () => {
+  it("allows clicking unused types in Show All mode", async () => {
     const user = userEvent.setup();
     const onTypeClick = vi.fn();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
         onTypeClick={onTypeClick}
       />
     );
@@ -237,10 +238,10 @@ describe('GlobalsSection Component', () => {
     const getterElement = screen.getByText(/getter/);
     await user.click(getterElement);
 
-    expect(onTypeClick).toHaveBeenCalledWith('getter');
+    expect(onTypeClick).toHaveBeenCalledWith("getter");
   });
 
-  it('handles empty type aliases list', () => {
+  it("handles empty type aliases list", () => {
     render(
       <GlobalsSection
         typeAliases={[]}
@@ -248,26 +249,26 @@ describe('GlobalsSection Component', () => {
       />
     );
 
-    expect(screen.getByText('Globals')).toBeDefined();
-    expect(screen.getByText('0')).toBeDefined();
+    expect(screen.getByText("Globals")).toBeDefined();
+    expect(screen.getByText("0")).toBeDefined();
   });
 
-  it('handles all types being used', () => {
+  it("handles all types being used", () => {
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2', 'Stringify', 'getter'])}
+        usedTypeNames={new Set([ "Loop2", "Stringify", "getter" ])}
       />
     );
 
-    expect(screen.getByText('3')).toBeDefined();
+    expect(screen.getByText("3")).toBeDefined();
     expect(screen.getByText(/Loop2/)).toBeDefined();
     expect(screen.getByText(/Stringify/)).toBeDefined();
     expect(screen.getByText(/getter/)).toBeDefined();
     expect(screen.queryByText(/unused/i)).toBeNull();
   });
 
-  it('handles no types being used', () => {
+  it("handles no types being used", () => {
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
@@ -275,18 +276,18 @@ describe('GlobalsSection Component', () => {
       />
     );
 
-    expect(screen.getByText('0')).toBeDefined();
-    expect(screen.queryByText('Loop2')).toBeNull();
+    expect(screen.getByText("0")).toBeDefined();
+    expect(screen.queryByText("Loop2")).toBeNull();
     expect(screen.getByText(/3 unused types hidden/i)).toBeDefined();
   });
 
-  it('collapses and expands section when header clicked', async () => {
+  it("collapses and expands section when header clicked", async () => {
     const user = userEvent.setup();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
@@ -294,19 +295,19 @@ describe('GlobalsSection Component', () => {
     expect(screen.getByText(/Loop2/)).toBeDefined();
 
     // Click header to collapse
-    const header = screen.getByText('Globals');
+    const header = screen.getByText("Globals");
     await user.click(header);
 
     // Content should be hidden
     expect(screen.queryByText(/Loop2/)).toBeNull();
   });
 
-  it('displays used types before unused types in Show All mode', async () => {
+  it("displays used types before unused types in Show All mode", async () => {
     const user = userEvent.setup();
     const { container } = render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['getter'])}
+        usedTypeNames={new Set([ "getter" ])}
       />
     );
 
@@ -314,10 +315,10 @@ describe('GlobalsSection Component', () => {
     const showAllButton = screen.getByText(/Show All/i);
     await user.click(showAllButton);
 
-    const text = container.textContent || '';
-    const getterIndex = text.indexOf('getter');
-    const loop2Index = text.indexOf('Loop2');
-    const stringifyIndex = text.indexOf('Stringify');
+    const text = container.textContent || "";
+    const getterIndex = text.indexOf("getter");
+    const loop2Index = text.indexOf("Loop2");
+    const stringifyIndex = text.indexOf("Stringify");
 
     // Used type (getter) should appear before unused types
     expect(getterIndex).toBeGreaterThan(-1);
@@ -325,52 +326,52 @@ describe('GlobalsSection Component', () => {
     expect(stringifyIndex).toBeGreaterThan(getterIndex);
   });
 
-  it('displays separator line between content and hidden message', () => {
+  it("displays separator line between content and hidden message", () => {
     const { container } = render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
     // Look for horizontal separator (hr or styled div with border)
-    const separator = container.querySelector('hr') ||
-                     container.querySelector('[style*="border"]');
+    const separator = container.querySelector("hr") ||
+                     container.querySelector("[style*=\"border\"]");
 
     expect(separator).toBeDefined();
   });
 
-  it('badge updates when toggling between Show All and Show Used', async () => {
+  it("badge updates when toggling between Show All and Show Used", async () => {
     const user = userEvent.setup();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
     // Initially shows used count (1)
-    expect(screen.getByText('1')).toBeDefined();
+    expect(screen.getByText("1")).toBeDefined();
 
     // Show all - badge should show total count
     const showAllButton = screen.getByText(/Show All/i);
     await user.click(showAllButton);
-    expect(screen.getByText('3')).toBeDefined();
+    expect(screen.getByText("3")).toBeDefined();
 
     // Show used - badge should show used count again
     const showUsedButton = screen.getByText(/Show Used/i);
     await user.click(showUsedButton);
-    expect(screen.getByText('1')).toBeDefined();
+    expect(screen.getByText("1")).toBeDefined();
   });
 
-  it('does not crash when onTypeClick not provided', async () => {
+  it("does not crash when onTypeClick not provided", async () => {
     const user = userEvent.setup();
 
     render(
       <GlobalsSection
         typeAliases={mockTypeAliases}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
@@ -381,20 +382,20 @@ describe('GlobalsSection Component', () => {
     expect(loop2Element).toBeDefined();
   });
 
-  it('handles single used and single unused type', () => {
-    const twoTypes: TypeInfo[] = [
-      mockTypeAliases[0],
-      mockTypeAliases[1],
+  it("handles single used and single unused type", () => {
+    const twoTypes = [
+      mockTypeAliases[0]!,
+      mockTypeAliases[1]!,
     ];
 
     render(
       <GlobalsSection
         typeAliases={twoTypes}
-        usedTypeNames={new Set(['Loop2'])}
+        usedTypeNames={new Set([ "Loop2" ])}
       />
     );
 
-    expect(screen.getByText('1')).toBeDefined();
+    expect(screen.getByText("1")).toBeDefined();
     expect(screen.getByText(/Loop2/)).toBeDefined();
     expect(screen.getByText(/1 unused type hidden/i)).toBeDefined();
   });

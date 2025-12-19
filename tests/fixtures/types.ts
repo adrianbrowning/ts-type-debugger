@@ -3,12 +3,12 @@
  */
 
 export const SIMPLE_TYPES = {
-  identity: 'type Identity<T> = T;',
-  conditional: 'type IsString<T> = T extends string ? true : false;',
-  mapped: 'type Readonly<T> = { readonly [K in keyof T]: T[K] };',
-  template: 'type Prefixed<S> = `prefix_${S}`;',
-  indexed: 'type GetProp<T, K extends keyof T> = T[K];',
-  union: 'type StringOrNumber = string | number;',
+  identity: "type Identity<T> = T;",
+  conditional: "type IsString<T> = T extends string ? true : false;",
+  mapped: "type Readonly<T> = { readonly [K in keyof T]: T[K] };",
+  template: "type Prefixed<S> = `prefix_${S}`;",
+  indexed: "type GetProp<T, K extends keyof T> = T[K];",
+  union: "type StringOrNumber = string | number;",
 };
 
 export const COMPLEX_TYPES = {
@@ -74,10 +74,10 @@ export const COMPLEX_TYPES = {
 };
 
 export const EDGE_CASES = {
-  emptyUnion: 'type Empty = never;',
-  recursiveType: 'type Json = string | number | boolean | null | Json[] | { [key: string]: Json };',
-  distributiveConditional: 'type ToArray<T> = T extends any ? T[] : never;',
-  nonDistributiveConditional: 'type NoDistribute<T> = [T] extends [any] ? T[] : never;',
-  templateWithNumber: 'type NumberTemplate = `value-${1 | 2 | 3}`;',
-  complexMapped: 'type Optional<T> = { [K in keyof T]?: T[K] };',
+  emptyUnion: "type Empty = never;",
+  recursiveType: "type Json = string | number | boolean | null | Json[] | { [key: string]: Json };",
+  distributiveConditional: "type ToArray<T> = T extends any ? T[] : never;",
+  nonDistributiveConditional: "type NoDistribute<T> = [T] extends [any] ? T[] : never;",
+  templateWithNumber: "type NumberTemplate = `value-${1 | 2 | 3}`;",
+  complexMapped: "type Optional<T> = { [K in keyof T]?: T[K] };",
 };

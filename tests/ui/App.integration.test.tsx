@@ -1,18 +1,19 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '../utils/renderWithProviders.tsx';
-import userEvent from '@testing-library/user-event';
-import { App } from '../../src/web/App.tsx';
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { App } from "../../src/web/App.tsx";
+import { render } from "../utils/renderWithProviders.tsx";
 
 // Helper to fill code before clicking Debug
 const fillCodeAndDebug = async (user: ReturnType<typeof userEvent.setup>) => {
   // Fill in typeName (required field)
   const typeInput = screen.getByPlaceholderText(/type/i);
   await user.clear(typeInput);
-  await user.type(typeInput, 'string');
+  await user.type(typeInput, "string");
 
   // Click Debug button (find by text content since accessible name may vary)
-  const debugButton = Array.from(document.querySelectorAll('button')).find(
-    (btn) => btn.textContent?.toLowerCase().includes('debug')
+  const debugButton = Array.from(document.querySelectorAll("button")).find(
+    btn => btn.textContent && btn.textContent.toLowerCase().includes("debug")
   );
   if (debugButton) {
     await user.click(debugButton);
@@ -23,13 +24,13 @@ const fillCodeAndDebug = async (user: ReturnType<typeof userEvent.setup>) => {
  * Integration tests for App.tsx refactoring
  * Tests the removal of FooterNav and editor hiding behavior
  */
-describe('App Integration - UI Refactoring', () => {
+describe("App Integration - UI Refactoring", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('Editor visibility after generation', () => {
-    it('hides editor after Debug button is clicked', async () => {
+  describe("Editor visibility after generation", () => {
+    it("hides editor after Debug button is clicked", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -53,20 +54,14 @@ describe('App Integration - UI Refactoring', () => {
       await waitFor(() => {
         const input = screen.queryByPlaceholderText(/type/i);
         // Find the editor panel container (parent with marginLeft style)
-        const editorPanel = input?.closest('div[style*="margin-left"]');
-        if (editorPanel) {
-          const style = window.getComputedStyle(editorPanel);
-          // When hidden, marginLeft should be negative (e.g., "-300px" or "-144.891px")
-          expect(style.marginLeft).toMatch(/^-\d+(\.\d+)?px$/);
-        } else {
-          // If no margin-left style found, check that editor panel doesn't exist when hidden
-          // This could happen if the component conditionally unmounts
-          expect(editorPanel).toBeFalsy();
-        }
+        const editorPanel = input?.closest("div[style*=\"margin-left\"]");
+        // Either panel doesn't exist, or has negative margin when hidden
+        const isHidden = !editorPanel || window.getComputedStyle(editorPanel).marginLeft.startsWith("-");
+        expect(isHidden).toBe(true);
       }, { timeout: 1000 });
     });
 
-    it('editor remains hidden after successful generation', async () => {
+    it("editor remains hidden after successful generation", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -82,20 +77,16 @@ describe('App Integration - UI Refactoring', () => {
       // Editor should still be hidden (visually off-screen via negative margin)
       await waitFor(() => {
         const input = screen.queryByPlaceholderText(/type/i);
-        const editorPanel = input?.closest('div[style*="margin-left"]');
-        if (editorPanel) {
-          const style = window.getComputedStyle(editorPanel);
-          // When hidden, marginLeft should be negative
-          expect(style.marginLeft).toMatch(/^-\d+(\.\d+)?px$/);
-        } else {
-          expect(editorPanel).toBeFalsy();
-        }
+        const editorPanel = input?.closest("div[style*=\"margin-left\"]");
+        // Either panel doesn't exist, or has negative margin when hidden
+        const isHidden = !editorPanel || window.getComputedStyle(editorPanel).marginLeft.startsWith("-");
+        expect(isHidden).toBe(true);
       }, { timeout: 1000 });
     });
   });
 
-  describe('FooterNav removal', () => {
-    it('does not render FooterNav after generation', async () => {
+  describe("FooterNav removal", () => {
+    it("does not render FooterNav after generation", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -115,11 +106,11 @@ describe('App Integration - UI Refactoring', () => {
       expect(screen.queryByText(/Pause/)).toBeNull();
 
       // Footer element should not exist
-      const footer = document.querySelector('footer');
+      const footer = document.querySelector("footer");
       expect(footer).toBeNull();
     });
 
-    it('does not show playback controls in footer', async () => {
+    it("does not show playback controls in footer", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -139,13 +130,13 @@ describe('App Integration - UI Refactoring', () => {
       expect(screen.queryByText(/2x/)).toBeNull();
 
       // No timeline slider in footer
-      const footerSliders = document.querySelectorAll('footer input[type="range"]');
+      const footerSliders = document.querySelectorAll("footer input[type=\"range\"]");
       expect(footerSliders.length).toBe(0);
     });
   });
 
-  describe('StepDetailsPanel receives new props', () => {
-    it('passes steps array to StepDetailsPanel', async () => {
+  describe("StepDetailsPanel receives new props", () => {
+    it("passes steps array to StepDetailsPanel", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -164,14 +155,14 @@ describe('App Integration - UI Refactoring', () => {
       expect(stepDetails).toBeDefined();
 
       // Verify DebugToolbar is rendered with step controls
-      const previousButton = screen.queryByRole('button', { name: /previous/i });
-      const nextButton = screen.queryByRole('button', { name: /next/i });
+      const previousButton = screen.queryByRole("button", { name: /previous/i });
+      const nextButton = screen.queryByRole("button", { name: /next/i });
 
       expect(previousButton).toBeDefined();
       expect(nextButton).toBeDefined();
     });
 
-    it('passes playback callbacks to StepDetailsPanel', async () => {
+    it("passes playback callbacks to StepDetailsPanel", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -185,16 +176,16 @@ describe('App Integration - UI Refactoring', () => {
       );
 
       // Playback controls should be in StepDetailsPanel, not footer
-      const stepIntoButton = screen.queryByRole('button', { name: /into/i });
-      const stepOverButton = screen.queryByRole('button', { name: /over/i });
-      const stepOutButton = screen.queryByRole('button', { name: /out/i });
+      const stepIntoButton = screen.queryByRole("button", { name: /into/i });
+      const stepOverButton = screen.queryByRole("button", { name: /over/i });
+      const stepOutButton = screen.queryByRole("button", { name: /out/i });
 
       expect(stepIntoButton).toBeDefined();
       expect(stepOverButton).toBeDefined();
       expect(stepOutButton).toBeDefined();
     });
 
-    it('passes typeAliases to StepDetailsPanel', async () => {
+    it("passes typeAliases to StepDetailsPanel", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -213,8 +204,8 @@ describe('App Integration - UI Refactoring', () => {
     });
   });
 
-  describe('Playback controls in StepDetailsPanel', () => {
-    it('can navigate steps via StepDetailsPanel Previous/Next buttons', async () => {
+  describe("Playback controls in StepDetailsPanel", () => {
+    it("can navigate steps via StepDetailsPanel Previous/Next buttons", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -228,7 +219,7 @@ describe('App Integration - UI Refactoring', () => {
       );
 
       // Find Next button in StepDetailsPanel
-      const nextButton = screen.getByRole('button', { name: /next/i });
+      const nextButton = screen.getByRole("button", { name: /next/i });
       expect(nextButton).toBeDefined();
 
       // Click Next
@@ -239,7 +230,7 @@ describe('App Integration - UI Refactoring', () => {
       expect(stepCounter).toBeDefined();
     });
 
-    it('can use Step Into/Over/Out controls from StepDetailsPanel', async () => {
+    it("can use Step Into/Over/Out controls from StepDetailsPanel", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -253,21 +244,21 @@ describe('App Integration - UI Refactoring', () => {
       );
 
       // All step controls should be accessible
-      const stepIntoButton = screen.queryByRole('button', { name: /into/i });
-      const stepOverButton = screen.queryByRole('button', { name: /over/i });
-      const stepOutButton = screen.queryByRole('button', { name: /out/i });
+      const stepIntoButton = screen.queryByRole("button", { name: /into/i });
+      const stepOverButton = screen.queryByRole("button", { name: /over/i });
+      const stepOutButton = screen.queryByRole("button", { name: /out/i });
 
       expect(stepIntoButton).toBeDefined();
       expect(stepOverButton).toBeDefined();
       expect(stepOutButton).toBeDefined();
 
       // Clicking should work without errors
-      if (stepIntoButton && !stepIntoButton.hasAttribute('disabled')) {
+      if (stepIntoButton && !stepIntoButton.hasAttribute("disabled")) {
         await user.click(stepIntoButton);
       }
     });
 
-    it('does not have any playback controls in footer', async () => {
+    it("does not have any playback controls in footer", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -281,12 +272,12 @@ describe('App Integration - UI Refactoring', () => {
       );
 
       // Confirm no footer element exists
-      const footer = document.querySelector('footer');
+      const footer = document.querySelector("footer");
       expect(footer).toBeNull();
 
       // Playback controls should only exist in StepDetailsPanel
-      const allPreviousButtons = screen.queryAllByRole('button', { name: /previous/i });
-      const allNextButtons = screen.queryAllByRole('button', { name: /next/i });
+      const allPreviousButtons = screen.queryAllByRole("button", { name: /previous/i });
+      const allNextButtons = screen.queryAllByRole("button", { name: /next/i });
 
       // Should have exactly 1 of each (in StepDetailsPanel), not 2 (one in footer)
       expect(allPreviousButtons.length).toBe(1);
@@ -294,8 +285,8 @@ describe('App Integration - UI Refactoring', () => {
     });
   });
 
-  describe('Three-panel layout after generation', () => {
-    it('shows only TypeDefinition and StepDetails panels after generation (no editor)', async () => {
+  describe("Three-panel layout after generation", () => {
+    it("shows only TypeDefinition and StepDetails panels after generation (no editor)", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -311,14 +302,10 @@ describe('App Integration - UI Refactoring', () => {
       // Editor should be hidden (visually off-screen via negative margin)
       await waitFor(() => {
         const input = screen.queryByPlaceholderText(/type/i);
-        const editorPanel = input?.closest('div[style*="margin-left"]');
-        if (editorPanel) {
-          const style = window.getComputedStyle(editorPanel);
-          // When hidden, marginLeft should be negative (e.g., "-144.891px")
-          expect(style.marginLeft).toMatch(/^-\d+(\.\d+)?px$/);
-        } else {
-          expect(editorPanel).toBeFalsy();
-        }
+        const editorPanel = input?.closest("div[style*=\"margin-left\"]");
+        // Either panel doesn't exist, or has negative margin when hidden
+        const isHidden = !editorPanel || window.getComputedStyle(editorPanel).marginLeft.startsWith("-");
+        expect(isHidden).toBe(true);
       }, { timeout: 1000 });
 
       // Type Definition panel should be visible

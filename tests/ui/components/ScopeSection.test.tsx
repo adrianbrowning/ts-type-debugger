@@ -1,43 +1,44 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '../../utils/renderWithProviders.tsx';
-import userEvent from '@testing-library/user-event';
-import { ScopeSection } from '../../../src/web/components/ScopeSection';
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect } from "vitest";
+import { ScopeSection } from "../../../src/web/components/ScopeSection";
+import { render } from "../../utils/renderWithProviders.tsx";
 
-describe('ScopeSection Component', () => {
-  it('renders CollapsibleSection with "Scope" title', () => {
+describe("ScopeSection Component", () => {
+  it("renders CollapsibleSection with \"Scope\" title", () => {
     render(
       <ScopeSection
         parameters={{
-          T: 'string',
-          K: '"a" | "b"',
+          T: "string",
+          K: "\"a\" | \"b\"",
         }}
       />
     );
 
-    expect(screen.getByText('Scope')).toBeDefined();
+    expect(screen.getByText("Scope")).toBeDefined();
   });
 
-  it('displays badge with parameter count', () => {
+  it("displays badge with parameter count", () => {
     render(
       <ScopeSection
         parameters={{
-          T: 'string',
-          K: '"a" | "b"',
-          Result: '1 | 2',
+          T: "string",
+          K: "\"a\" | \"b\"",
+          Result: "1 | 2",
         }}
       />
     );
 
-    expect(screen.getByText('Scope')).toBeDefined();
-    expect(screen.getByText('3')).toBeDefined();
+    expect(screen.getByText("Scope")).toBeDefined();
+    expect(screen.getByText("3")).toBeDefined();
   });
 
-  it('displays parameters in Name = Value format', () => {
+  it("displays parameters in Name = Value format", () => {
     render(
       <ScopeSection
         parameters={{
-          T: '"a"',
-          K: 'string',
+          T: "\"a\"",
+          K: "string",
         }}
       />
     );
@@ -46,46 +47,46 @@ describe('ScopeSection Component', () => {
     expect(screen.getByText(/K = string/)).toBeDefined();
   });
 
-  it('displays parameter values in monospace font', () => {
+  it("displays parameter values in monospace font", () => {
     const { container } = render(
       <ScopeSection
         parameters={{
-          T: 'string',
+          T: "string",
         }}
       />
     );
 
     // Find element containing the value and check its font-family
-    const valueElement = container.querySelector('[style*="monospace"]') ||
-                         container.querySelector('code') ||
-                         container.querySelector('[style*="font-family"]');
+    const valueElement = container.querySelector("[style*=\"monospace\"]") ||
+                         container.querySelector("code") ||
+                         container.querySelector("[style*=\"font-family\"]");
 
     expect(valueElement).toBeDefined();
-    expect(valueElement?.textContent).toContain('string');
+    expect(valueElement?.textContent).toContain("string");
   });
 
-  it('shows "No parameters in scope" when empty', () => {
+  it("shows \"No parameters in scope\" when empty", () => {
     render(<ScopeSection parameters={{}} />);
 
-    expect(screen.getByText('Scope')).toBeDefined();
+    expect(screen.getByText("Scope")).toBeDefined();
     expect(screen.getByText(/No parameters in scope/i)).toBeDefined();
   });
 
-  it('preserves parameter order from Object.entries', () => {
+  it("preserves parameter order from Object.entries", () => {
     const { container } = render(
       <ScopeSection
         parameters={{
-          T: '"a"',
-          K: 'string',
-          Result: '1 | 2',
+          T: "\"a\"",
+          K: "string",
+          Result: "1 | 2",
         }}
       />
     );
 
-    const text = container.textContent || '';
-    const tIndex = text.indexOf('T = "a"');
-    const kIndex = text.indexOf('K = string');
-    const resultIndex = text.indexOf('Result = 1 | 2');
+    const text = container.textContent || "";
+    const tIndex = text.indexOf("T = \"a\"");
+    const kIndex = text.indexOf("K = string");
+    const resultIndex = text.indexOf("Result = 1 | 2");
 
     // Parameters should appear in order
     expect(tIndex).toBeGreaterThan(-1);
@@ -93,13 +94,13 @@ describe('ScopeSection Component', () => {
     expect(resultIndex).toBeGreaterThan(kIndex);
   });
 
-  it('collapses and expands section when header clicked', async () => {
+  it("collapses and expands section when header clicked", async () => {
     const user = userEvent.setup();
 
     render(
       <ScopeSection
         parameters={{
-          T: 'string',
+          T: "string",
         }}
       />
     );
@@ -108,40 +109,40 @@ describe('ScopeSection Component', () => {
     expect(screen.getByText(/T = string/)).toBeDefined();
 
     // Click header to collapse
-    const header = screen.getByText('Scope');
+    const header = screen.getByText("Scope");
     await user.click(header);
 
     // Content should be hidden
     expect(screen.queryByText(/T = string/)).toBeNull();
   });
 
-  it('displays badge as zero when no parameters', () => {
+  it("displays badge as zero when no parameters", () => {
     render(<ScopeSection parameters={{}} />);
 
-    expect(screen.getByText('Scope')).toBeDefined();
-    expect(screen.getByText('0')).toBeDefined();
+    expect(screen.getByText("Scope")).toBeDefined();
+    expect(screen.getByText("0")).toBeDefined();
   });
 
-  it('handles single parameter correctly', () => {
+  it("handles single parameter correctly", () => {
     render(
       <ScopeSection
         parameters={{
-          T: '"hello"',
+          T: "\"hello\"",
         }}
       />
     );
 
-    expect(screen.getByText('1')).toBeDefined();
+    expect(screen.getByText("1")).toBeDefined();
     expect(screen.getByText(/T = "hello"/)).toBeDefined();
   });
 
-  it('handles complex union types', () => {
+  it("handles complex union types", () => {
     render(
       <ScopeSection
         parameters={{
-          T: '"a" | "b" | "c"',
-          K: 'string | number',
-          Result: '1 | 2 | never',
+          T: "\"a\" | \"b\" | \"c\"",
+          K: "string | number",
+          Result: "1 | 2 | never",
         }}
       />
     );
@@ -151,11 +152,11 @@ describe('ScopeSection Component', () => {
     expect(screen.getByText(/Result = 1 \| 2 \| never/)).toBeDefined();
   });
 
-  it('displays expanded by default', () => {
+  it("displays expanded by default", () => {
     render(
       <ScopeSection
         parameters={{
-          T: 'string',
+          T: "string",
         }}
       />
     );
@@ -164,16 +165,16 @@ describe('ScopeSection Component', () => {
     expect(screen.getByText(/T = string/)).toBeDefined();
 
     // Look for down arrow (expanded state)
-    const header = screen.getByText('Scope').closest('button') || screen.getByText('Scope').closest('div');
-    expect(header?.textContent).toContain('▼');
+    const header = screen.getByText("Scope").closest("button") || screen.getByText("Scope").closest("div");
+    expect(header?.textContent).toContain("▼");
   });
 
-  it('handles parameters with special characters', () => {
+  it("handles parameters with special characters", () => {
     render(
       <ScopeSection
         parameters={{
-          T: '`Prop ${string}`',
-          K: '{ [key: string]: any }',
+          T: "`Prop ${string}`",
+          K: "{ [key: string]: any }",
         }}
       />
     );
@@ -182,13 +183,13 @@ describe('ScopeSection Component', () => {
     expect(screen.getByText(/K = \{ \[key: string\]: any \}/)).toBeDefined();
   });
 
-  it('renders multiple parameters with consistent spacing', () => {
+  it("renders multiple parameters with consistent spacing", () => {
     const { container } = render(
       <ScopeSection
         parameters={{
-          T: 'string',
-          K: 'number',
-          V: 'boolean',
+          T: "string",
+          K: "number",
+          V: "boolean",
         }}
       />
     );
@@ -199,9 +200,9 @@ describe('ScopeSection Component', () => {
     expect(screen.getByText(/V = boolean/)).toBeDefined();
 
     // Should have consistent layout (check for multiple parameter entries)
-    const text = container.textContent || '';
-    expect(text).toContain('T = string');
-    expect(text).toContain('K = number');
-    expect(text).toContain('V = boolean');
+    const text = container.textContent || "";
+    expect(text).toContain("T = string");
+    expect(text).toContain("K = number");
+    expect(text).toContain("V = boolean");
   });
 });

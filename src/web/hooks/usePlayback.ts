@@ -2,8 +2,8 @@
  * Hook for managing playback state and animation
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import type { VideoData, VideoTraceStep } from '../../core/types.ts';
+import { useState, useEffect, useCallback, useRef } from "react";
+import type { VideoData } from "../../core/types.ts";
 
 interface PlaybackState {
   currentStepIndex: number;
@@ -12,7 +12,7 @@ interface PlaybackState {
 }
 
 export function usePlayback(videoData: VideoData | null) {
-  const [state, setState] = useState<PlaybackState>({
+  const [ state, setState ] = useState<PlaybackState>({
     currentStepIndex: 0,
     isPlaying: false,
     speed: 1,
@@ -28,7 +28,7 @@ export function usePlayback(videoData: VideoData | null) {
       isPlaying: false,
       speed: 1,
     });
-  }, [videoData]);
+  }, [ videoData ]);
 
   // Calculate frame progress (0-1) within current step
   const getCurrentStepFrameProgress = useCallback((): number => {
@@ -42,16 +42,16 @@ export function usePlayback(videoData: VideoData | null) {
 
     // Return a value between 0 and 1
     return 0.5; // simplified - will be animated by requestAnimationFrame
-  }, [videoData, state.currentStepIndex]);
+  }, [ videoData, state.currentStepIndex ]);
 
   // Handle play/pause
   const togglePlayPause = useCallback(() => {
-    setState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
+    setState(prev => ({ ...prev, isPlaying: !prev.isPlaying }));
   }, []);
 
   // Handle next/previous
   const nextStep = useCallback(() => {
-    setState((prev) => {
+    setState(prev => {
       if (!videoData) return prev;
       return {
         ...prev,
@@ -59,10 +59,10 @@ export function usePlayback(videoData: VideoData | null) {
         isPlaying: false,
       };
     });
-  }, [videoData]);
+  }, [ videoData ]);
 
   const previousStep = useCallback(() => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       currentStepIndex: Math.max(prev.currentStepIndex - 1, 0),
       isPlaying: false,
@@ -71,23 +71,23 @@ export function usePlayback(videoData: VideoData | null) {
 
   // Handle speed change
   const setSpeed = useCallback((speed: number) => {
-    setState((prev) => ({ ...prev, speed }));
+    setState(prev => ({ ...prev, speed }));
   }, []);
 
   // Handle seek to step
   const seekToStep = useCallback((stepIndex: number) => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       currentStepIndex: Math.max(0, Math.min(stepIndex, videoData?.steps.length ?? 0)),
       isPlaying: false,
     }));
-  }, [videoData]);
+  }, [ videoData ]);
 
   // Store speed in ref to avoid stale closures
   const speedRef = useRef(state.speed);
   useEffect(() => {
     speedRef.current = state.speed;
-  }, [state.speed]);
+  }, [ state.speed ]);
 
   // Animation loop
   useEffect(() => {
@@ -112,7 +112,7 @@ export function usePlayback(videoData: VideoData | null) {
 
       // Advance through steps based on accumulated time
       while (accumulatedMs > 0 && localIndex < videoData.steps.length - 1) {
-        const nextStepDuration = (videoData.steps[localIndex].duration / videoData.fps) * 1000;
+        const nextStepDuration = (videoData.steps[localIndex]?.duration ?? 0 / videoData.fps) * 1000;
         if (accumulatedMs < nextStepDuration) break;
         accumulatedMs -= nextStepDuration;
         localIndex++;
@@ -121,7 +121,7 @@ export function usePlayback(videoData: VideoData | null) {
       // Stop if at end
       const isAtEnd = localIndex === videoData.steps.length - 1;
 
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         currentStepIndex: localIndex,
         isPlaying: isAtEnd ? false : prev.isPlaying,
@@ -143,7 +143,7 @@ export function usePlayback(videoData: VideoData | null) {
         animationRef.current = null;
       }
     };
-  }, [state.isPlaying, videoData]);
+  }, [ state.currentStepIndex, state.isPlaying, videoData ]);
 
   const currentStep = videoData?.steps[state.currentStepIndex] || null;
 
@@ -156,8 +156,8 @@ export function usePlayback(videoData: VideoData | null) {
 
       // Find next step matching level condition
       for (let i = state.currentStepIndex + 1; i < videoData.steps.length; i++) {
-        if (levelCheck(videoData.steps[i].original.level, currentLevel)) {
-          setState((prev) => ({
+        if (levelCheck(videoData.steps[i]?.original.level ?? 0, currentLevel)) {
+          setState(prev => ({
             ...prev,
             currentStepIndex: i,
             isPlaying: false,
@@ -167,34 +167,34 @@ export function usePlayback(videoData: VideoData | null) {
       }
 
       // No matching step found, go to last step
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         currentStepIndex: videoData.steps.length - 1,
         isPlaying: false,
       }));
     },
-    [videoData, currentStep, state.currentStepIndex]
+    [ videoData, currentStep, state.currentStepIndex ]
   );
 
   // Step over: move to next step at same or lower level (parent or sibling)
   const stepOver = useCallback(() => {
     findNextStepByLevel((stepLevel, currentLevel) => stepLevel <= currentLevel);
-  }, [findNextStepByLevel]);
+  }, [ findNextStepByLevel ]);
 
   // Step out: move to next step at strictly lower level (parent)
   const stepOut = useCallback(() => {
     findNextStepByLevel((stepLevel, currentLevel) => stepLevel < currentLevel);
-  }, [findNextStepByLevel]);
+  }, [ findNextStepByLevel ]);
 
   // Step into: just go to next step (alias for nextStep)
   const stepInto = useCallback(() => {
     nextStep();
-  }, [nextStep]);
+  }, [ nextStep ]);
 
   // Jump to start: go to first step
   const jumpToStart = useCallback(() => {
     seekToStep(0);
-  }, [seekToStep]);
+  }, [ seekToStep ]);
 
   return {
     currentStep,

@@ -1,9 +1,9 @@
-import React from 'react';
-import { CollapsibleSection } from './CollapsibleSection.tsx';
-import { InfoRow } from './InfoRow.tsx';
-import { useCssTheme } from '../theme.ts';
+import React from "react";
+import { GLOBAL_THEME } from "../theme.ts";
+import { CollapsibleSection } from "./CollapsibleSection.tsx";
+import { InfoRow } from "./InfoRow.tsx";
 
-export type IterationSectionProps = {
+type IterationSectionProps = {
   currentMember?: string;
   accumulatedResults?: string;
 };
@@ -13,7 +13,7 @@ const countNonNeverMembers = (results: string | undefined): number => {
 
   return results
     .split(/\s*\|\s*/)
-    .filter(m => m.trim() && m.trim() !== 'never')
+    .filter(m => m.trim() && m.trim() !== "never")
     .length;
 };
 
@@ -32,20 +32,28 @@ export const IterationSection: React.FC<IterationSectionProps> = ({
   currentMember,
   accumulatedResults,
 }) => {
-  const theme = useCssTheme();
+  const theme = GLOBAL_THEME;
 
   if (!currentMember) {
     return null;
   }
 
   const currentIndex = calculateCurrentIndex(accumulatedResults);
-  const displayAccumulated = accumulatedResults?.trim() || 'none';
+  const displayAccumulated = accumulatedResults?.trim() || "none";
 
   return (
     <CollapsibleSection title="Iteration">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing.sm }}>
-        <InfoRow label="Current Member" value={currentMember} monospace />
-        <InfoRow label="Accumulated" value={displayAccumulated} monospace />
+      <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing.sm }}>
+        <InfoRow
+          label="Current Member"
+          value={currentMember}
+          monospace
+        />
+        <InfoRow
+          label="Accumulated"
+          value={displayAccumulated}
+          monospace
+        />
         <InfoRow label="Index" value={`${currentIndex} of ?`} />
       </div>
     </CollapsibleSection>

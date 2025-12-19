@@ -1,42 +1,119 @@
-import ts from 'typescript';
-import type { TraceEntry } from '../astGenerator.ts';
-import { getSingletonHighlighter } from 'shiki';
+import { getSingletonHighlighter } from "shiki";
+import ts from "typescript";
+import type { TraceEntry } from "../astGenerator.ts";
 import type {
   VideoData,
   VideoConfig,
   VideoTraceStep,
-  TypeInfo,
-} from './types.ts';
-import { TRACE_TYPE_COLORS } from './types.ts';
+  TypeInfo
+} from "./types.ts";
+import { TRACE_TYPE_COLORS } from "./types.ts";
 
-// Re-export types for backward compatibility
-export type { VideoData, VideoConfig, VideoTraceStep, TypeInfo };
-export { TRACE_TYPE_COLORS };
+// // Re-export types for backward compatibility
+// export type { VideoData, VideoConfig, VideoTraceStep, TypeInfo };
+// export { TRACE_TYPE_COLORS };
 
 const DEFAULT_CONFIG: VideoConfig = {
   fps: 30,
   secondsPerStep: 1,
 };
 
+type TagParseResult =
+  | { type: "line_start"; advance: number; }
+  | { type: "open_span"; advance: number; }
+  | { type: "close_span"; advance: number; }
+  | { type: "content"; advance: number; }
+  | { type: "skip"; advance: number; };
+
+/**
+ * Parse HTML tag at current position and return type + advance amount
+ */
+function parseHtmlTag(html: string, pos: number, spanDepth: number): TagParseResult {
+  const rest = html.substring(pos);
+
+  if (rest.startsWith("<span class=\"line\">")) {
+    return { type: "line_start", advance: "<span class=\"line\">".length };
+  }
+
+  if (spanDepth > 0 && rest.startsWith("<span")) {
+    return { type: "open_span", advance: 1 };
+  }
+
+  if (spanDepth > 0 && rest.startsWith("</span>")) {
+    return { type: "close_span", advance: 7 };
+  }
+
+  if (spanDepth > 0) {
+    return { type: "content", advance: 1 };
+  }
+
+  return { type: "skip", advance: 1 };
+}
+
+type LineState = {
+  lineHtml: string;
+  spanDepth: number;
+};
+
+/**
+ * Accumulate line content based on tag type
+ */
+function accumulateLineContent(
+  state: LineState,
+  tagResult: TagParseResult,
+  html: string,
+  pos: number,
+  result: Array<string>
+): LineState {
+  if (tagResult.type === "line_start") {
+    if (state.lineHtml) {
+      result.push(state.lineHtml);
+    }
+    return { lineHtml: "", spanDepth: 1 };
+  }
+
+  if (tagResult.type === "open_span") {
+    return {
+      lineHtml: state.lineHtml + html[pos],
+      spanDepth: state.spanDepth + 1,
+    };
+  }
+
+  if (tagResult.type === "close_span") {
+    const newDepth = state.spanDepth - 1;
+    const newHtml = newDepth > 0 ? state.lineHtml + html.substring(pos, pos + 7) : state.lineHtml;
+    return { lineHtml: newHtml, spanDepth: newDepth };
+  }
+
+  if (tagResult.type === "content") {
+    return {
+      lineHtml: state.lineHtml + html[pos],
+      spanDepth: state.spanDepth,
+    };
+  }
+
+  return state;
+}
+
 /**
  * Highlight code lines using Shiki with GitHub Dark theme
  */
-async function highlightCodeLines(lines: string[]): Promise<string[]> {
+async function highlightCodeLines(lines: Array<string>): Promise<Array<string>> {
   try {
     const highlighter = await getSingletonHighlighter({
-      themes: ['github-dark'],
-      langs: ['typescript'],
+      themes: [ "github-dark" ],
+      langs: [ "typescript" ],
     });
 
-    const code = lines.join('\n');
-    const highlighted = await highlighter.codeToHtml(code, {
-      lang: 'typescript',
-      theme: 'github-dark',
+    const code = lines.join("\n");
+    const highlighted = highlighter.codeToHtml(code, {
+      lang: "typescript",
+      theme: "github-dark",
     });
 
     // Extract code content between <code> tags
-    const codeStart = highlighted.indexOf('<code>');
-    const codeEnd = highlighted.indexOf('</code>');
+    const codeStart = highlighted.indexOf("<code>");
+    const codeEnd = highlighted.indexOf("</code>");
     if (codeStart === -1 || codeEnd === -1) {
       return lines;
     }
@@ -44,55 +121,26 @@ async function highlightCodeLines(lines: string[]): Promise<string[]> {
     const codeHtml = highlighted.substring(codeStart + 6, codeEnd);
 
     // Parse line spans with proper nesting support
-    const result: string[] = [];
-    let lineHtml = '';
-    let spanDepth = 0;
+    const result: Array<string> = [];
+    let state: LineState = { lineHtml: "", spanDepth: 0 };
     let i = 0;
 
     while (i < codeHtml.length) {
-      const rest = codeHtml.substring(i);
-
-      // Start of a new line
-      if (rest.startsWith('<span class="line">')) {
-        if (lineHtml) {
-          result.push(lineHtml);
-        }
-        lineHtml = '';
-        spanDepth = 1;
-        i += '<span class="line">'.length;
-      }
-      // Opening span (nested)
-      else if (spanDepth > 0 && rest.startsWith('<span')) {
-        spanDepth++;
-        lineHtml += codeHtml[i];
-        i++;
-      }
-      // Closing span
-      else if (spanDepth > 0 && rest.startsWith('</span>')) {
-        spanDepth--;
-        if (spanDepth > 0) {
-          lineHtml += codeHtml.substring(i, i + 7);
-        }
-        i += 7;
-      }
-      // Regular content
-      else if (spanDepth > 0) {
-        lineHtml += codeHtml[i];
-        i++;
-      } else {
-        i++;
-      }
+      const tagResult = parseHtmlTag(codeHtml, i, state.spanDepth);
+      state = accumulateLineContent(state, tagResult, codeHtml, i, result);
+      i += tagResult.advance;
     }
 
     // Add final line if any
-    if (lineHtml) {
-      result.push(lineHtml);
+    if (state.lineHtml) {
+      result.push(state.lineHtml);
     }
 
     return result.length > 0 ? result : lines;
-  } catch (error) {
+  }
+  catch (error) {
     // Fallback to plain text if highlighting fails
-    console.warn('Syntax highlighting failed, using plain text:', error);
+    console.warn("Syntax highlighting failed, using plain text:", error);
     return lines;
   }
 }
@@ -100,14 +148,14 @@ async function highlightCodeLines(lines: string[]): Promise<string[]> {
 /**
  * Extract type aliases and their source code from AST
  */
-async function extractTypeAliases(ast: ts.SourceFile, sourceText: string): Promise<TypeInfo[]> {
-  const aliases: TypeInfo[] = [];
-  const lines = sourceText.split('\n');
+async function extractTypeAliases(ast: ts.SourceFile, sourceText: string): Promise<Array<TypeInfo>> {
+  const aliases: Array<TypeInfo> = [];
+  const lines = sourceText.split("\n");
 
   function visit(node: ts.Node) {
     if (ts.isTypeAliasDeclaration(node)) {
-      const start = sourceText.substring(0, node.getStart(ast)).split('\n').length - 1;
-      const end = sourceText.substring(0, node.getEnd()).split('\n').length - 1;
+      const start = sourceText.substring(0, node.getStart(ast)).split("\n").length - 1;
+      const end = sourceText.substring(0, node.getEnd()).split("\n").length - 1;
       const typeLines = lines.slice(start, end + 1);
 
       aliases.push({
@@ -126,6 +174,7 @@ async function extractTypeAliases(ast: ts.SourceFile, sourceText: string): Promi
 
   // Add syntax highlighting to each type alias
   for (const alias of aliases) {
+    // eslint-disable-next-line no-await-in-loop
     alias.highlightedLines = await highlightCodeLines(alias.lines);
   }
 
@@ -133,31 +182,17 @@ async function extractTypeAliases(ast: ts.SourceFile, sourceText: string): Promi
 }
 
 /**
- * Calculate the line distance between two steps for scroll detection
- */
-function getScrollDistance(
-  prevStep: VideoTraceStep | undefined,
-  currStep: VideoTraceStep
-): number {
-  if (!prevStep?.highlightLines || !currStep.highlightLines) {
-    return 0;
-  }
-
-  return Math.abs(currStep.highlightLines.start - prevStep.highlightLines.start);
-}
-
-/**
  * Convert trace entries to video steps with timing
  */
 function traceToVideoSteps(
-  trace: TraceEntry[],
-  ast: ts.SourceFile,
+  trace: Array<TraceEntry>,
+  _ast: ts.SourceFile,
   config: VideoConfig
-): VideoTraceStep[] {
+): Array<VideoTraceStep> {
   const baseFramesPerStep = Math.round(config.fps * config.secondsPerStep);
   const largeScrollThreshold = 30; // lines
   const largeScrollFrames = Math.round(config.fps * 2); // 2 seconds for large scrolls
-  const steps: VideoTraceStep[] = [];
+  const steps: Array<VideoTraceStep> = [];
 
   let currentFrame = 0;
 
@@ -167,7 +202,7 @@ function traceToVideoSteps(
     const isHighlight = !!entry.position;
 
     // Calculate highlight lines first to determine scroll distance
-    let highlightLines: VideoTraceStep['highlightLines'];
+    let highlightLines: VideoTraceStep["highlightLines"];
     if (entry.position) {
       highlightLines = {
         start: entry.position.start.line - 1, // Convert from 1-indexed to 0-indexed
@@ -219,8 +254,8 @@ function traceToVideoSteps(
  * Pattern: "type _result = ..." or "type SomeName = ..."
  */
 function extractTypeNameFromAliasStart(expression: string): string | null {
-  const match = expression.match(/^type\s+(\w+)\s*=/);
-  return match ? match[1] : null;
+  const match = /^type\s+(\w+)\s*=/.exec(expression);
+  return (match ? match[1] : null) ?? null;
 }
 
 /**
@@ -228,42 +263,60 @@ function extractTypeNameFromAliasStart(expression: string): string | null {
  * Pattern: "type getter<path = ""> = ..." or "type validateLeafPath<...> = ..."
  */
 function extractTypeNameFromDef(expression: string): string | null {
-  const match = expression.match(/^type\s+(\w+)</);
-  return match ? match[1] : null;
+  const match = /^type\s+(\w+)</.exec(expression);
+  return (match ? match[1] : null) ?? null;
+}
+
+/**
+ * Extract type name from a step based on its type
+ */
+function extractTypeNameFromStep(step: VideoTraceStep): string | null {
+  if (step.original.type === "type_alias_start") {
+    return extractTypeNameFromAliasStart(step.original.expression);
+  }
+  if (step.original.type === "generic_def") {
+    return extractTypeNameFromDef(step.original.expression);
+  }
+  return null;
+}
+
+/**
+ * Check if highlight is outside the bounds of the active type
+ */
+function isHighlightOutOfBounds(
+  step: VideoTraceStep,
+  activeType: TypeInfo | null
+): boolean {
+  if (!step.highlightLines || !activeType) return false;
+  return (
+    step.highlightLines.start < activeType.startLine ||
+    step.highlightLines.start > activeType.endLine
+  );
 }
 
 /**
  * Build a map of step index -> active type definition
  * Uses a context stack to track which type we're currently evaluating
  */
-export function buildActiveTypeMap(
-  steps: VideoTraceStep[],
-  typeAliases: TypeInfo[]
+function buildActiveTypeMap(
+  steps: Array<VideoTraceStep>,
+  typeAliases: Array<TypeInfo>
 ): Map<number, TypeInfo | null> {
   const map = new Map<number, TypeInfo | null>();
-  const contextStack: TypeInfo[] = [];
+  const contextStack: Array<TypeInfo> = [];
 
   // First, create a map of type names to TypeInfo for quick lookup
   const typesByName = new Map<string, TypeInfo>();
-  typeAliases.forEach((t) => typesByName.set(t.name, t));
+  typeAliases.forEach(t => typesByName.set(t.name, t));
 
-  steps.forEach((step) => {
+  steps.forEach(step => {
     // Handle context push/pop based on step type
-    if (step.original.type === 'type_alias_start') {
-      // Extract type name from "type _result = ..." pattern
-      const typeName = extractTypeNameFromAliasStart(step.original.expression);
-      if (typeName && typesByName.has(typeName)) {
-        const typeInfo = typesByName.get(typeName)!;
-        contextStack.push(typeInfo);
-      }
-    } else if (step.original.type === 'generic_def') {
-      // Extract type name from "type <name><...> = ..." pattern
-      const typeName = extractTypeNameFromDef(step.original.expression);
-      if (typeName && typesByName.has(typeName)) {
-        const typeInfo = typesByName.get(typeName)!;
-        contextStack.push(typeInfo);
-      }
-    } else if (step.original.type === 'generic_result') {
+    const typeName = extractTypeNameFromStep(step);
+    if (typeName && typesByName.has(typeName)) {
+      const typeInfo = typesByName.get(typeName)!;
+      contextStack.push(typeInfo);
+    }
+    else if (step.original.type === "generic_result") {
       // Pop context when returning from a generic type evaluation
       if (contextStack.length > 1) {
         contextStack.pop();
@@ -271,15 +324,12 @@ export function buildActiveTypeMap(
     }
 
     // Determine active type for this step
-    let activeType = contextStack.length > 0 ? contextStack[contextStack.length - 1] : null;
+    let activeType = contextStack.length > 0 ? (contextStack[contextStack.length - 1] ?? null) : null;
 
     // If highlight is outside the current active type, find the type containing it
-    if (step.highlightLines && activeType && (
-      step.highlightLines.start < activeType.startLine ||
-      step.highlightLines.start > activeType.endLine
-    )) {
+    if (isHighlightOutOfBounds(step, activeType)) {
       // Search for a type that contains the highlight
-      const typeContainingHighlight = typeAliases.find((t) =>
+      const typeContainingHighlight = typeAliases.find(t =>
         step.highlightLines!.start >= t.startLine && step.highlightLines!.start <= t.endLine
       );
       if (typeContainingHighlight) {
@@ -287,7 +337,7 @@ export function buildActiveTypeMap(
       }
     }
 
-    map.set(step.stepIndex, activeType);
+    map.set(step.stepIndex, activeType ?? null);
   });
 
   return map;
@@ -297,7 +347,7 @@ export function buildActiveTypeMap(
  * Main entry point: convert trace and AST to video data
  */
 export async function generateVideoData(
-  trace: TraceEntry[],
+  trace: Array<TraceEntry>,
   ast: ts.SourceFile,
   sourceText: string,
   config: Partial<VideoConfig> = {}
@@ -306,7 +356,7 @@ export async function generateVideoData(
   const steps = traceToVideoSteps(trace, ast, finalConfig);
 
   // Calculate total frames from actual step durations (which may vary based on scroll distance)
-  const totalFrames = steps.length > 0 ? steps[steps.length - 1].endFrame : 0;
+  const totalFrames = steps.length > 0 ? (steps[steps.length - 1]?.endFrame ?? 0) : 0;
 
   const typeAliases = await extractTypeAliases(ast, sourceText);
   const activeTypeMap = buildActiveTypeMap(steps, typeAliases);
@@ -321,51 +371,3 @@ export async function generateVideoData(
   };
 }
 
-/**
- * Get all unique type names referenced in trace
- */
-export function getReferencedTypes(trace: TraceEntry[]): Set<string> {
-  const types = new Set<string>();
-
-  trace.forEach((entry) => {
-    // Extract type names from expressions like "getter<...>" or "validateLeafPath<...>"
-    const typeMatch = entry.expression.match(/(\w+)<[^>]*>/g);
-    if (typeMatch) {
-      typeMatch.forEach((match) => {
-        const typeName = match.split('<')[0];
-        types.add(typeName);
-      });
-    }
-  });
-
-  return types;
-}
-
-/**
- * Find the active type alias for a given step
- */
-export function findActiveTypeAlias(
-  step: VideoTraceStep,
-  typeAliases: TypeInfo[]
-): TypeInfo | undefined {
-  // Heuristic: look for type name in the step expression
-  const typeMatch = step.original.expression.match(/^(\w+)</);
-  if (!typeMatch) return undefined;
-
-  const typeName = typeMatch[1];
-  return typeAliases.find((t) => t.name === typeName);
-}
-
-/**
- * Format result for display
- */
-export function formatResult(step: VideoTraceStep): string {
-  return step.original.result || '';
-}
-
-/**
- * Format parameters for display
- */
-export function formatParameters(step: VideoTraceStep): Record<string, string> {
-  return step.original.parameters || {};
-}

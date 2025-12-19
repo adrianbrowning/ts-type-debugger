@@ -1,7 +1,7 @@
-import LZString from 'lz-string';
+import LZString from "lz-string";
 
 const VERSION = 1;
-const PARAM_NAME = 'code';
+const PARAM_NAME = "code";
 
 type ShareState = {
   typeName: string;
@@ -18,12 +18,13 @@ export const decodeShareState = (compressed: string): ShareState | null => {
     const data = LZString.decompressFromEncodedURIComponent(compressed);
     if (!data) return null;
 
-    const [version, typeName, ...codeParts] = data.split('|');
-    if (version !== '1') return null;
+    const [ version, typeName, ...codeParts ] = data.split("|");
+    if (version !== "1") return null;
     if (typeName === undefined) return null;
 
-    return { typeName, code: codeParts.join('|') };
-  } catch {
+    return { typeName, code: codeParts.join("|") };
+  }
+  catch {
     return null;
   }
 };

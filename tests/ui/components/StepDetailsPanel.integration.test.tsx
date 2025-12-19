@@ -1,28 +1,29 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '../../utils/renderWithProviders.tsx';
-import userEvent from '@testing-library/user-event';
-import { StepDetailsPanel } from '../../../src/web/components/StepDetailsPanel';
-import { createMockStep, createMockTypeInfo } from '../../fixtures/mockVideoData.ts';
-import type { VideoTraceStep, TypeInfo } from '../../../src/core/types.ts';
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
+import type { VideoTraceStep, TypeInfo } from "../../../src/core/types.ts";
+import { StepDetailsPanel } from "../../../src/web/components/StepDetailsPanel";
+import { createMockStep, createMockTypeInfo } from "../../fixtures/mockVideoData.ts";
+import { render } from "../../utils/renderWithProviders.tsx";
 
 /**
  * Integration test for refactored StepDetailsPanel
  * Tests the new Chrome DevTools-style component structure
  */
-describe('StepDetailsPanel Integration (Refactored)', () => {
-  const mockTypeAliases: TypeInfo[] = [
+describe("StepDetailsPanel Integration (Refactored)", () => {
+  const mockTypeAliases: Array<TypeInfo> = [
     createMockTypeInfo({
-      name: 'Loop2',
-      text: 'type Loop2<T> = T extends "a" ? 1 : 2',
+      name: "Loop2",
+      text: "type Loop2<T> = T extends \"a\" ? 1 : 2",
     }),
     createMockTypeInfo({
-      name: 'Stringify',
-      text: 'type Stringify<T> = `${T & string}`',
+      name: "Stringify",
+      text: "type Stringify<T> = `${T & string}`",
     }),
   ];
 
   const defaultProps = {
-    steps: [] as VideoTraceStep[],
+    steps: [] as Array<VideoTraceStep>,
     currentStep: null,
     currentStepIndex: 0,
     totalSteps: 0,
@@ -36,38 +37,38 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
     onSeekToStep: vi.fn(),
   };
 
-  describe('Empty state (no step selected)', () => {
-    it('shows "Step Details" header when no step selected', () => {
+  describe("Empty state (no step selected)", () => {
+    it("shows \"Step Details\" header when no step selected", () => {
       render(<StepDetailsPanel {...defaultProps} />);
 
-      expect(screen.getByText('Step Details')).toBeDefined();
+      expect(screen.getByText("Step Details")).toBeDefined();
     });
 
-    it('shows "No step selected" message when currentStep is null', () => {
+    it("shows \"No step selected\" message when currentStep is null", () => {
       render(<StepDetailsPanel {...defaultProps} />);
 
       expect(screen.getByText(/No step selected/i)).toBeDefined();
     });
 
-    it('does not render any child sections when no step selected', () => {
+    it("does not render any child sections when no step selected", () => {
       render(<StepDetailsPanel {...defaultProps} />);
 
-      expect(screen.queryByText('Call Stack')).toBeNull();
-      expect(screen.queryByText('Iteration')).toBeNull();
-      expect(screen.queryByText('Scope')).toBeNull();
-      expect(screen.queryByText('Globals')).toBeNull();
+      expect(screen.queryByText("Call Stack")).toBeNull();
+      expect(screen.queryByText("Iteration")).toBeNull();
+      expect(screen.queryByText("Scope")).toBeNull();
+      expect(screen.queryByText("Globals")).toBeNull();
     });
   });
 
-  describe('Component structure with step selected', () => {
-    it('renders DebugToolbar with step controls', () => {
-      const steps: VideoTraceStep[] = [
+  describe("Component structure with step selected", () => {
+    it("renders DebugToolbar with step controls", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Loop2<"a">',
+            type: "generic_call",
+            expression: "Loop2<\"a\">",
             level: 0,
           },
         }),
@@ -76,7 +77,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
@@ -84,22 +85,22 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       );
 
       // Verify DebugToolbar renders with controls
-      expect(screen.getByRole('button', { name: /previous/i })).toBeDefined();
-      expect(screen.getByRole('button', { name: /next/i })).toBeDefined();
-      expect(screen.getByRole('button', { name: /into/i })).toBeDefined();
-      expect(screen.getByRole('button', { name: /over/i })).toBeDefined();
-      expect(screen.getByRole('button', { name: /out/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /previous/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /next/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /into/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /over/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /out/i })).toBeDefined();
     });
 
-    it('renders CallStackSection with steps data', () => {
+    it("renders CallStackSection with steps data", () => {
       // Use generic_call types which are included in CALL_STACK_TYPES
-      const steps: VideoTraceStep[] = [
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Outer<"a" | "b">',
+            type: "generic_call",
+            expression: "Outer<\"a\" | \"b\">",
             level: 0,
             position: { start: { line: 5, character: 0 }, end: { line: 5, character: 20 } },
           },
@@ -108,8 +109,8 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 1,
           original: {
             step: 2,
-            type: 'generic_call',
-            expression: 'Inner<"x">',
+            type: "generic_call",
+            expression: "Inner<\"x\">",
             level: 1,
             position: { start: { line: 8, character: 0 }, end: { line: 8, character: 10 } },
           },
@@ -119,31 +120,31 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[1]}
+          currentStep={steps[1] ?? null}
           steps={steps}
           currentStepIndex={1}
           totalSteps={2}
         />
       );
 
-      expect(screen.getByText('Call Stack')).toBeDefined();
+      expect(screen.getByText("Call Stack")).toBeDefined();
       // buildCallStack extracts just type name from generic_call expressions
       expect(screen.getByText(/Outer/)).toBeDefined();
       expect(screen.getByText(/Inner/)).toBeDefined();
     });
 
-    it('renders ScopeSection with parameters from currentStep', () => {
-      const steps: VideoTraceStep[] = [
+    it("renders ScopeSection with parameters from currentStep", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Loop2<"a">',
+            type: "generic_call",
+            expression: "Loop2<\"a\">",
             level: 0,
             parameters: {
-              T: '"a"',
-              K: 'string',
+              T: "\"a\"",
+              K: "string",
             },
           },
         }),
@@ -152,26 +153,26 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
         />
       );
 
-      expect(screen.getByText('Scope')).toBeDefined();
+      expect(screen.getByText("Scope")).toBeDefined();
       expect(screen.getByText(/T = "a"/)).toBeDefined();
       expect(screen.getByText(/K = string/)).toBeDefined();
     });
 
-    it('renders GlobalsSection with typeAliases', () => {
-      const steps: VideoTraceStep[] = [
+    it("renders GlobalsSection with typeAliases", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Loop2<"a">',
+            type: "generic_call",
+            expression: "Loop2<\"a\">",
             level: 0,
           },
         }),
@@ -180,25 +181,25 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
         />
       );
 
-      expect(screen.getByText('Globals')).toBeDefined();
+      expect(screen.getByText("Globals")).toBeDefined();
       // Should show type aliases that are used
     });
 
-    it('renders Expression in CollapsibleSection', () => {
-      const steps: VideoTraceStep[] = [
+    it("renders Expression in CollapsibleSection", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'UniqueExpr<"a" | "b">',
+            type: "generic_call",
+            expression: "UniqueExpr<\"a\" | \"b\">",
             level: 0,
           },
         }),
@@ -207,7 +208,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
@@ -221,18 +222,18 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
     });
   });
 
-  describe('Union stepping (IterationSection)', () => {
-    it('renders IterationSection when currentUnionMember exists', () => {
-      const steps: VideoTraceStep[] = [
+  describe("Union stepping (IterationSection)", () => {
+    it("renders IterationSection when currentUnionMember exists", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'conditional_union_member',
-            expression: 'T extends "a" ? 1 : 2',
+            type: "conditional_union_member",
+            expression: "T extends \"a\" ? 1 : 2",
             level: 0,
-            currentUnionMember: '"a"',
-            currentUnionResults: '1 | 2',
+            currentUnionMember: "\"a\"",
+            currentUnionResults: "1 | 2",
           },
         }),
       ];
@@ -240,24 +241,24 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
         />
       );
 
-      expect(screen.getByText('Iteration')).toBeDefined();
+      expect(screen.getByText("Iteration")).toBeDefined();
     });
 
-    it('does not render IterationSection when currentUnionMember is absent', () => {
-      const steps: VideoTraceStep[] = [
+    it("does not render IterationSection when currentUnionMember is absent", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Loop2<"a">',
+            type: "generic_call",
+            expression: "Loop2<\"a\">",
             level: 0,
           },
         }),
@@ -266,28 +267,28 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
         />
       );
 
-      expect(screen.queryByText('Iteration')).toBeNull();
+      expect(screen.queryByText("Iteration")).toBeNull();
     });
   });
 
-  describe('Result bar', () => {
-    it('shows Result bar at bottom when result exists', () => {
-      const steps: VideoTraceStep[] = [
+  describe("Result bar", () => {
+    it("shows Result bar at bottom when result exists", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_result',
-            expression: 'Loop2<"a">',
+            type: "generic_result",
+            expression: "Loop2<\"a\">",
             level: 0,
-            result: 'MyResult123',
+            result: "MyResult123",
           },
         }),
       ];
@@ -295,7 +296,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
@@ -306,14 +307,14 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       expect(screen.getByText(/MyResult123/)).toBeDefined();
     });
 
-    it('does not show Result bar when result is absent', () => {
-      const steps: VideoTraceStep[] = [
+    it("does not show Result bar when result is absent", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Loop2<"a">',
+            type: "generic_call",
+            expression: "Loop2<\"a\">",
             level: 0,
           },
         }),
@@ -322,7 +323,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       const { container } = render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
@@ -330,19 +331,19 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       );
 
       // Result bar should not appear
-      const resultElements = Array.from(container.querySelectorAll('*')).filter(
-        (el) => el.textContent?.includes('Result') && !el.textContent?.includes('currentUnionResults')
+      const resultElements = Array.from(container.querySelectorAll("*")).filter(
+        el => el.textContent.includes("Result") && !el.textContent.includes("currentUnionResults")
       );
       expect(resultElements.length).toBe(0);
     });
   });
 
-  describe('Callback integration', () => {
-    it('calls onPrevious when Previous button clicked', async () => {
+  describe("Callback integration", () => {
+    it("calls onPrevious when Previous button clicked", async () => {
       const user = userEvent.setup();
       const onPrevious = vi.fn();
 
-      const steps: VideoTraceStep[] = [
+      const steps: Array<VideoTraceStep> = [
         createMockStep({ stepIndex: 0 }),
         createMockStep({ stepIndex: 1 }),
       ];
@@ -350,7 +351,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[1]}
+          currentStep={steps[1] ?? null}
           steps={steps}
           currentStepIndex={1}
           totalSteps={2}
@@ -358,17 +359,17 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      const prevButton = screen.getByRole('button', { name: /previous/i });
+      const prevButton = screen.getByRole("button", { name: /previous/i });
       await user.click(prevButton);
 
       expect(onPrevious).toHaveBeenCalledOnce();
     });
 
-    it('calls onNext when Next button clicked', async () => {
+    it("calls onNext when Next button clicked", async () => {
       const user = userEvent.setup();
       const onNext = vi.fn();
 
-      const steps: VideoTraceStep[] = [
+      const steps: Array<VideoTraceStep> = [
         createMockStep({ stepIndex: 0 }),
         createMockStep({ stepIndex: 1 }),
       ];
@@ -376,7 +377,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={2}
@@ -384,22 +385,22 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      const nextButton = screen.getByRole('button', { name: /next/i });
+      const nextButton = screen.getByRole("button", { name: /next/i });
       await user.click(nextButton);
 
       expect(onNext).toHaveBeenCalledOnce();
     });
 
-    it('calls onStepInto when Step Into button clicked', async () => {
+    it("calls onStepInto when Step Into button clicked", async () => {
       const user = userEvent.setup();
       const onStepInto = vi.fn();
 
-      const steps: VideoTraceStep[] = [createMockStep({ stepIndex: 0 })];
+      const steps: Array<VideoTraceStep> = [ createMockStep({ stepIndex: 0 }) ];
 
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
@@ -407,22 +408,22 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      const stepIntoButton = screen.getByRole('button', { name: /into/i });
+      const stepIntoButton = screen.getByRole("button", { name: /into/i });
       await user.click(stepIntoButton);
 
       expect(onStepInto).toHaveBeenCalledOnce();
     });
 
-    it('calls onStepOver when Step Over button clicked', async () => {
+    it("calls onStepOver when Step Over button clicked", async () => {
       const user = userEvent.setup();
       const onStepOver = vi.fn();
 
-      const steps: VideoTraceStep[] = [createMockStep({ stepIndex: 0 })];
+      const steps: Array<VideoTraceStep> = [ createMockStep({ stepIndex: 0 }) ];
 
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
@@ -430,22 +431,22 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      const stepOverButton = screen.getByRole('button', { name: /over/i });
+      const stepOverButton = screen.getByRole("button", { name: /over/i });
       await user.click(stepOverButton);
 
       expect(onStepOver).toHaveBeenCalledOnce();
     });
 
-    it('calls onStepOut when Step Out button clicked', async () => {
+    it("calls onStepOut when Step Out button clicked", async () => {
       const user = userEvent.setup();
       const onStepOut = vi.fn();
 
-      const steps: VideoTraceStep[] = [createMockStep({ stepIndex: 0 })];
+      const steps: Array<VideoTraceStep> = [ createMockStep({ stepIndex: 0 }) ];
 
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
@@ -453,24 +454,24 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      const stepOutButton = screen.getByRole('button', { name: /out/i });
+      const stepOutButton = screen.getByRole("button", { name: /out/i });
       await user.click(stepOutButton);
 
       expect(onStepOut).toHaveBeenCalledOnce();
     });
 
-    it('calls onSeekToStep when call stack frame clicked', async () => {
+    it("calls onSeekToStep when call stack frame clicked", async () => {
       const user = userEvent.setup();
       const onSeekToStep = vi.fn();
 
       // Use generic_call types which are included in CALL_STACK_TYPES
-      const steps: VideoTraceStep[] = [
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Outer<"a">',
+            type: "generic_call",
+            expression: "Outer<\"a\">",
             level: 0,
           },
         }),
@@ -478,8 +479,8 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 1,
           original: {
             step: 2,
-            type: 'generic_call',
-            expression: 'Inner<"b">',
+            type: "generic_call",
+            expression: "Inner<\"b\">",
             level: 1,
           },
         }),
@@ -488,7 +489,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[1]}
+          currentStep={steps[1] ?? null}
           steps={steps}
           currentStepIndex={1}
           totalSteps={2}
@@ -504,9 +505,9 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
     });
   });
 
-  describe('Data flow verification', () => {
-    it('passes currentStepIndex and totalSteps to DebugToolbar', () => {
-      const steps: VideoTraceStep[] = [
+  describe("Data flow verification", () => {
+    it("passes currentStepIndex and totalSteps to DebugToolbar", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({ stepIndex: 0 }),
         createMockStep({ stepIndex: 1 }),
         createMockStep({ stepIndex: 2 }),
@@ -515,7 +516,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[1]}
+          currentStep={steps[1] ?? null}
           steps={steps}
           currentStepIndex={1}
           totalSteps={3}
@@ -526,15 +527,15 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       expect(screen.getByText(/step 1 \/ 3/i)).toBeDefined();
     });
 
-    it('passes all steps to CallStackSection', () => {
+    it("passes all steps to CallStackSection", () => {
       // Use only generic_call types which are included in CALL_STACK_TYPES
-      const steps: VideoTraceStep[] = [
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Outer<T>',
+            type: "generic_call",
+            expression: "Outer<T>",
             level: 0,
             position: { start: { line: 1, character: 0 }, end: { line: 1, character: 10 } },
           },
@@ -543,8 +544,8 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 1,
           original: {
             step: 2,
-            type: 'generic_call',
-            expression: 'Middle<K>',
+            type: "generic_call",
+            expression: "Middle<K>",
             level: 1,
             position: { start: { line: 2, character: 0 }, end: { line: 2, character: 10 } },
           },
@@ -553,8 +554,8 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 2,
           original: {
             step: 3,
-            type: 'generic_call',
-            expression: 'Inner<X>',
+            type: "generic_call",
+            expression: "Inner<X>",
             level: 2,
             position: { start: { line: 3, character: 0 }, end: { line: 3, character: 10 } },
           },
@@ -564,7 +565,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[2]}
+          currentStep={steps[2] ?? null}
           steps={steps}
           currentStepIndex={2}
           totalSteps={3}
@@ -577,14 +578,14 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       expect(screen.getByText(/Inner/)).toBeDefined();
     });
 
-    it('passes typeAliases and used types to GlobalsSection', () => {
-      const steps: VideoTraceStep[] = [
+    it("passes typeAliases and used types to GlobalsSection", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Loop2<"a">',
+            type: "generic_call",
+            expression: "Loop2<\"a\">",
             level: 0,
           },
         }),
@@ -593,7 +594,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
@@ -601,24 +602,24 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
         />
       );
 
-      expect(screen.getByText('Globals')).toBeDefined();
+      expect(screen.getByText("Globals")).toBeDefined();
       // TypeAliases should be available to GlobalsSection
       // (Used types would be determined by GlobalsSection implementation)
     });
 
-    it('extracts and passes parameters from currentStep to ScopeSection', () => {
-      const steps: VideoTraceStep[] = [
+    it("extracts and passes parameters from currentStep to ScopeSection", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Test<T, K>',
+            type: "generic_call",
+            expression: "Test<T, K>",
             level: 0,
             parameters: {
-              T: '"hello"',
-              K: 'number',
-              Result: '1 | 2',
+              T: "\"hello\"",
+              K: "number",
+              Result: "1 | 2",
             },
           },
         }),
@@ -627,32 +628,32 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[0]}
+          currentStep={steps[0] ?? null}
           steps={steps}
           currentStepIndex={0}
           totalSteps={1}
         />
       );
 
-      expect(screen.getByText('Scope')).toBeDefined();
+      expect(screen.getByText("Scope")).toBeDefined();
       expect(screen.getByText(/T = "hello"/)).toBeDefined();
       expect(screen.getByText(/K = number/)).toBeDefined();
       expect(screen.getByText(/Result = 1 \| 2/)).toBeDefined();
     });
   });
 
-  describe('Complex scenarios', () => {
-    it('handles union stepping with full data flow', () => {
-      const steps: VideoTraceStep[] = [
+  describe("Complex scenarios", () => {
+    it("handles union stepping with full data flow", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'conditional_union_distribute',
-            expression: 'T extends "a" ? 1 : 2',
+            type: "conditional_union_distribute",
+            expression: "T extends \"a\" ? 1 : 2",
             level: 0,
             parameters: {
-              T: '"a" | "b" | "x"',
+              T: "\"a\" | \"b\" | \"x\"",
             },
           },
         }),
@@ -660,13 +661,13 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 1,
           original: {
             step: 2,
-            type: 'conditional_union_member',
-            expression: 'T extends "a" ? 1 : 2',
+            type: "conditional_union_member",
+            expression: "T extends \"a\" ? 1 : 2",
             level: 0,
-            currentUnionMember: '"a"',
-            currentUnionResults: '',
+            currentUnionMember: "\"a\"",
+            currentUnionResults: "",
             parameters: {
-              T: '"a"',
+              T: "\"a\"",
             },
           },
         }),
@@ -674,15 +675,15 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 2,
           original: {
             step: 3,
-            type: 'conditional_union_member',
-            expression: 'T extends "a" ? 1 : 2',
+            type: "conditional_union_member",
+            expression: "T extends \"a\" ? 1 : 2",
             level: 0,
-            currentUnionMember: '"currentMember"',
-            currentUnionResults: 'accumulatedValue',
+            currentUnionMember: "\"currentMember\"",
+            currentUnionResults: "accumulatedValue",
             parameters: {
-              T: '"paramValue"',
+              T: "\"paramValue\"",
             },
-            result: 'finalResult',
+            result: "finalResult",
           },
         }),
       ];
@@ -690,7 +691,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[2]}
+          currentStep={steps[2] ?? null}
           steps={steps}
           currentStepIndex={2}
           totalSteps={3}
@@ -698,26 +699,26 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       );
 
       // IterationSection should show union stepping details
-      expect(screen.getByText('Iteration')).toBeDefined();
+      expect(screen.getByText("Iteration")).toBeDefined();
 
       // ScopeSection should show current parameter value
-      expect(screen.getByText('Scope')).toBeDefined();
+      expect(screen.getByText("Scope")).toBeDefined();
       expect(screen.getByText(/T = "paramValue"/)).toBeDefined();
 
       // Result bar should show result
       expect(screen.getByText(/finalResult/)).toBeDefined();
     });
 
-    it('handles nested call stack with parameters at each level', () => {
-      const steps: VideoTraceStep[] = [
+    it("handles nested call stack with parameters at each level", () => {
+      const steps: Array<VideoTraceStep> = [
         createMockStep({
           stepIndex: 0,
           original: {
             step: 1,
-            type: 'generic_call',
-            expression: 'Outer<string>',
+            type: "generic_call",
+            expression: "Outer<string>",
             level: 0,
-            parameters: { T: 'string' },
+            parameters: { T: "string" },
             position: { start: { line: 1, character: 0 }, end: { line: 1, character: 14 } },
           },
         }),
@@ -725,10 +726,10 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
           stepIndex: 1,
           original: {
             step: 2,
-            type: 'generic_call',
-            expression: 'Inner<number>',
+            type: "generic_call",
+            expression: "Inner<number>",
             level: 1,
-            parameters: { K: 'number' },
+            parameters: { K: "number" },
             position: { start: { line: 2, character: 0 }, end: { line: 2, character: 14 } },
           },
         }),
@@ -737,7 +738,7 @@ describe('StepDetailsPanel Integration (Refactored)', () => {
       render(
         <StepDetailsPanel
           {...defaultProps}
-          currentStep={steps[1]}
+          currentStep={steps[1] ?? null}
           steps={steps}
           currentStepIndex={1}
           totalSteps={2}

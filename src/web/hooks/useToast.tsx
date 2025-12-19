@@ -1,55 +1,24 @@
-import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from "react";
+import { ToastContext } from "./ToastContext.ts";
+import type { ToastType, Toast } from "./ToastContext.ts";
 
-export type ToastType = 'success' | 'error';
-
-type Toast = {
-  id: number;
-  message: string;
-  type: ToastType;
-};
-
-type ToastContextValue = {
-  toasts: Toast[];
-  showToast: (message: string, type: ToastType) => void;
-  dismissToast: (id: number) => void;
-};
-
-const ToastContext = createContext<ToastContextValue | null>(null);
-
-const TOAST_DURATION = 3000;
-
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+export const ToastProvider: React.FC<{ children: React.ReactNode; }> = ({ children }) => {
+  const [ toasts, setToasts ] = useState<Array<Toast>>([]);
   const nextId = useRef(0);
 
   const dismissToast = useCallback((id: number) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+    setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
   const showToast = useCallback((message: string, type: ToastType) => {
     const id = nextId.current++;
-    setToasts((prev) => [...prev, { id, message, type }]);
+    setToasts(prev => [ ...prev, { id, message, type }]);
   }, []);
 
+  const toastValues = useMemo(() => ({ toasts, showToast, dismissToast }), [ toasts, showToast, dismissToast ]);
   return (
-    <ToastContext.Provider value={{ toasts, showToast, dismissToast }}>
+    <ToastContext.Provider value={toastValues}>
       {children}
     </ToastContext.Provider>
   );
-};
-
-export const useToast = (): Pick<ToastContextValue, 'showToast'> => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within ToastProvider');
-  }
-  return { showToast: context.showToast };
-};
-
-export const useToastContext = (): ToastContextValue => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToastContext must be used within ToastProvider');
-  }
-  return context;
 };
