@@ -1,28 +1,40 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '../../utils/renderWithProviders.tsx';
-import { createMockStep } from '../../fixtures/mockVideoData.ts';
+import { screen } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import { createMockStep } from "../../fixtures/mockVideoData.ts";
+import { render } from "../../utils/renderWithProviders.tsx";
 
 // Mock StepDetailsPanel component
-const MockStepDetailsPanel = ({ step }: any) => (
+type StepOriginal = {
+  expression?: string;
+  parameters?: unknown;
+  result?: string;
+  currentUnionMember?: string;
+};
+
+type MockStepDetailsPanelProps = {
+  step?: { original: StepOriginal; };
+};
+
+const MockStepDetailsPanel = ({ step }: MockStepDetailsPanelProps) => (
   <div data-testid="step-details">
-    <div>Expression: {step?.original.expression}</div>
+    <div>{"Expression: "}{step?.original.expression}</div>
     {step?.original.parameters && (
-      <div>Parameters: {JSON.stringify(step.original.parameters)}</div>
+      <div>{"Parameters: "}{JSON.stringify(step.original.parameters)}</div>
     )}
-    {step?.original.result && <div>Result: {step.original.result}</div>}
+    {step?.original.result && <div>{"Result: "}{step.original.result}</div>}
     {step?.original.currentUnionMember && (
-      <div>Union Member: {step.original.currentUnionMember}</div>
+      <div>{"Union Member: "}{step.original.currentUnionMember}</div>
     )}
   </div>
 );
 
-describe('StepDetailsPanel Component', () => {
-  it('displays current step details', () => {
+describe("StepDetailsPanel Component", () => {
+  it("displays current step details", () => {
     const mockStep = createMockStep({
       original: {
         step: 1,
-        type: 'generic_call',
-        expression: 'Identity<string>',
+        type: "generic_call",
+        expression: "Identity<string>",
         level: 0,
       },
     });
@@ -32,14 +44,14 @@ describe('StepDetailsPanel Component', () => {
     expect(screen.getByText(/Identity<string>/)).toBeDefined();
   });
 
-  it('displays currentUnionMember when present', () => {
+  it("displays currentUnionMember when present", () => {
     const mockStep = createMockStep({
       original: {
         step: 1,
-        type: 'conditional_union_member',
-        expression: 'test',
+        type: "conditional_union_member",
+        expression: "test",
         level: 0,
-        currentUnionMember: '"a"',
+        currentUnionMember: "\"a\"",
       },
     });
 
@@ -48,14 +60,14 @@ describe('StepDetailsPanel Component', () => {
     expect(screen.getByText(/Union Member: "a"/)).toBeDefined();
   });
 
-  it('displays result when available', () => {
+  it("displays result when available", () => {
     const mockStep = createMockStep({
       original: {
         step: 1,
-        type: 'generic_result',
-        expression: 'test',
+        type: "generic_result",
+        expression: "test",
         level: 0,
-        result: 'string',
+        result: "string",
       },
     });
 

@@ -1,27 +1,38 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '../../utils/renderWithProviders.tsx';
-import userEvent from '@testing-library/user-event';
-import { createMockVideoData } from '../../fixtures/mockVideoData.ts';
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
+import { createMockVideoData } from "../../fixtures/mockVideoData.ts";
+import { render } from "../../utils/renderWithProviders.tsx";
 
 // Mock component - actual import may differ
-const MockPlaybackControls = ({ videoData, onStepChange }: any) => (
+type MockPlaybackControlsProps = {
+  videoData?: unknown;
+  onStepChange?: (step: number) => void;
+};
+
+const noop = () => {};
+const handlePlay = (fn?: (n: number) => void) => () => fn?.(0);
+const handleNext = (fn?: (n: number) => void) => () => fn?.(1);
+const handlePrev = (fn?: (n: number) => void) => () => fn?.(-1);
+
+const MockPlaybackControls = ({ onStepChange }: MockPlaybackControlsProps) => (
   <div data-testid="playback-controls">
-    <button onClick={() => onStepChange?.(0)}>Play</button>
-    <button onClick={() => onStepChange?.(1)}>Next</button>
-    <button onClick={() => onStepChange?.(-1)}>Prev</button>
-    <button>1x</button>
-    <button>2x</button>
+    <button type="button" onClick={onStepChange ? handlePlay(onStepChange) : noop}>{"Play"}</button>
+    <button type="button" onClick={onStepChange ? handleNext(onStepChange) : noop}>{"Next"}</button>
+    <button type="button" onClick={onStepChange ? handlePrev(onStepChange) : noop}>{"Prev"}</button>
+    <button type="button">{"1x"}</button>
+    <button type="button">{"2x"}</button>
   </div>
 );
 
-describe('PlaybackControls Component', () => {
-  it('renders disabled when no video data', () => {
+describe("PlaybackControls Component", () => {
+  it("renders disabled when no video data", () => {
     render(<MockPlaybackControls videoData={null} />);
 
-    expect(screen.getByTestId('playback-controls')).toBeDefined();
+    expect(screen.getByTestId("playback-controls")).toBeDefined();
   });
 
-  it('renders play/pause button', () => {
+  it("renders play/pause button", () => {
     const mockData = createMockVideoData();
     render(<MockPlaybackControls videoData={mockData} />);
 
@@ -29,7 +40,7 @@ describe('PlaybackControls Component', () => {
     expect(playButton).toBeDefined();
   });
 
-  it('handles next/previous step clicks', async () => {
+  it("handles next/previous step clicks", async () => {
     const user = userEvent.setup();
     const onStepChange = vi.fn();
     const mockData = createMockVideoData();
@@ -42,13 +53,13 @@ describe('PlaybackControls Component', () => {
     expect(onStepChange).toHaveBeenCalledWith(1);
   });
 
-  it('handles speed change', async () => {
+  it("handles speed change", async () => {
     const user = userEvent.setup();
     const mockData = createMockVideoData();
 
     render(<MockPlaybackControls videoData={mockData} />);
 
-    const speedButtons = screen.getAllByText(/[0-9]x/);
+    const speedButtons = screen.getAllByText(/\dx/);
     expect(speedButtons.length).toBeGreaterThan(0);
 
     if (speedButtons[0]) {

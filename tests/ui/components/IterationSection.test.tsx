@@ -1,10 +1,11 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '../../utils/renderWithProviders.tsx';
-import userEvent from '@testing-library/user-event';
-import { IterationSection } from '../../../src/web/components/IterationSection';
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect } from "vitest";
+import { IterationSection } from "../../../src/web/components/IterationSection";
+import { render } from "../../utils/renderWithProviders.tsx";
 
-describe('IterationSection Component', () => {
-  it('renders CollapsibleSection with "Iteration" title', () => {
+describe("IterationSection Component", () => {
+  it("renders CollapsibleSection with \"Iteration\" title", () => {
     render(
       <IterationSection
         currentMember='"a"'
@@ -12,10 +13,10 @@ describe('IterationSection Component', () => {
       />
     );
 
-    expect(screen.getByText('Iteration')).toBeDefined();
+    expect(screen.getByText("Iteration")).toBeDefined();
   });
 
-  it('returns null when currentMember is not provided', () => {
+  it("returns null when currentMember is not provided", () => {
     const { container } = render(
       <IterationSection
         accumulatedResults='1 | 2'
@@ -25,7 +26,7 @@ describe('IterationSection Component', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('returns null when currentMember is undefined', () => {
+  it("returns null when currentMember is undefined", () => {
     const { container } = render(
       <IterationSection
         currentMember={undefined}
@@ -36,7 +37,7 @@ describe('IterationSection Component', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('displays "Current Member:" label with value', () => {
+  it("displays \"Current Member:\" label with value", () => {
     render(
       <IterationSection
         currentMember='"a"'
@@ -48,7 +49,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/"a"/)).toBeDefined();
   });
 
-  it('displays "Accumulated:" label with value', () => {
+  it("displays \"Accumulated:\" label with value", () => {
     render(
       <IterationSection
         currentMember='"a"'
@@ -60,7 +61,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/1 \| 2/)).toBeDefined();
   });
 
-  it('displays "none" when accumulatedResults is empty', () => {
+  it("displays \"none\" when accumulatedResults is empty", () => {
     render(
       <IterationSection
         currentMember='"a"'
@@ -72,7 +73,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/none/)).toBeDefined();
   });
 
-  it('displays "none" when accumulatedResults is undefined', () => {
+  it("displays \"none\" when accumulatedResults is undefined", () => {
     render(
       <IterationSection
         currentMember='"a"'
@@ -84,7 +85,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/none/)).toBeDefined();
   });
 
-  it('displays index "1 of ?" when accumulatedResults is empty', () => {
+  it("displays index \"1 of ?\" when accumulatedResults is empty", () => {
     render(
       <IterationSection
         currentMember='"a"'
@@ -96,7 +97,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/1 of \?/)).toBeDefined();
   });
 
-  it('displays correct index for single member in accumulated results', () => {
+  it("displays correct index for single member in accumulated results", () => {
     render(
       <IterationSection
         currentMember='"a"'
@@ -108,7 +109,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/1 of \?/)).toBeDefined();
   });
 
-  it('displays correct index for two members in accumulated results', () => {
+  it("displays correct index for two members in accumulated results", () => {
     render(
       <IterationSection
         currentMember='"b"'
@@ -120,7 +121,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/2 of \?/)).toBeDefined();
   });
 
-  it('displays correct index for three members in accumulated results', () => {
+  it("displays correct index for three members in accumulated results", () => {
     render(
       <IterationSection
         currentMember='"c"'
@@ -132,7 +133,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/3 of \?/)).toBeDefined();
   });
 
-  it('filters out "never" from member count', () => {
+  it("filters out \"never\" from member count", () => {
     render(
       <IterationSection
         currentMember='"x"'
@@ -144,7 +145,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/2 of \?/)).toBeDefined();
   });
 
-  it('handles accumulated results with only "never"', () => {
+  it("handles accumulated results with only \"never\"", () => {
     render(
       <IterationSection
         currentMember='"x"'
@@ -156,7 +157,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/0 of \?/)).toBeDefined();
   });
 
-  it('handles accumulated results with multiple "never" types', () => {
+  it("handles accumulated results with multiple \"never\" types", () => {
     render(
       <IterationSection
         currentMember='"x"'
@@ -168,7 +169,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/0 of \?/)).toBeDefined();
   });
 
-  it('handles complex union types in accumulated results', () => {
+  it("handles complex union types in accumulated results", () => {
     render(
       <IterationSection
         currentMember='"d"'
@@ -180,7 +181,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/3 of \?/)).toBeDefined();
   });
 
-  it('renders with all props provided', () => {
+  it("renders with all props provided", () => {
     render(
       <IterationSection
         currentMember='"b"'
@@ -188,7 +189,7 @@ describe('IterationSection Component', () => {
       />
     );
 
-    expect(screen.getByText('Iteration')).toBeDefined();
+    expect(screen.getByText("Iteration")).toBeDefined();
     expect(screen.getByText(/Current Member:/)).toBeDefined();
     expect(screen.getByText(/"b"/)).toBeDefined();
     expect(screen.getByText(/Accumulated:/)).toBeDefined();
@@ -197,7 +198,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/2 of \?/)).toBeDefined();
   });
 
-  it('can be collapsed and expanded', async () => {
+  it("can be collapsed and expanded", async () => {
     const user = userEvent.setup();
 
     render(
@@ -211,14 +212,14 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/Current Member:/)).toBeDefined();
 
     // Click header to collapse
-    const header = screen.getByText('Iteration');
+    const header = screen.getByText("Iteration");
     await user.click(header);
 
     // Content should be hidden
     expect(screen.queryByText(/Current Member:/)).toBeNull();
   });
 
-  it('handles whitespace in accumulated results', () => {
+  it("handles whitespace in accumulated results", () => {
     render(
       <IterationSection
         currentMember='"a"'
@@ -230,7 +231,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/Index:/)).toBeDefined();
   });
 
-  it('handles member count with mixed spacing', () => {
+  it("handles member count with mixed spacing", () => {
     render(
       <IterationSection
         currentMember='"c"'
@@ -242,7 +243,7 @@ describe('IterationSection Component', () => {
     expect(screen.getByText(/3 of \?/)).toBeDefined();
   });
 
-  it('uses CollapsibleSection component internally', () => {
+  it("uses CollapsibleSection component internally", () => {
     const { container } = render(
       <IterationSection
         currentMember='"a"'
@@ -251,6 +252,6 @@ describe('IterationSection Component', () => {
     );
 
     // Check for down arrow indicating CollapsibleSection
-    expect(container.textContent).toContain('▼');
+    expect(container.textContent).toContain("▼");
   });
 });
