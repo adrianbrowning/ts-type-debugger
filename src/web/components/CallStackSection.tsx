@@ -11,7 +11,6 @@ export type CallStackSectionProps = {
 };
 
 const INDENT_BASE = 12;
-const INDENT_PER_LEVEL = 16;
 
 type CallStackFrameProps = {
   frame: ReturnType<typeof buildCallStack>[number];
@@ -49,7 +48,7 @@ const CallStackFrame: React.FC<CallStackFrameProps> = ({
       onKeyDown={handleKeyDown}
       style={{
         padding: theme.spacing.sm,
-        paddingLeft: `${INDENT_BASE + frame.level * INDENT_PER_LEVEL}px`,
+        paddingLeft: `${INDENT_BASE}px`,
         cursor: "pointer",
         backgroundColor: isTopFrame ? theme.bg.active : "transparent",
         borderLeft: isTopFrame ? `2px solid ${theme.accent.primary}` : "none",
