@@ -6,7 +6,7 @@ import { render } from "../../utils/renderWithProviders.tsx";
 // Mock StepDetailsPanel component
 type StepOriginal = {
   expression?: string;
-  parameters?: unknown;
+  parameters?: Record<string, unknown>;
   result?: string;
   currentUnionMember?: string;
 };

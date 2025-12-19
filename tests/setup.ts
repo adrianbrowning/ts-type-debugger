@@ -36,7 +36,7 @@ afterEach(() => {
     pendingRafs.clear();
 
     // Restore original functions
-    window.requestAnimationFrame = originalRAF;
-    window.cancelAnimationFrame = originalCAF;
+    window.requestAnimationFrame = originalRAF!;
+    window.cancelAnimationFrame = originalCAF!;
   }
 });
