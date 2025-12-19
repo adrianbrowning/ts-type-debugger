@@ -54,7 +54,7 @@ describe('CallStackSection Component', () => {
     );
 
     expect(screen.getByText(/Loop2/)).toBeDefined();
-    expect(screen.getByText(/:5/)).toBeDefined();
+    expect(screen.getByText(/: 5/)).toBeDefined();
   });
 
   it('displays nested call stack with proper indentation', () => {

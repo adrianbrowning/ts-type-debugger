@@ -47,7 +47,13 @@
       "mcp__plugin_beads_beads__update",
       "mcp__plugin_beads_beads__*",
       "mcp__plugin_beads_beads__close",
-      "mcp__plugin_beads_beads__stats"
+      "mcp__plugin_beads_beads__stats",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm lint:fix:*)",
+      "mcp__plugin_beads_beads__show",
+      "mcp__plugin_beads_beads__list",
+      "Bash(grep:*)",
+      "Bash(pnpm test:all:*)"
     ],
     "deny": [],
     "ask": []

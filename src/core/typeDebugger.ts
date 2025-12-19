@@ -5,10 +5,10 @@
 import {
   generateAST,
   traceTypeResolution,
-  getNodeByName,
-} from '../astGenerator.ts';
-import { generateVideoData } from './traceProcessor.ts';
-import type { VideoData, VideoConfig } from './types.ts';
+  getNodeByName
+} from "../astGenerator.ts";
+import { generateVideoData } from "./traceProcessor.ts";
+import type { VideoData, VideoConfig } from "./types.ts";
 
 /**
  * Generate video data for a specific type
@@ -27,8 +27,9 @@ export async function generateTypeVideo(
     }
 
     // Always wrap the user input in a temporary type alias for evaluation
-    const actualTypeName = '__EvalTarget__';
-    const cleanTypeName = typeName.trim().replace(/;+$/, '').trim();
+    const actualTypeName = "__EvalTarget__";
+    const cleanTypeName = typeName.trim().replace(/;+$/, "")
+      .trim();
     const modifiedCode = `type ${actualTypeName} = ${cleanTypeName};\n${code}`;
 
     // Generate AST
@@ -49,7 +50,8 @@ export async function generateTypeVideo(
     // Generate video data (use modified code for consistent source)
     const videoData = await generateVideoData(trace, ast, modifiedCode, config);
     return videoData;
-  } catch (error) {
+  }
+  catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to generate video data: ${message}`);
   }
@@ -66,7 +68,7 @@ export function formatVideoDataForExport(videoData: VideoData): object {
       durationSeconds: videoData.totalFrames / videoData.fps,
       totalSteps: videoData.steps.length,
     },
-    typeAliases: videoData.typeAliases.map((t) => ({
+    typeAliases: videoData.typeAliases.map(t => ({
       name: t.name,
       lines: { start: t.startLine + 1, end: t.endLine + 1 },
     })),

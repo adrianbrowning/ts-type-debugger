@@ -1,20 +1,20 @@
-import React, { useMemo } from 'react';
-import type { VideoTraceStep, TypeInfo } from '../../core/types.ts';
-import { useCssTheme } from '../theme.ts';
-import { DebugToolbar } from './DebugToolbar.tsx';
-import { CallStackSection } from './CallStackSection.tsx';
-import { IterationSection } from './IterationSection.tsx';
-import { ScopeSection } from './ScopeSection.tsx';
-import { GlobalsSection } from './GlobalsSection.tsx';
-import { CollapsibleSection } from './CollapsibleSection.tsx';
-import { InferPatternSection } from './InferPatternSection.tsx';
+import React, { useMemo } from "react";
+import type { VideoTraceStep, TypeInfo } from "../../core/types.ts";
+import { GLOBAL_THEME } from "../theme.ts";
+import { CallStackSection } from "./CallStackSection.tsx";
+import { CollapsibleSection } from "./CollapsibleSection.tsx";
+import { DebugToolbar } from "./DebugToolbar.tsx";
+import { GlobalsSection } from "./GlobalsSection.tsx";
+import { InferPatternSection } from "./InferPatternSection.tsx";
+import { IterationSection } from "./IterationSection.tsx";
+import { ScopeSection } from "./ScopeSection.tsx";
 
 type StepDetailsPanelProps = {
   currentStep: VideoTraceStep | null;
-  steps: VideoTraceStep[];
+  steps: Array<VideoTraceStep>;
   currentStepIndex: number;
   totalSteps: number;
-  typeAliases: TypeInfo[];
+  typeAliases: Array<TypeInfo>;
   onJumpToStart: () => void;
   onPrevious: () => void;
   onNext: () => void;
@@ -27,12 +27,12 @@ type StepDetailsPanelProps = {
 /**
  * Calculate used type names by scanning traces for type references
  */
-function calculateUsedTypeNames(steps: VideoTraceStep[], typeAliases: TypeInfo[]): Set<string> {
+function calculateUsedTypeNames(steps: Array<VideoTraceStep>, typeAliases: Array<TypeInfo>): Set<string> {
   const usedNames = new Set<string>();
   const knownTypeNames = new Set(typeAliases.map(t => t.name));
 
   for (const step of steps) {
-    const expr = step.original.expression || '';
+    const expr = step.original.expression || "";
     // Match identifiers that are known type names (case-sensitive)
     for (const typeName of knownTypeNames) {
       // Match whole word only
@@ -63,8 +63,8 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
   onStepOut,
   onSeekToStep,
 }) => {
-  const theme = useCssTheme();
-  const usedTypeNames = useMemo(() => calculateUsedTypeNames(steps, typeAliases), [steps, typeAliases]);
+  const theme = GLOBAL_THEME;
+  const usedTypeNames = useMemo(() => calculateUsedTypeNames(steps, typeAliases), [ steps, typeAliases ]);
   const canStepOut = currentStep !== null;
 
   // Empty state
@@ -72,11 +72,11 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
     return (
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
           backgroundColor: theme.bg.secondary,
-          overflow: 'hidden',
+          overflow: "hidden",
         }}
       >
         {/* Header */}
@@ -95,7 +95,7 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
               fontWeight: theme.fontWeight.semibold,
             }}
           >
-            Step Details
+            {"Step Details"}
           </h3>
         </div>
 
@@ -103,14 +103,14 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
         <div
           style={{
             flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             color: theme.text.secondary,
             fontSize: theme.fontSize.md,
           }}
         >
-          No step selected
+          {"No step selected"}
         </div>
       </div>
     );
@@ -123,11 +123,11 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
         backgroundColor: theme.bg.secondary,
-        overflow: 'hidden',
+        overflow: "hidden",
       }}
     >
       {/* Debug Toolbar */}
@@ -147,9 +147,9 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
       <div
         style={{
           flex: 1,
-          overflow: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
+          overflow: "auto",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {/* Call Stack */}
@@ -193,12 +193,12 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
               borderRadius: theme.radius.md,
               border: `1px solid ${theme.border.subtle}`,
               color: theme.text.primary,
-              fontFamily: '"Fira Code", monospace',
+              fontFamily: "\"Fira Code\", monospace",
               fontSize: theme.fontSize.sm,
               lineHeight: 1.6,
-              overflow: 'auto',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
+              overflow: "auto",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
             }}
           >
             {step.expression}
@@ -223,12 +223,12 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
               marginRight: theme.spacing.sm,
             }}
           >
-            Result:
+            {"Result:"}
           </span>
           <code
             style={{
               color: theme.accent.success,
-              fontFamily: '"Fira Code", monospace',
+              fontFamily: "\"Fira Code\", monospace",
               fontSize: theme.fontSize.sm,
             }}
           >

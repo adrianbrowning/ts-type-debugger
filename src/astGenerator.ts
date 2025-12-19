@@ -106,7 +106,7 @@ export function getNodeByName(ast: ts.SourceFile, name: string): ts.Node | undef
       ts.isVariableDeclaration(node) ||
       ts.isEnumDeclaration(node)
     ) {
-      if ((node as any).name?.text === name) {
+      if (ts.getNameOfDeclaration(node)?.getText() === name) {
         result = node;
       }
     }
@@ -223,6 +223,15 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
   const shouldUseContextNode = resultTypes.has(type) && !opts.position && context.currentNode;
   const isSemanticStep = semanticSteps.has(type);
 
+  // Compute position: semantic steps get none, result steps use current node if available
+  const computedPosition = (() => {
+    if (isSemanticStep) return undefined;
+    if (shouldUseContextNode && context.currentNode) {
+      return getNodePosition(context.currentNode, context.sourceFile);
+    }
+    return undefined;
+  })();
+
   const entry: TraceEntry = {
     step: context.trace.length,
     type,
@@ -230,9 +239,7 @@ function addTrace(context: EvalContext, type: TraceEntry['type'], expression: st
     level: context.level,
     // Always include current parameters in scope
     parameters: context.parameters.size > 0 ? Object.fromEntries(context.parameters) : undefined,
-    // For result steps, use current node position if no explicit position provided
-    // Semantic steps don't get auto-positioned
-    position: isSemanticStep ? undefined : (shouldUseContextNode && context.currentNode ? getNodePosition(context.currentNode, context.sourceFile) : undefined),
+    position: computedPosition,
     // Track which union member is currently being evaluated
     currentUnionMember: context.currentUnionMember,
     // Track accumulated union results
@@ -622,7 +629,7 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
         context.currentUnionResults = accumulatedUnion;
 
         // Reduce the union (remove never, simplify) after each member
-        let reducedUnion = accumulatedUnion;
+        let reducedUnion;
         try {
           reducedUnion = evalTypeString(context.sourceFile.text, accumulatedUnion);
         } catch {
@@ -1106,7 +1113,7 @@ function evaluateIndexedAccess(indexedType: ts.IndexedAccessTypeNode, context: E
   const substitutedIndex = substituteParameters(indexTypeStr, context.parameters);
   const fullExpr = `(${substitutedObj})[${substitutedIndex}]`;
 
-  let finalResult = fullExpr;
+  let finalResult;
   try {
     finalResult = evalTypeString(context.sourceFile.text, fullExpr);
   } catch {
@@ -1199,7 +1206,7 @@ export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Trace
 
   // Find the target type
   const targetAlias = allTypeAliases.get(typeName);
-  if (!targetAlias || !targetAlias.type) {
+  if (!targetAlias) {
     return [];
   }
 

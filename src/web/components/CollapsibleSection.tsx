@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useCssTheme } from '../theme.ts';
+import React, { useCallback, useState } from "react";
+import { GLOBAL_THEME } from "../theme.ts";
 
 export type CollapsibleSectionProps = {
   title: string;
@@ -16,38 +16,39 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   headerRight,
   children,
 }) => {
-  const theme = useCssTheme();
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-  const contentId = `collapsible-${title.replace(/\s+/g, '-').toLowerCase()}`;
+  const theme = GLOBAL_THEME;
+  const [ isExpanded, setIsExpanded ] = useState(defaultExpanded);
+  const contentId = `collapsible-${title.replace(/\s+/g, "-").toLowerCase()}`;
 
-  const toggleExpanded = () => setIsExpanded(!isExpanded);
+  const toggleExpanded = useCallback(() => setIsExpanded(prev => !prev), []);
 
   return (
     <div>
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           padding: `${theme.spacing.sm} ${theme.spacing.md}`,
           backgroundColor: theme.bg.secondary,
           borderBottom: `1px solid ${theme.border.subtle}`,
         }}
       >
         <button
+          type="button"
           onClick={toggleExpanded}
           aria-expanded={isExpanded}
           aria-controls={contentId}
           style={{
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             gap: theme.spacing.sm,
-            cursor: 'pointer',
+            cursor: "pointer",
             flex: 1,
-            background: 'none',
-            border: 'none',
+            background: "none",
+            border: "none",
             padding: 0,
-            textAlign: 'left',
+            textAlign: "left",
           }}
         >
           <span
@@ -57,7 +58,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
               fontSize: theme.fontSize.sm,
             }}
           >
-            {isExpanded ? '▼' : '▶'}
+            {isExpanded ? "▼" : "▶"}
           </span>
           <span
             style={{

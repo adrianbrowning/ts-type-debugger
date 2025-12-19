@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useCssTheme } from '../theme.ts';
+import React, { useState, useCallback } from "react";
+import { GLOBAL_THEME } from "../theme.ts";
 
 type InputFormProps = {
   onGenerate: (code: string, typeName: string) => Promise<void>;
@@ -11,21 +11,33 @@ type InputFormProps = {
  * Input form for type evaluation - web version
  */
 export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, error }) => {
-  const theme = useCssTheme();
-  const [code, setCode] = useState<string>('');
-  const [typeName, setTypeName] = useState<string>('_result');
+  const theme = GLOBAL_THEME;
+  const [ code, setCode ] = useState<string>("");
+  const [ typeName, setTypeName ] = useState<string>("_result");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmitAsync = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     await onGenerate(code, typeName);
-  };
+  }, [ code, typeName, onGenerate ]);
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    void handleSubmitAsync(e);
+  }, [ handleSubmitAsync ]);
+
+  const handleCodeChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCode(e.target.value);
+  }, []);
+
+  const handleTypeNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setTypeName(e.target.value);
+  }, []);
 
   return (
     <form
       onSubmit={handleSubmit}
       style={{
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: 16,
         padding: 20,
         backgroundColor: theme.bg.primary,
@@ -38,29 +50,29 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
         style={{
           margin: 0,
           color: theme.text.primary,
-          fontSize: theme.fontSize['2xl'],
+          fontSize: theme.fontSize["2xl"],
           fontWeight: theme.fontWeight.semibold,
         }}
       >
-        Type Evaluation Debugger
+        {"Type Evaluation Debugger"}
       </h2>
 
       {/* Code editor */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <label
           style={{
             color: theme.text.secondary,
             fontSize: theme.fontSize.sm,
             fontWeight: theme.fontWeight.semibold,
-            textTransform: 'uppercase',
+            textTransform: "uppercase",
             letterSpacing: 0.5,
           }}
         >
-          TypeScript Code
+          {"TypeScript Code"}
         </label>
         <textarea
           value={code}
-          onChange={(e) => setCode(e.target.value)}
+          onChange={handleCodeChange}
           disabled={isLoading}
           style={{
             padding: 12,
@@ -68,34 +80,34 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
             color: theme.text.primary,
             border: `1px solid ${theme.border.subtle}`,
             borderRadius: theme.radius.sm,
-            fontFamily: '"Fira Code", monospace',
+            fontFamily: "\"Fira Code\", monospace",
             fontSize: theme.fontSize.sm,
             lineHeight: 1.5,
             minHeight: 200,
-            resize: 'vertical',
+            resize: "vertical",
             opacity: isLoading ? 0.6 : 1,
-            cursor: isLoading ? 'not-allowed' : 'text',
+            cursor: isLoading ? "not-allowed" : "text",
           }}
         />
       </div>
 
       {/* Type name input */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <label
           style={{
             color: theme.text.secondary,
             fontSize: theme.fontSize.sm,
             fontWeight: theme.fontWeight.semibold,
-            textTransform: 'uppercase',
+            textTransform: "uppercase",
             letterSpacing: 0.5,
           }}
         >
-          Type to Evaluate
+          {"Type to Evaluate"}
         </label>
         <input
           type="text"
           value={typeName}
-          onChange={(e) => setTypeName(e.target.value)}
+          onChange={handleTypeNameChange}
           disabled={isLoading}
           placeholder="e.g., _result"
           style={{
@@ -104,10 +116,10 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
             color: theme.text.primary,
             border: `1px solid ${theme.border.subtle}`,
             borderRadius: theme.radius.sm,
-            fontFamily: '"Fira Code", monospace',
+            fontFamily: "\"Fira Code\", monospace",
             fontSize: theme.fontSize.sm,
             opacity: isLoading ? 0.6 : 1,
-            cursor: isLoading ? 'not-allowed' : 'text',
+            cursor: isLoading ? "not-allowed" : "text",
           }}
         />
       </div>
@@ -117,7 +129,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
         <div
           style={{
             padding: 12,
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            backgroundColor: "rgba(239, 68, 68, 0.1)",
             border: `1px solid ${theme.accent.error}`,
             borderRadius: theme.radius.sm,
             color: theme.accent.error,
@@ -133,37 +145,37 @@ export const InputForm: React.FC<InputFormProps> = ({ onGenerate, isLoading, err
         type="submit"
         disabled={isLoading || !code.trim() || !typeName.trim()}
         style={{
-          padding: '12px 24px',
+          padding: "12px 24px",
           backgroundColor:
             isLoading || !code.trim() || !typeName.trim() ? theme.border.subtle : theme.accent.highlight,
           color: isLoading || !code.trim() || !typeName.trim() ? theme.text.primary : theme.accent.btnText,
-          border: 'none',
+          border: "none",
           borderRadius: theme.radius.sm,
           fontSize: theme.fontSize.md,
           fontWeight: theme.fontWeight.semibold,
           cursor:
-            isLoading || !code.trim() || !typeName.trim() ? 'not-allowed' : 'pointer',
+            isLoading || !code.trim() || !typeName.trim() ? "not-allowed" : "pointer",
           opacity: isLoading || !code.trim() || !typeName.trim() ? 0.6 : 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
         }}
       >
         {isLoading && (
           <span
             style={{
-              display: 'inline-block',
-              width: '14px',
-              height: '14px',
+              display: "inline-block",
+              width: "14px",
+              height: "14px",
               border: `2px solid ${theme.accent.btnText}`,
-              borderTopColor: 'transparent',
-              borderRadius: '50%',
-              animation: 'spin 0.8s linear infinite',
+              borderTopColor: "transparent",
+              borderRadius: "50%",
+              animation: "spin 0.8s linear infinite",
             }}
           />
         )}
-        {isLoading ? 'Debugging...' : 'Debug'}
+        {isLoading ? "Debugging..." : "Debug"}
       </button>
     </form>
   );

@@ -1,7 +1,7 @@
-import React from 'react';
-import { useCssTheme } from '../theme.ts';
-import type { VideoTraceStep } from '../../core/types.ts';
-import {formatParameters, formatResult} from "../../core/traceProcessor.ts";
+import React from "react";
+import { formatParameters, formatResult } from "../../core/traceProcessor.ts";
+import type { VideoTraceStep } from "../../core/types.ts";
+import { GLOBAL_THEME } from "../theme.ts";
 
 type ResultsPanelProps = {
   currentStep: VideoTraceStep | null;
@@ -11,23 +11,23 @@ type ResultsPanelProps = {
  * Renders current evaluation step information - web version
  */
 export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
-  const theme = useCssTheme();
+  const theme = GLOBAL_THEME;
 
   if (!currentStep) {
     return (
       <div
         style={{
-          height: '100%',
+          height: "100%",
           backgroundColor: theme.bg.secondary,
           border: `1px solid ${theme.border.subtle}`,
           borderRadius: theme.radius.lg,
           padding: theme.spacing.lg,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <p style={{ color: theme.text.tertiary }}>No step selected</p>
+        <p style={{ color: theme.text.tertiary }}>{"No step selected"}</p>
       </div>
     );
   }
@@ -40,13 +40,13 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
   return (
     <div
       style={{
-        height: '100%',
+        height: "100%",
         backgroundColor: theme.bg.secondary,
         border: `1px solid ${theme.border.subtle}`,
         borderRadius: theme.radius.lg,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
+        overflow: "auto",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       {/* Header with step info */}
@@ -59,8 +59,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
       >
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             gap: 12,
             marginBottom: 8,
           }}
@@ -74,7 +74,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
             }}
           />
           <span style={{ color: theme.text.primary, fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.semibold }}>
-            Step {step.step}
+            {"Step "}{step.step}
           </span>
         </div>
         <p
@@ -85,11 +85,11 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
             backgroundColor: theme.bg.secondary,
             padding: 6,
             borderRadius: theme.radius.sm,
-            fontFamily: 'monospace',
-            wordBreak: 'break-word',
+            fontFamily: "monospace",
+            wordBreak: "break-word",
           }}
         >
-          [{step.type}]
+          {"["}{step.type}{"]"}
         </p>
       </div>
 
@@ -98,7 +98,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
         style={{
           flex: 1,
           padding: theme.spacing.lg,
-          overflow: 'auto',
+          overflow: "auto",
           fontSize: theme.fontSize.sm,
         }}
       >
@@ -106,14 +106,14 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
         <div style={{ marginBottom: 16 }}>
           <h4
             style={{
-              margin: '0 0 8px 0',
+              margin: "0 0 8px 0",
               color: theme.text.secondary,
               fontSize: theme.fontSize.xs,
-              textTransform: 'uppercase',
+              textTransform: "uppercase",
               letterSpacing: 0.5,
             }}
           >
-            Expression
+            {"Expression"}
           </h4>
           <pre
             style={{
@@ -122,12 +122,12 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
               backgroundColor: theme.bg.primary,
               borderRadius: theme.radius.sm,
               color: theme.text.primary,
-              fontFamily: 'monospace',
+              fontFamily: "monospace",
               fontSize: theme.fontSize.xs,
-              overflow: 'auto',
+              overflow: "auto",
               maxHeight: 120,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
             }}
           >
             {step.expression}
@@ -139,14 +139,14 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
           <div style={{ marginBottom: 16 }}>
             <h4
               style={{
-                margin: '0 0 8px 0',
+                margin: "0 0 8px 0",
                 color: theme.text.secondary,
                 fontSize: theme.fontSize.xs,
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 letterSpacing: 0.5,
               }}
             >
-              Parameters in Scope
+              {"Parameters in Scope"}
             </h4>
             <div
               style={{
@@ -155,25 +155,25 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
                 padding: 8,
               }}
             >
-              {Object.entries(params).map(([key, value]) => (
+              {Object.entries(params).map(([ key, value ]) => (
                 <div
                   key={key}
                   style={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 8,
                     marginBottom: 6,
                     fontSize: theme.fontSize.xs,
                   }}
                 >
                   <span style={{ color: theme.accent.highlight, fontWeight: theme.fontWeight.semibold }}>
-                    {key}:
+                    {key}{":"}
                   </span>
                   <span
                     style={{
                       color: theme.text.primary,
-                      fontFamily: 'monospace',
+                      fontFamily: "monospace",
                       flex: 1,
-                      wordBreak: 'break-word',
+                      wordBreak: "break-word",
                     }}
                   >
                     {value}
@@ -189,14 +189,14 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
           <div style={{ marginBottom: 16 }}>
             <h4
               style={{
-                margin: '0 0 8px 0',
+                margin: "0 0 8px 0",
                 color: theme.text.secondary,
                 fontSize: theme.fontSize.xs,
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 letterSpacing: 0.5,
               }}
             >
-              Result
+              {"Result"}
             </h4>
             <pre
               style={{
@@ -205,10 +205,10 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
                 backgroundColor: theme.bg.primary,
                 borderRadius: theme.radius.sm,
                 color: theme.accent.success,
-                fontFamily: 'monospace',
+                fontFamily: "monospace",
                 fontSize: theme.fontSize.xs,
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
               }}
             >
               {result}
@@ -221,14 +221,14 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
           <div>
             <h4
               style={{
-                margin: '0 0 8px 0',
+                margin: "0 0 8px 0",
                 color: theme.text.secondary,
                 fontSize: theme.fontSize.xs,
-                textTransform: 'uppercase',
+                textTransform: "uppercase",
                 letterSpacing: 0.5,
               }}
             >
-              Arguments
+              {"Arguments"}
             </h4>
             <div
               style={{
@@ -237,25 +237,25 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ currentStep }) => {
                 padding: 8,
               }}
             >
-              {Object.entries(step.args).map(([key, value]) => (
+              {Object.entries(step.args).map(([ key, value ]) => (
                 <div
                   key={key}
                   style={{
-                    display: 'flex',
+                    display: "flex",
                     gap: 8,
                     marginBottom: 6,
                     fontSize: theme.fontSize.xs,
                   }}
                 >
                   <span style={{ color: theme.accent.warning, fontWeight: theme.fontWeight.semibold }}>
-                    {key}:
+                    {key}{":"}
                   </span>
                   <span
                     style={{
                       color: theme.text.primary,
-                      fontFamily: 'monospace',
+                      fontFamily: "monospace",
                       flex: 1,
-                      wordBreak: 'break-word',
+                      wordBreak: "break-word",
                     }}
                   >
                     {value}

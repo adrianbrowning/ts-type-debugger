@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useCssTheme } from '../theme.ts';
-import { useToastContext, type ToastType } from '../hooks/useToast.tsx';
+import React, { useEffect, useState, useCallback } from "react";
+import type { ToastType } from "../hooks/ToastContext.ts";
+import { useToastContext } from "../hooks/useToastHook.ts";
+import { GLOBAL_THEME } from "../theme.ts";
 
 const TOAST_DURATION = 3000;
 const ANIMATION_DURATION = 200;
@@ -13,8 +14,8 @@ type ToastItemProps = {
 };
 
 const ToastItem: React.FC<ToastItemProps> = ({ id, message, type, onDismiss }) => {
-  const theme = useCssTheme();
-  const [isExiting, setIsExiting] = useState(false);
+  const theme = GLOBAL_THEME;
+  const [ isExiting, setIsExiting ] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,38 +24,43 @@ const ToastItem: React.FC<ToastItemProps> = ({ id, message, type, onDismiss }) =
     }, TOAST_DURATION);
 
     return () => clearTimeout(timer);
-  }, [id, onDismiss]);
+  }, [ id, onDismiss ]);
 
-  const bgColor = type === 'success' ? theme.accent.success : theme.accent.error;
+  const bgColor = type === "success" ? theme.accent.success : theme.accent.error;
+
+  const onClickCallBack = useCallback(()=> {
+    setIsExiting(true);
+    setTimeout(() => onDismiss(id), ANIMATION_DURATION);
+  }, [ id, onDismiss ]);
 
   return (
-    <div
+    <button
+      type="button"
       style={{
         padding: `${theme.spacing.md} ${theme.spacing.lg}`,
         backgroundColor: bgColor,
         color: theme.accent.btnText,
         borderRadius: theme.radius.md,
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
         fontSize: theme.fontSize.sm,
         fontWeight: theme.fontWeight.medium,
         opacity: isExiting ? 0 : 1,
-        transform: isExiting ? 'translateX(100%)' : 'translateX(0)',
+        transform: isExiting ? "translateX(100%)" : "translateX(0)",
         transition: `opacity ${ANIMATION_DURATION}ms ease, transform ${ANIMATION_DURATION}ms ease`,
-        cursor: 'pointer',
-        maxWidth: '320px',
+        cursor: "pointer",
+        maxWidth: "320px",
+        border: "none",
+        textAlign: "left",
       }}
-      onClick={() => {
-        setIsExiting(true);
-        setTimeout(() => onDismiss(id), ANIMATION_DURATION);
-      }}
+      onClick={onClickCallBack}
     >
       {message}
-    </div>
+    </button>
   );
 };
 
 export const ToastContainer: React.FC = () => {
-  const theme = useCssTheme();
+  const theme = GLOBAL_THEME;
   const { toasts, dismissToast } = useToastContext();
 
   if (toasts.length === 0) return null;
@@ -62,16 +68,16 @@ export const ToastContainer: React.FC = () => {
   return (
     <div
       style={{
-        position: 'fixed',
+        position: "fixed",
         bottom: theme.spacing.lg,
         right: theme.spacing.lg,
         zIndex: theme.zIndex.tooltip,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: theme.spacing.sm,
       }}
     >
-      {toasts.map((toast) => (
+      {toasts.map(toast => (
         <ToastItem
           key={toast.id}
           id={toast.id}

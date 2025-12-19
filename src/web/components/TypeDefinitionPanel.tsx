@@ -1,6 +1,6 @@
-import React from 'react';
-import type { TypeInfo } from '../../core/types.ts';
-import { useCssTheme } from '../theme.ts';
+import React from "react";
+import type { TypeInfo } from "../../core/types.ts";
+import { GLOBAL_THEME } from "../theme.ts";
 
 type TypeDefinitionPanelProps = {
   activeType: TypeInfo | null;
@@ -10,17 +10,17 @@ type TypeDefinitionPanelProps = {
  * Displays the currently active type definition
  */
 export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ activeType }) => {
-  const theme = useCssTheme();
+  const theme = GLOBAL_THEME;
 
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
         backgroundColor: theme.bg.secondary,
         borderRight: `1px solid ${theme.border.subtle}`,
-        overflow: 'hidden',
+        overflow: "hidden",
       }}
     >
       {/* Header */}
@@ -39,7 +39,7 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
             fontWeight: theme.fontWeight.semibold,
           }}
         >
-          Type Definition
+          {"Type Definition"}
         </h3>
       </div>
 
@@ -47,20 +47,20 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
       <div
         style={{
           flex: 1,
-          overflow: 'auto',
+          overflow: "auto",
           padding: theme.spacing.xl,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: activeType ? 'flex-start' : 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: activeType ? "flex-start" : "center",
         }}
       >
         {activeType ? (
           <>
             <div
               style={{
-                alignSelf: 'flex-start',
-                width: '100%',
+                alignSelf: "flex-start",
+                width: "100%",
               }}
             >
               <h4
@@ -69,8 +69,8 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
                   color: theme.text.secondary,
                   fontSize: theme.fontSize.xs,
                   fontWeight: theme.fontWeight.semibold,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
                 }}
               >
                 {activeType.name}
@@ -83,12 +83,12 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
                   borderRadius: theme.radius.md,
                   border: `1px solid ${theme.border.subtle}`,
                   color: theme.text.primary,
-                  fontFamily: '"Fira Code", monospace',
+                  fontFamily: "\"Fira Code\", monospace",
                   fontSize: theme.fontSize.sm,
                   lineHeight: 1.6,
-                  overflow: 'auto',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word',
+                  overflow: "auto",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
                 }}
               >
                 {activeType.text}
@@ -101,10 +101,10 @@ export const TypeDefinitionPanel: React.FC<TypeDefinitionPanelProps> = ({ active
               color: theme.text.secondary,
               fontSize: theme.fontSize.md,
               margin: 0,
-              textAlign: 'center',
+              textAlign: "center",
             }}
           >
-            No type selected
+            {"No type selected"}
           </p>
         )}
       </div>

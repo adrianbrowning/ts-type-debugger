@@ -1,7 +1,7 @@
-import React from 'react';
-import Editor from '@monaco-editor/react';
-import { useCssTheme } from '../theme.ts';
-import { useTheme } from '../hooks/useTheme.tsx';
+import Editor from "@monaco-editor/react";
+import React, { useCallback } from "react";
+import { useTheme } from "../hooks/useThemeHook.ts";
+import { GLOBAL_THEME } from "../theme.ts";
 
 type MonacoCodeEditorProps = {
   code: string;
@@ -17,28 +17,31 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
   onChange,
   isLoading = false,
 }) => {
-  const theme = useCssTheme();
+  const theme = GLOBAL_THEME;
   const { isDark } = useTheme();
 
   // Use vs/vs-dark based on theme mode
-  const monacoTheme = isDark ? 'vs-dark' : 'vs';
+  const monacoTheme = isDark ? "vs-dark" : "vs";
 
-  const handleEditorChange = (value: string | undefined) => {
-    if (value !== undefined) {
-      onChange(value);
-    }
-  };
+  const handleEditorChange = useCallback(
+    (value: string | undefined) => {
+      if (value !== undefined) {
+        onChange(value);
+      }
+    },
+    [ onChange ]
+  );
 
   return (
     <div
       style={{
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
         backgroundColor: theme.bg.editor,
         borderRight: `1px solid ${theme.border.subtle}`,
-        overflow: 'hidden',
+        overflow: "hidden",
       }}
     >
       {/* Header */}
@@ -47,25 +50,25 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
           padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
           borderBottom: `1px solid ${theme.border.subtle}`,
           backgroundColor: theme.bg.primary,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <h3
           style={{
             margin: 0,
             color: theme.text.primary,
-            fontSize: theme.fontSize['2xl'],
+            fontSize: theme.fontSize["2xl"],
             fontWeight: theme.fontWeight.bold,
           }}
         >
-          TypeScript Code
+          {"TypeScript Code"}
         </h3>
       </div>
 
       {/* Editor */}
-      <div style={{ flex: 1, overflow: 'hidden' }}>
+      <div style={{ flex: 1, overflow: "hidden" }}>
         <Editor
           height="100%"
           defaultLanguage="typescript"
@@ -78,7 +81,7 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
             automaticLayout: true,
             fontSize: 14,
             lineHeight: 1.6 * 14,
-            fontFamily: '"Fira Code", "Monaco", "Menlo", monospace',
+            fontFamily: "\"Fira Code\", \"Monaco\", \"Menlo\", monospace",
             tabSize: 2,
             insertSpaces: true,
             trimAutoWhitespace: true,
@@ -86,7 +89,7 @@ export const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
             lineNumbersMinChars: 3,
             readOnly: isLoading,
           }}
-          loading={<div style={{ color: theme.text.secondary }}>Loading editor...</div>}
+          loading={<div style={{ color: theme.text.secondary }}>{"Loading editor..."}</div>}
         />
       </div>
     </div>

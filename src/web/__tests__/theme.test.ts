@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { createTheme } from '../theme.ts';
+import { describe, it, expect } from "vitest";
+import { createTheme } from "../theme.ts";
 
 /**
  * Theme Regression Tests
@@ -10,21 +10,21 @@ import { createTheme } from '../theme.ts';
  * 3. Button contrast - accent.btnText available for dark text on bright backgrounds
  */
 
-describe('Theme CSS Variable References', () => {
-  it('returns CSS variable reference strings to prevent race conditions', () => {
+describe("Theme CSS Variable References", () => {
+  it("returns CSS variable reference strings to prevent race conditions", () => {
     // Arrange & Act
     const theme = createTheme();
 
     // Assert - cssVar() should return 'var(--name)' format, not computed values
     // This prevents reading DOM values before theme class is applied
-    expect(theme.bg.primary).toBe('var(--bg)');
-    expect(theme.bg.secondary).toBe('var(--bg-secondary)');
-    expect(theme.text.primary).toBe('var(--text-primary)');
-    expect(theme.accent.primary).toBe('var(--accent-primary)');
-    expect(theme.border.subtle).toBe('var(--border-subtle)');
+    expect(theme.bg.primary).toBe("var(--bg)");
+    expect(theme.bg.secondary).toBe("var(--bg-secondary)");
+    expect(theme.text.primary).toBe("var(--text-primary)");
+    expect(theme.accent.primary).toBe("var(--accent-primary)");
+    expect(theme.border.subtle).toBe("var(--border-subtle)");
   });
 
-  it('returns CSS variable references for all color properties', () => {
+  it("returns CSS variable references for all color properties", () => {
     // Arrange & Act
     const theme = createTheme();
 
@@ -48,35 +48,35 @@ describe('Theme CSS Variable References', () => {
       theme.accent.btnText,
     ];
 
-    allColorProps.forEach((colorProp) => {
+    allColorProps.forEach(colorProp => {
       expect(colorProp).toMatch(/^var\(--[\w-]+\)$/);
     });
   });
 });
 
-describe('Theme Raw Numeric Values', () => {
-  it('provides numeric font size for JavaScript calculations', () => {
+describe("Theme Raw Numeric Values", () => {
+  it("provides numeric font size for JavaScript calculations", () => {
     // Arrange & Act
     const theme = createTheme();
 
     // Assert - should be number, not string or NaN
     // This allows parseInt(), math operations without parsing 'var(--font-size-md)'
     expect(theme.raw.fontSizeMd).toBe(14);
-    expect(typeof theme.raw.fontSizeMd).toBe('number');
+    expect(typeof theme.raw.fontSizeMd).toBe("number");
     expect(Number.isNaN(theme.raw.fontSizeMd)).toBe(false);
   });
 
-  it('provides numeric line height for JavaScript calculations', () => {
+  it("provides numeric line height for JavaScript calculations", () => {
     // Arrange & Act
     const theme = createTheme();
 
     // Assert - should be number, not string or NaN
     expect(theme.raw.lineHeight).toBe(1.6);
-    expect(typeof theme.raw.lineHeight).toBe('number');
+    expect(typeof theme.raw.lineHeight).toBe("number");
     expect(Number.isNaN(theme.raw.lineHeight)).toBe(false);
   });
 
-  it('allows mathematical operations on raw values', () => {
+  it("allows mathematical operations on raw values", () => {
     // Arrange
     const theme = createTheme();
 
@@ -90,35 +90,35 @@ describe('Theme Raw Numeric Values', () => {
   });
 });
 
-describe('Theme Button Contrast', () => {
-  it('includes btnText color for proper button contrast', () => {
+describe("Theme Button Contrast", () => {
+  it("includes btnText color for proper button contrast", () => {
     // Arrange & Act
     const theme = createTheme();
 
     // Assert - btnText should exist for dark text on bright backgrounds
     expect(theme.accent.btnText).toBeDefined();
-    expect(theme.accent.btnText).toBe('var(--btn-accent-text)');
-    expect(typeof theme.accent.btnText).toBe('string');
+    expect(theme.accent.btnText).toBe("var(--btn-accent-text)");
+    expect(typeof theme.accent.btnText).toBe("string");
   });
 
-  it('provides all required accent colors for UI elements', () => {
+  it("provides all required accent colors for UI elements", () => {
     // Arrange & Act
     const theme = createTheme();
 
     // Assert - verify complete accent color palette
     const requiredAccentColors = [
-      'primary',
-      'primaryAlt',
-      'highlight',
-      'warning',
-      'success',
-      'error',
-      'btnText',
+      "primary",
+      "primaryAlt",
+      "highlight",
+      "warning",
+      "success",
+      "error",
+      "btnText",
     ];
 
-    requiredAccentColors.forEach((colorKey) => {
+    requiredAccentColors.forEach(colorKey => {
       expect(theme.accent).toHaveProperty(colorKey);
-      expect(typeof theme.accent[colorKey as keyof typeof theme.accent]).toBe('string');
+      expect(typeof theme.accent[colorKey as keyof typeof theme.accent]).toBe("string");
     });
   });
 });

@@ -9,9 +9,9 @@ import type {
 } from './types.ts';
 import { TRACE_TYPE_COLORS } from './types.ts';
 
-// Re-export types for backward compatibility
-export type { VideoData, VideoConfig, VideoTraceStep, TypeInfo };
-export { TRACE_TYPE_COLORS };
+// // Re-export types for backward compatibility
+// export type { VideoData, VideoConfig, VideoTraceStep, TypeInfo };
+// export { TRACE_TYPE_COLORS };
 
 const DEFAULT_CONFIG: VideoConfig = {
   fps: 30,
@@ -126,6 +126,7 @@ async function extractTypeAliases(ast: ts.SourceFile, sourceText: string): Promi
 
   // Add syntax highlighting to each type alias
   for (const alias of aliases) {
+    // eslint-disable-next-line no-await-in-loop
     alias.highlightedLines = await highlightCodeLines(alias.lines);
   }
 
@@ -349,7 +350,7 @@ export function findActiveTypeAlias(
   typeAliases: TypeInfo[]
 ): TypeInfo | undefined {
   // Heuristic: look for type name in the step expression
-  const typeMatch = step.original.expression.match(/^(\w+)</);
+  const typeMatch = /^(\w+)</.exec(step.original.expression);
   if (!typeMatch) return undefined;
 
   const typeName = typeMatch[1];
