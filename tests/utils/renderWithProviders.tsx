@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render as rtlRender } from "@testing-library/react";
 import type { RenderOptions } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 import { ThemeProvider } from "../../src/web/hooks/useTheme.tsx";
@@ -11,9 +11,7 @@ const AllProviders = ({ children }: { children: ReactNode; }) => (
   </ThemeProvider>
 );
 
-export const renderWithProviders = (
+export const render = (
   ui: ReactElement,
   options?: Omit<RenderOptions, "wrapper">
-) => render(ui, { wrapper: AllProviders, ...options });
- 
-export { renderWithProviders as render };
+) => rtlRender(ui, { wrapper: AllProviders, ...options });

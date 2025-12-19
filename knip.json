@@ -1,10 +1,14 @@
 {
+  "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": [
-    "src/**/*.{js,ts}"
+    "src/web/main.tsx",
+    "scripts/generate-lib-bundle.ts"
   ],
   "project": [
-    "**/*.{js,ts}"
+    "src/**/*.{ts,tsx}",
+    "tests/**/*.{ts,tsx}"
   ],
-  "ignoreBinaries": [],
-  "ignoreDependencies": []
+  "ignoreDependencies": [
+    "@total-typescript/ts-reset"
+  ]
 }

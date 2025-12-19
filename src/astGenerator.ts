@@ -40,34 +40,9 @@ export function generateAST(code: string, fileName = "generated.ts"): ts.SourceF
  * @param node Root node to start traversal
  * @param visitor Callback function for each node
  */
-export function visitNodes(node: ts.Node, visitor: (n: ts.Node) => void): void {
+function visitNodes(node: ts.Node, visitor: (n: ts.Node) => void): void {
   visitor(node);
   ts.forEachChild(node, child => visitNodes(child, visitor));
-}
-
-/**
- * Prints AST structure for debugging
- * @param ast SourceFile AST
- * @param maxDepth Max recursion depth
- */
-export function printAST(ast: ts.SourceFile, maxDepth = 10): string {
-  const lines: Array<string> = [];
-
-  function print(node: ts.Node, depth = 0) {
-    if (depth > maxDepth) return;
-
-    const indent = "  ".repeat(depth);
-    const kind = ts.SyntaxKind[node.kind];
-    const text = node.getText(ast).slice(0, 40)
-      .replace(/\n/g, " ");
-
-    lines.push(`${indent}${kind}${text ? ` "${text}..."` : ""}`);
-
-    ts.forEachChild(node, child => print(child, depth + 1));
-  }
-
-  print(ast);
-  return lines.join("\n");
 }
 
 /**
@@ -75,7 +50,7 @@ export function printAST(ast: ts.SourceFile, maxDepth = 10): string {
  * @param ast SourceFile AST
  * @param kind SyntaxKind to filter by
  */
-export function findNodes(ast: ts.SourceFile, kind: ts.SyntaxKind): Array<ts.Node> {
+function findNodes(ast: ts.SourceFile, kind: ts.SyntaxKind): Array<ts.Node> {
   const results: Array<ts.Node> = [];
 
   visitNodes(ast, node => {
@@ -121,29 +96,8 @@ export function getNodeByName(ast: ts.SourceFile, name: string): ts.Node | undef
  * @param ast SourceFile AST
  * @returns Array of type alias nodes
  */
-export function getTypeAliases(ast: ts.SourceFile): Array<ts.TypeAliasDeclaration> {
+function getTypeAliases(ast: ts.SourceFile): Array<ts.TypeAliasDeclaration> {
   return findNodes(ast, ts.SyntaxKind.TypeAliasDeclaration) as Array<ts.TypeAliasDeclaration>;
-}
-
-/**
- * Gets a TypeAliasDeclaration by name
- * @param ast SourceFile AST
- * @param name Type alias name
- * @returns TypeAliasDeclaration or undefined
- */
-export function getTypeAliasByName(ast: ts.SourceFile, name: string): ts.TypeAliasDeclaration | undefined {
-  const aliases = getTypeAliases(ast);
-  return aliases.find(alias => alias.name.text === name);
-}
-
-/**
- * Extracts the type expression from a TypeAliasDeclaration
- * @param alias TypeAliasDeclaration node
- * @param sourceFile SourceFile for getText()
- * @returns Type expression as string
- */
-export function getTypeAliasType(alias: ts.TypeAliasDeclaration, sourceFile: ts.SourceFile): string {
-  return alias.type.getText(sourceFile);
 }
 
 /**
@@ -371,7 +325,7 @@ function extractGenericParams(
  * @param context Evaluation context
  * @returns The resolved type string
  */
-export function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: EvalContext): string {
+function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: EvalContext): string {
   const typeName = typeRef.typeName.getText(context.sourceFile);
   const typeArgs = typeRef.typeArguments?.map(arg => arg.getText(context.sourceFile)) || [];
 
@@ -766,7 +720,7 @@ function evaluateUnionDistribution(
  * @param context Evaluation context
  * @returns The resolved type from the taken branch
  */
-export function evaluateConditional(condType: ts.ConditionalTypeNode, context: EvalContext): string {
+function evaluateConditional(condType: ts.ConditionalTypeNode, context: EvalContext): string {
   const checkStr = condType.checkType.getText(context.sourceFile);
   const extendsStr = condType.extendsType.getText(context.sourceFile);
   const trueStr = condType.trueType.getText(context.sourceFile);
@@ -856,7 +810,7 @@ export function evaluateConditional(condType: ts.ConditionalTypeNode, context: E
  * @param context Evaluation context
  * @returns The resolved type (union of string literals)
  */
-export function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode, context: EvalContext): string {
+function evaluateTemplateLiteral(templateType: ts.TemplateLiteralTypeNode, context: EvalContext): string {
   const text = templateType.getText(context.sourceFile);
 
   // Check if this template contains infer types (pattern matching context)
@@ -1266,7 +1220,7 @@ function evaluateIndexedAccess(indexedType: ts.IndexedAccessTypeNode, context: E
 /**
  * Main type node evaluator
  */
-export function evaluateTypeNode(typeNode: ts.TypeNode, context: EvalContext): string {
+function evaluateTypeNode(typeNode: ts.TypeNode, context: EvalContext): string {
   // Prevent infinite recursion
   context.depth++;
   if (context.depth > MAX_RECURSION_DEPTH) {
@@ -1377,36 +1331,4 @@ export function traceTypeResolution(ast: ts.SourceFile, typeName: string): Array
   });
 
   return context.trace;
-}
-
-/**
- * Checks if a type node is a conditional type (T extends U ? X : Y)
- * @param typeNode Type node to check
- * @returns true if conditional type
- */
-export function isConditionalType(typeNode: ts.TypeNode): typeNode is ts.ConditionalTypeNode {
-  return typeNode.kind === ts.SyntaxKind.ConditionalType;
-}
-
-/**
- * Extracts parts of a conditional type
- * @param condType ConditionalTypeNode
- * @param sourceFile SourceFile for getText()
- * @returns Object with check, extends, true, false branches
- */
-export function parseConditionalType(
-  condType: ts.ConditionalTypeNode,
-  sourceFile: ts.SourceFile
-): {
-  check: string;
-  extendsType: string;
-  trueType: string;
-  falseType: string;
-} {
-  return {
-    check: condType.checkType.getText(sourceFile),
-    extendsType: condType.extendsType.getText(sourceFile),
-    trueType: condType.trueType.getText(sourceFile),
-    falseType: condType.falseType.getText(sourceFile),
-  };
 }

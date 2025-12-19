@@ -3,7 +3,7 @@ import { GLOBAL_THEME } from "../theme.ts";
 import { CollapsibleSection } from "./CollapsibleSection.tsx";
 import { InfoRow } from "./InfoRow.tsx";
 
-export type IterationSectionProps = {
+type IterationSectionProps = {
   currentMember?: string;
   accumulatedResults?: string;
 };

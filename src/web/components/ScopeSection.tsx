@@ -2,7 +2,7 @@ import React from "react";
 import { GLOBAL_THEME } from "../theme.ts";
 import { CollapsibleSection } from "./CollapsibleSection.tsx";
 
-export type ScopeSectionProps = {
+type ScopeSectionProps = {
   parameters: Record<string, string>;
 };
 

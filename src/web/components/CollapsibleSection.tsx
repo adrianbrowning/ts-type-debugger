@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { GLOBAL_THEME } from "../theme.ts";
 
-export type CollapsibleSectionProps = {
+type CollapsibleSectionProps = {
   title: string;
   badge?: string | number;
   defaultExpanded?: boolean;

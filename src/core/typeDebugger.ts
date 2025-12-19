@@ -56,30 +56,3 @@ export async function generateTypeVideo(
     throw new Error(`Failed to generate video data: ${message}`);
   }
 }
-
-/**
- * Format video data for display/export
- */
-export function formatVideoDataForExport(videoData: VideoData): object {
-  return {
-    metadata: {
-      fps: videoData.fps,
-      totalFrames: videoData.totalFrames,
-      durationSeconds: videoData.totalFrames / videoData.fps,
-      totalSteps: videoData.steps.length,
-    },
-    typeAliases: videoData.typeAliases.map(t => ({
-      name: t.name,
-      lines: { start: t.startLine + 1, end: t.endLine + 1 },
-    })),
-    stepsSummary: videoData.steps.map((step, idx) => ({
-      index: idx,
-      step: step.original.step,
-      type: step.original.type,
-      expression: step.original.expression.substring(0, 80),
-      hasResult: !!step.original.result,
-      color: step.color,
-      frames: { start: step.startFrame, end: step.endFrame },
-    })),
-  };
-}

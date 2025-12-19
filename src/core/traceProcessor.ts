@@ -298,7 +298,7 @@ function isHighlightOutOfBounds(
  * Build a map of step index -> active type definition
  * Uses a context stack to track which type we're currently evaluating
  */
-export function buildActiveTypeMap(
+function buildActiveTypeMap(
   steps: Array<VideoTraceStep>,
   typeAliases: Array<TypeInfo>
 ): Map<number, TypeInfo | null> {
@@ -371,53 +371,3 @@ export async function generateVideoData(
   };
 }
 
-/**
- * Get all unique type names referenced in trace
- */
-export function getReferencedTypes(trace: Array<TraceEntry>): Set<string> {
-  const types = new Set<string>();
-
-  trace.forEach(entry => {
-    // Extract type names from expressions like "getter<...>" or "validateLeafPath<...>"
-    const typeMatch = entry.expression.match(/(\w+)<[^>]*>/g);
-    if (typeMatch) {
-      typeMatch.forEach(match => {
-        const typeName = match.split("<")[0];
-        if (typeName) {
-          types.add(typeName);
-        }
-      });
-    }
-  });
-
-  return types;
-}
-
-/**
- * Find the active type alias for a given step
- */
-export function findActiveTypeAlias(
-  step: VideoTraceStep,
-  typeAliases: Array<TypeInfo>
-): TypeInfo | undefined {
-  // Heuristic: look for type name in the step expression
-  const typeMatch = /^(\w+)</.exec(step.original.expression);
-  if (!typeMatch) return undefined;
-
-  const typeName = typeMatch[1];
-  return typeAliases.find(t => t.name === typeName);
-}
-
-/**
- * Format result for display
- */
-export function formatResult(step: VideoTraceStep): string {
-  return step.original.result || "";
-}
-
-/**
- * Format parameters for display
- */
-export function formatParameters(step: VideoTraceStep): Record<string, string> {
-  return step.original.parameters || {};
-}

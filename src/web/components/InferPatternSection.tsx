@@ -4,7 +4,7 @@ import { GLOBAL_THEME } from "../theme.ts";
 import { CollapsibleSection } from "./CollapsibleSection.tsx";
 import { InfoRow } from "./InfoRow.tsx";
 
-export type InferPatternSectionProps = {
+type InferPatternSectionProps = {
   stepType: TraceEntry["type"];
   expression: string;
   result?: string;

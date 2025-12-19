@@ -3,7 +3,7 @@ import type { TypeInfo } from "../../core/types.ts";
 import { GLOBAL_THEME } from "../theme.ts";
 import { CollapsibleSection } from "./CollapsibleSection.tsx";
 
-export type GlobalsSectionProps = {
+type GlobalsSectionProps = {
   typeAliases: Array<TypeInfo>;
   usedTypeNames: Set<string>;
   onTypeClick?: (typeName: string) => void;

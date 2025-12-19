@@ -4,7 +4,7 @@ import type { VideoTraceStep } from "../../core/types.ts";
 import { GLOBAL_THEME } from "../theme.ts";
 import { CollapsibleSection } from "./CollapsibleSection.tsx";
 
-export type CallStackSectionProps = {
+type CallStackSectionProps = {
   steps: Array<VideoTraceStep>;
   currentStepIndex: number;
   onNavigateToStep: (stepIndex: number) => void;

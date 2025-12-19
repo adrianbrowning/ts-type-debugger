@@ -1,7 +1,7 @@
 import React from "react";
 import { GLOBAL_THEME } from "../theme.ts";
 
-export type InfoRowProps = {
+type InfoRowProps = {
   label: string;
   value: string;
   monospace?: boolean;

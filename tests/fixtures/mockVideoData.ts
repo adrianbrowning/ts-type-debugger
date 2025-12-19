@@ -1,4 +1,3 @@
-import type { TraceEntry } from "../../src/astGenerator.ts";
 import type { VideoData, VideoTraceStep, TypeInfo } from "../../src/core/types.ts";
 
 export function createMockVideoData(overrides?: Partial<VideoData>): VideoData {
@@ -39,16 +38,6 @@ export function createMockTypeInfo(overrides?: Partial<TypeInfo>): TypeInfo {
     startLine: 0,
     endLine: 0,
     highlightedLines: [ "<span>type Test = string;</span>" ],
-    ...overrides,
-  };
-}
-
-export function createMockTraceEntry(overrides?: Partial<TraceEntry>): TraceEntry {
-  return {
-    step: 1,
-    type: "type_alias_start",
-    expression: "type Test = string",
-    level: 0,
     ...overrides,
   };
 }
