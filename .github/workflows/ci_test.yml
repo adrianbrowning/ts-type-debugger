@@ -62,5 +62,5 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # 5. Run Tests
-      - name: Run unit tests
-        run: pnpm test:vitest
+      - name: Run unit/integration tests
+        run: pnpm test
