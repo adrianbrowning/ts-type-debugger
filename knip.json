@@ -10,5 +10,8 @@
   ],
   "ignoreDependencies": [
     "@total-typescript/ts-reset"
+  ],
+  "ignore": [
+    "src/stubs/**"
   ]
 }
