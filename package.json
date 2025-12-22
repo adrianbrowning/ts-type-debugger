@@ -9,6 +9,7 @@
     "test:ui": "vitest run --config vitest.browser.config.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:vitest": "pnpm test:unit && pnpm test:integration && pnpm test:ui",
     "test:all": "vitest run && vitest run --config vitest.browser.config.ts && playwright test",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
@@ -25,7 +26,7 @@
   },
   "keywords": [],
   "author": "Adrian Elton-Browning",
-  "license": "ISC",
+  "license": "MIT",
   "packageManager": "pnpm@10.20.0",
   "type": "module",
   "devDependencies": {
