@@ -1,31 +1,26 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { resolve } from 'node:path';
 
 export default defineConfig({
   base: '/',
-  plugins: [react()],
+  plugins: [react({
+    exclude: /lib-bundle\.ts$/
+  })],
   server: {
     port: 5173,
     open: true,
+  },
+  resolve: {
+    alias: {
+      fs: resolve(__dirname, 'src/stubs/fs.ts'),
+      path: resolve(__dirname, 'src/stubs/path.ts'),
+    },
   },
   build: {
     target: 'ES2020',
     minify: 'esbuild',
     sourcemap: true,
-    rollupOptions: {
-      external: ['fs', 'path', 'node:fs', 'node:path'],
-      output: {
-        globals: {
-          fs: 'null',
-          path: 'null',
-          'node:fs': 'null',
-          'node:path': 'null',
-        },
-      },
-    },
-  },
-  ssr: {
-    external: ['fs', 'path'],
   },
   optimizeDeps: {
     exclude: ['video-data.json'],
