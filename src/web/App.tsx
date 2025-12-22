@@ -14,6 +14,9 @@ import { useToast } from "./hooks/useToastHook.ts";
 import { GLOBAL_THEME } from "./theme.ts";
 import { buildShareUrl, getShareStateFromUrl } from "./utils/urlSharing.ts";
 
+// Collapsed editor width for chevron button
+const COLLAPSED_EDITOR_WIDTH = 32;
+
 /**
  * Main app component with 3-panel layout
  */
@@ -41,10 +44,11 @@ export const App: React.FC = () => {
   const [ videoData, setVideoData ] = useState<VideoData | null>(null);
   const [ isLoading, setIsLoading ] = useState(false);
   const [ error, setError ] = useState<string | null>(null);
-  const [ editorVisible, setEditorVisible ] = useState(true);
+  const [ editorCollapsed, setEditorCollapsed ] = useState(false);
   const [ typeNameError, setTypeNameError ] = useState<string | null>(null);
   const [ hasGenerated, setHasGenerated ] = useState(false);
-  const [ paneSizes, setPaneSizes ] = useState<Array<string | number>>([ "50%", "auto" ]);
+  const [ debugPanesEnabled, setDebugPanesEnabled ] = useState(false);
+  const [ paneSizes, setPaneSizes ] = useState<Array<string | number>>([ "50%", "50%" ]);
 
   const playback = usePlayback(videoData);
 
@@ -142,15 +146,19 @@ export const App: React.FC = () => {
     return (activeTypeMap)[playback.currentStepIndex] || null;
   }, [ videoData, playback.currentStepIndex, playback.currentStep ]);
 
-  // Compute editor margin for slide animation (always px string for consistency)
-  const editorMarginLeft = useMemo((): string => {
-    if (editorVisible) return "0px";
-    return hasGenerated ? `-${theme.size.editorWidth}` : "0px";
-  }, [ editorVisible, hasGenerated, theme.size.editorWidth ]);
-
+  // Toggle editor collapse
   const handleToggleEditor = useCallback(() => {
-    setEditorVisible(!editorVisible);
-  }, [ editorVisible ]);
+    const newCollapsed = !editorCollapsed;
+    setEditorCollapsed(newCollapsed);
+    // When collapsing, enable debug panes if we have generated data
+    if (newCollapsed && hasGenerated) {
+      setDebugPanesEnabled(true);
+    }
+    // When expanding, disable debug panes (stale until re-debug)
+    if (!newCollapsed) {
+      setDebugPanesEnabled(false);
+    }
+  }, [ editorCollapsed, hasGenerated ]);
 
   const handleTypeNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -220,7 +228,8 @@ export const App: React.FC = () => {
 
       setVideoData(data);
       setHasGenerated(true);
-      setEditorVisible(false); // Auto-hide editor after successful debug
+      setEditorCollapsed(true); // Collapse editor after successful debug
+      setDebugPanesEnabled(true); // Enable debug panes
       setError(null);
     }
     catch (err) {
@@ -237,16 +246,24 @@ export const App: React.FC = () => {
     void handleGenerateAsync();
   }, [ handleGenerateAsync ]);
 
-  // Precompute visibility states
-  const shouldShowDebugPanels = hasGenerated && !editorVisible;
-  const editorWidth = !editorVisible && hasGenerated ? theme.size.editorWidth : undefined;
-  const editorFlex = editorVisible || !hasGenerated ? 1 : undefined;
-  const editorMinWidth = !editorVisible && hasGenerated ? theme.size.editorWidth : undefined;
-
   // Render landing page if in landing view
   if (view === "landing") {
     return <LandingPage onTryIt={handleTryIt} />;
   }
+
+  // Disabled overlay style for debug panes
+  const disabledOverlayStyle: React.CSSProperties = {
+    position: "absolute",
+    inset: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: theme.text.secondary,
+    fontSize: theme.fontSize.md,
+    zIndex: 10,
+    pointerEvents: "none",
+  };
 
   return (
     <div
@@ -263,13 +280,13 @@ export const App: React.FC = () => {
       {/* Header */}
       <Header
         onToggleEditor={handleToggleEditor}
-        editorVisible={editorVisible}
+        editorVisible={!editorCollapsed}
         hasGenerated={hasGenerated}
         videoData={videoData}
         onBackToLanding={handleBackToLanding}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content Area - 3 Panel Layout */}
       <div
         style={{
           display: "flex",
@@ -278,114 +295,164 @@ export const App: React.FC = () => {
           minHeight: 0,
         }}
       >
-        {/* Editor Panel (Hidden/Visible with CSS slide) */}
+        {/* Editor Panel - Collapsible */}
         <div
           style={{
-            width: editorWidth,
-            flex: editorFlex,
+            width: editorCollapsed ? COLLAPSED_EDITOR_WIDTH : "33%",
+            minWidth: editorCollapsed ? COLLAPSED_EDITOR_WIDTH : 300,
+            maxWidth: editorCollapsed ? COLLAPSED_EDITOR_WIDTH : "50%",
             display: "flex",
             flexDirection: "column",
-            minWidth: editorMinWidth,
-            marginLeft: editorMarginLeft,
-            transition: "margin-left 0.3s ease-in-out",
+            borderRight: `1px solid ${theme.border.subtle}`,
+            transition: "width 0.3s ease-in-out, min-width 0.3s ease-in-out, max-width 0.3s ease-in-out",
             overflow: "hidden",
+            position: "relative",
           }}
         >
-          <InputSection
-            typeName={typeName}
-            onTypeNameChange={handleTypeNameChange}
-            typeNameError={typeNameError}
-            isLoading={isLoading}
-            onGenerate={handleGenerate}
-            error={error}
-            onButtonMouseOver={handleButtonMouseOver}
-            onButtonMouseOut={handleButtonMouseOut}
-          />
-
-          <MonacoCodeEditor
-            code={code}
-            onChange={setCode}
-            isLoading={isLoading}
-          />
+          {editorCollapsed ? (
+            /* Collapsed state - show expand chevron */
+            <button
+              type="button"
+              onClick={handleToggleEditor}
+              style={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: theme.bg.secondary,
+                border: "none",
+                cursor: "pointer",
+                color: theme.text.secondary,
+                fontSize: "20px",
+                transition: "background-color 0.15s, color 0.15s",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = theme.bg.hover;
+                e.currentTarget.style.color = theme.text.primary;
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = theme.bg.secondary;
+                e.currentTarget.style.color = theme.text.secondary;
+              }}
+              title="Expand Editor"
+            >
+              {"›"}
+            </button>
+          ) : (
+            /* Expanded state - show editor */
+            <>
+              <InputSection
+                typeName={typeName}
+                onTypeNameChange={handleTypeNameChange}
+                typeNameError={typeNameError}
+                isLoading={isLoading}
+                onGenerate={handleGenerate}
+                error={error}
+                onButtonMouseOver={handleButtonMouseOver}
+                onButtonMouseOut={handleButtonMouseOut}
+              />
+              <MonacoCodeEditor
+                code={code}
+                onChange={setCode}
+                isLoading={isLoading}
+              />
+            </>
+          )}
         </div>
 
-        {/* Resizable Debug Panels */}
-        {shouldShowDebugPanels && (
-          <SplitPane
-            split="vertical"
-            sizes={paneSizes}
-            onChange={setPaneSizes}
-            sashRender={renderSash}
-          >
-            {/* Type Definition Panel */}
-            <Pane minSize={200}>
-              <div
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  minWidth: 0,
-                  borderRight: `1px solid ${theme.border.subtle}`,
-                }}
-              >
-                {videoData ? (
-                  <CodePanel
-                    currentStep={playback.currentStep}
-                    activeType={activeType}
-                    sourceCode={videoData.sourceCode}
-                  />
-                ) : (
+        {/* Debug Panels - Always visible, faded when disabled */}
+        <SplitPane
+          split="vertical"
+          sizes={paneSizes}
+          onChange={setPaneSizes}
+          sashRender={renderSash}
+        >
+          {/* Eval Target Panel (Type Definition) */}
+          <Pane minSize={200}>
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+                borderRight: `1px solid ${theme.border.subtle}`,
+                position: "relative",
+              }}
+            >
+              {videoData && debugPanesEnabled ? (
+                <CodePanel
+                  currentStep={playback.currentStep}
+                  activeType={activeType}
+                  sourceCode={videoData.sourceCode}
+                />
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                    backgroundColor: theme.bg.secondary,
+                  }}
+                >
                   <div
                     style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      height: "100%",
-                      backgroundColor: theme.bg.secondary,
+                      padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+                      borderBottom: `1px solid ${theme.border.subtle}`,
+                      backgroundColor: theme.bg.primary,
                     }}
                   >
-                    <div
+                    <h3
                       style={{
-                        padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
-                        borderBottom: `1px solid ${theme.border.subtle}`,
-                        backgroundColor: theme.bg.primary,
+                        margin: 0,
+                        color: theme.text.primary,
+                        fontSize: theme.fontSize.xl,
+                        fontWeight: theme.fontWeight.semibold,
                       }}
                     >
-                      <h3
-                        style={{
-                          margin: 0,
-                          color: theme.text.primary,
-                          fontSize: theme.fontSize.xl,
-                          fontWeight: theme.fontWeight.semibold,
-                        }}
-                      >
-                        {"Type Definition"}
-                      </h3>
-                    </div>
-                    <div
-                      style={{
-                        flex: 1,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: theme.text.secondary,
-                      }}
-                    >
-                      {"Generate video to see type definition"}
-                    </div>
+                      {"Eval Target"}
+                    </h3>
                   </div>
-                )}
-              </div>
-            </Pane>
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: theme.text.tertiary,
+                    }}
+                  >
+                    {"Click Debug to evaluate"}
+                  </div>
+                </div>
+              )}
+              {/* Disabled overlay */}
+              {!debugPanesEnabled && (
+                <div style={disabledOverlayStyle}>
+                  <span>{"Click Debug to enable"}</span>
+                </div>
+              )}
+            </div>
+          </Pane>
 
-            {/* Step Details Panel */}
-            <Pane minSize={200}>
-              <div style={{ height: "100%", display: "flex", flexDirection: "column", minWidth: 0 }}>
+          {/* Call Stack Panel */}
+          <Pane minSize={200}>
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+                position: "relative",
+              }}
+            >
+              {videoData && debugPanesEnabled ? (
                 <StepDetailsPanel
                   currentStep={playback.currentStep}
-                  steps={videoData?.steps ?? []}
+                  steps={videoData.steps}
                   currentStepIndex={playback.currentStepIndex}
-                  totalSteps={videoData?.steps.length ?? 0}
-                  typeAliases={videoData?.typeAliases ?? []}
+                  totalSteps={videoData.steps.length}
+                  typeAliases={videoData.typeAliases}
                   onJumpToStart={playback.jumpToStart}
                   onPrevious={playback.previousStep}
                   onNext={playback.nextStep}
@@ -394,10 +461,55 @@ export const App: React.FC = () => {
                   onStepOut={playback.stepOut}
                   onSeekToStep={playback.seekToStep}
                 />
-              </div>
-            </Pane>
-          </SplitPane>
-        )}
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                    backgroundColor: theme.bg.secondary,
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+                      borderBottom: `1px solid ${theme.border.subtle}`,
+                      backgroundColor: theme.bg.primary,
+                    }}
+                  >
+                    <h3
+                      style={{
+                        margin: 0,
+                        color: theme.text.primary,
+                        fontSize: theme.fontSize.xl,
+                        fontWeight: theme.fontWeight.semibold,
+                      }}
+                    >
+                      {"Call Stack"}
+                    </h3>
+                  </div>
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: theme.text.tertiary,
+                    }}
+                  >
+                    {"Click Debug to evaluate"}
+                  </div>
+                </div>
+              )}
+              {/* Disabled overlay */}
+              {!debugPanesEnabled && (
+                <div style={disabledOverlayStyle}>
+                  <span>{"Click Debug to enable"}</span>
+                </div>
+              )}
+            </div>
+          </Pane>
+        </SplitPane>
       </div>
     </div>
   );
