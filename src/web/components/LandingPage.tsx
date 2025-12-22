@@ -87,9 +87,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
     <div className="landing-page min-h-screen font-sans">
       {/* HERO */}
       <header className="landing-hero border-b">
-        {/* Theme Toggle - Top Right */}
-        <div className="absolute top-4 right-6">
+        {/* Theme Toggle + GitHub - Top Right */}
+        <div className="absolute top-4 right-6 flex items-center gap-3">
           <ThemeDropdown />
+          <span className="landing-footer-divider w-px h-5" />
+          <a
+            href="https://github.com/AdrianMayron/ts-type-debugger"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="landing-github-link flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
+            title="View on GitHub"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
+          </a>
         </div>
 
         <div className="max-w-5xl mx-auto px-6 py-16 text-center">
@@ -269,29 +281,44 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
           <div className="landing-features-card rounded-2xl p-6 md:p-8">
             <h2 className="landing-heading text-2xl font-bold">{"Features"}</h2>
             <p className="landing-text mt-2 max-w-2xl">
-              {"Everything you need to explore complex types quickly — without switching tools or guessing what TypeScript is doing."}
+              {"A debugger built specifically for TypeScript's type system — understand exactly how your types evaluate."}
             </p>
 
-            <div className="grid gap-4 mt-8 md:grid-cols-3">
+            <div className="grid gap-4 mt-8 md:grid-cols-2 lg:grid-cols-3">
               <div className="landing-feature-card p-5 rounded-xl">
-                <div className="text-xl">{"🧭"}</div>
-                <h3 className="landing-heading mt-3 font-semibold">{"Step-by-step evaluation"}</h3>
+                <h3 className="landing-heading font-semibold">{"Debugger Controls"}</h3>
                 <p className="landing-text mt-2 text-sm">
-                  {"Trace how conditionals, inference, and mapped types resolve over time."}
+                  {"Step into nested generics, step over branches, or step out to parent types. Navigate evaluation like you would runtime code."}
                 </p>
               </div>
               <div className="landing-feature-card p-5 rounded-xl">
-                <div className="text-xl">{"🧩"}</div>
-                <h3 className="landing-heading mt-3 font-semibold">{"Nested type expansion"}</h3>
+                <h3 className="landing-heading font-semibold">{"Call Stack Navigation"}</h3>
                 <p className="landing-text mt-2 text-sm">
-                  {"Expand layers of generics and utilities to see the final evaluated result."}
+                  {"See the full evaluation path from your target type down to the current expression. Click any frame to jump directly."}
                 </p>
               </div>
               <div className="landing-feature-card p-5 rounded-xl">
-                <div className="text-xl">{"⚡"}</div>
-                <h3 className="landing-heading mt-3 font-semibold">{"Fast experimentation"}</h3>
+                <h3 className="landing-heading font-semibold">{"Scope Inspection"}</h3>
                 <p className="landing-text mt-2 text-sm">
-                  {"Load examples, tweak inputs, and iterate quickly — like a TS playground for types."}
+                  {"Watch how generic parameters bind at each step. See exactly what T resolves to inside conditionals and mapped types."}
+                </p>
+              </div>
+              <div className="landing-feature-card p-5 rounded-xl">
+                <h3 className="landing-heading font-semibold">{"Union Distribution"}</h3>
+                <p className="landing-text mt-2 text-sm">
+                  {"Visualize how unions distribute over conditionals. See each member evaluated individually, then combined into the final result."}
+                </p>
+              </div>
+              <div className="landing-feature-card p-5 rounded-xl">
+                <h3 className="landing-heading font-semibold">{"Infer Pattern Matching"}</h3>
+                <p className="landing-text mt-2 text-sm">
+                  {"Understand how infer captures types. See the pattern, what matched, and what got extracted at each step."}
+                </p>
+              </div>
+              <div className="landing-feature-card p-5 rounded-xl">
+                <h3 className="landing-heading font-semibold">{"Globals & Type Aliases"}</h3>
+                <p className="landing-text mt-2 text-sm">
+                  {"Track all type aliases in scope. Quickly reference definitions while stepping through complex type compositions."}
                 </p>
               </div>
             </div>
@@ -300,15 +327,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
       </section>
 
       {/* FOOTER */}
-      <footer className="landing-footer border-t py-8 text-center">
-        <p>{"Made for TypeScript developers & learners."}</p>
-        <p className="mt-2">
-          <a href="https://github.com/AdrianMayron/ts-type-debugger" className="landing-link hover:underline">{"GitHub"}</a>
-          {" | "}
-          <a href="#features" className="landing-link hover:underline">{"Features"}</a>
-          {" | "}
-          <a href="#try" className="landing-link hover:underline">{"Try It"}</a>
-        </p>
+      <footer className="landing-footer border-t py-8">
+        <div className="flex items-center justify-center gap-4">
+          <span>{"Made for TypeScript developers & learners."}</span>
+          <span className="landing-footer-divider w-px h-5" />
+          <a
+            href="https://github.com/AdrianMayron/ts-type-debugger"
+            className="landing-link hover:underline flex items-center gap-1.5"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
+            {"GitHub"}
+          </a>
+        </div>
       </footer>
     </div>
   );

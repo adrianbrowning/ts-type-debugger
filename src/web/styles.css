@@ -561,6 +561,10 @@ input[type='range']::-moz-range-progress {
   color: #cbd5e1; /* slate-300 */
 }
 
+.landing-footer-divider {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 /* Light theme overrides for landing page */
 body.theme-light .landing-page {
   background: #f8fafc; /* slate-50 */
@@ -727,6 +731,10 @@ body.theme-light .landing-footer {
   color: #64748b; /* slate-500 */
 }
 
+body.theme-light .landing-footer-divider {
+  background: #cbd5e1; /* slate-300 */
+}
+
 /* Theme dropdown for landing page */
 .landing-theme-btn {
   background: rgba(255, 255, 255, 0.05);
@@ -794,4 +802,27 @@ body.theme-light .landing-theme-option.selected {
 
 body.theme-light .landing-theme-check {
   color: #4f46e5; /* indigo-600 */
+}
+
+/* GitHub link for landing page */
+.landing-github-link {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+}
+
+.landing-github-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+body.theme-light .landing-github-link {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  color: #475569; /* slate-600 */
+}
+
+body.theme-light .landing-github-link:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #0f172a;
 }

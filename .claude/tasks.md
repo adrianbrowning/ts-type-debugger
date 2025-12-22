@@ -25,6 +25,25 @@
     - Editor collapses left with chevron indicator on Debug
     - Debug panes enable when editor collapsed
     - Expanding editor disables debug panes (stale)
+11. ✅ **Resizable Editor Panel** - All 3 panels now use SplitPane for resizing:
+    - Editor size saved when collapsing, restored on expand
+    - First sash hidden when editor collapsed
+    - Resize disabled when editor collapsed
+12. ✅ **Stale Debug State** - Debug panes stay visible when editor expands:
+    - Content preserved with dimmed "Stale" overlay
+    - Only clears on re-debug, not on editor expand
+13. ✅ **Button Styling** - Show/Hide Editor button now matches Export JSON (secondary style)
+14. ✅ **Footer Update** - Simplified footer with vertical divider + GitHub logo link
+15. ✅ **GitHub Links** - Added GitHub logo to:
+    - Debugger header (right of title with vertical divider)
+    - Landing page hero (right of theme dropdown with same styling)
+16. ✅ **Features Section Revamp** - Expanded to 6 value-focused features:
+    - Debugger Controls (step into/over/out)
+    - Call Stack Navigation
+    - Scope Inspection (generic parameter binding)
+    - Union Distribution visualization
+    - Infer Pattern Matching
+    - Globals & Type Aliases tracking
 
 ## Key Files Changed
 
