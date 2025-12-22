@@ -1,16 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'node:path';
 
 export default defineConfig({
   base: '/',
-  plugins: [react({
-    exclude: /lib-bundle\.ts$/
-  })],
+  plugins: [
+    tailwindcss(),
+    react({
+      exclude: /lib-bundle\.ts$/
+    }),
+  ],
   server: {
     port: 5173,
     open: true,
   },
+  // SPA fallback: serve index.html for all routes (handles /debugger)
+  appType: 'spa',
   resolve: {
     alias: {
       fs: resolve(__dirname, 'src/stubs/fs.ts'),

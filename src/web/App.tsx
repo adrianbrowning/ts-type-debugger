@@ -6,6 +6,7 @@ import type { VideoData, TypeInfo } from "../core/types.ts";
 import { CodePanel } from "./components/CodePanel.tsx";
 import { Header } from "./components/Header.tsx";
 import { InputSection } from "./components/InputSection.tsx";
+import { LandingPage } from "./components/LandingPage.tsx";
 import { MonacoCodeEditor } from "./components/MonacoCodeEditor.tsx";
 import { StepDetailsPanel } from "./components/StepDetailsPanel.tsx";
 import { usePlayback } from "./hooks/usePlayback.ts";
@@ -19,9 +20,22 @@ import { buildShareUrl, getShareStateFromUrl } from "./utils/urlSharing.ts";
 // Validation pattern: reject inputs starting with 'type X ='
 const TYPE_KEYWORD_PATTERN = /^\s*type\s+\w+\s*=/i;
 
+type AppView = "landing" | "debugger";
+
+// Get initial view from URL path
+const getInitialView = (): AppView => {
+  const path = window.location.pathname;
+  // Check for /debugger path (with or without trailing slash)
+  if (path === "/debugger" || path === "/debugger/") {
+    return "debugger";
+  }
+  return "landing";
+};
+
 export const App: React.FC = () => {
   const theme = GLOBAL_THEME;
   const { showToast } = useToast();
+  const [ view, setView ] = useState<AppView>(getInitialView);
   const [ code, setCode ] = useState<string>("");
   const [ typeName, setTypeName ] = useState<string>("");
   const [ videoData, setVideoData ] = useState<VideoData | null>(null);
@@ -34,7 +48,7 @@ export const App: React.FC = () => {
 
   const playback = usePlayback(videoData);
 
-  // Load state from URL on mount
+  // Load shared state from URL on mount (for /debugger?code=... links)
   useEffect(() => {
     const url = new URL(window.location.href);
     const hasCodeParam = url.searchParams.has("code");
@@ -44,12 +58,53 @@ export const App: React.FC = () => {
     if (sharedState) {
       setCode(sharedState.code);
       setTypeName(sharedState.typeName);
+      // Ensure we're on debugger view when loading shared code
+      if (view !== "debugger") {
+        setView("debugger");
+        window.history.replaceState({}, "", `/debugger${window.location.search}`);
+      }
     }
     else {
       showToast("Failed to load shared code", "error");
     }
-    // Keep URL params for re-sharing
-  }, [ showToast ]);
+  }, [ showToast, view ]);
+
+  // Sync URL with view changes
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    const targetPath = view === "debugger" ? "/debugger" : "/";
+
+    // Only update if path doesn't match (avoid unnecessary history entries)
+    const isOnDebugger = currentPath === "/debugger" || currentPath === "/debugger/";
+    const shouldBeOnDebugger = view === "debugger";
+
+    if (isOnDebugger !== shouldBeOnDebugger) {
+      // Preserve query params when switching views
+      const search = window.location.search;
+      window.history.pushState({}, "", `${targetPath}${search}`);
+    }
+  }, [ view ]);
+
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      setView(getInitialView());
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Handler for landing page "Try It" button
+  const handleTryIt = useCallback((newCode: string, newTypeName: string) => {
+    setCode(newCode);
+    setTypeName(newTypeName);
+    setView("debugger");
+  }, []);
+
+  // Handler to go back to landing page
+  const handleBackToLanding = useCallback(() => {
+    setView("landing");
+  }, []);
 
   // Keyboard shortcut: Cmd/Ctrl+S to share
   useEffect(() => {
@@ -188,6 +243,11 @@ export const App: React.FC = () => {
   const editorFlex = editorVisible || !hasGenerated ? 1 : undefined;
   const editorMinWidth = !editorVisible && hasGenerated ? theme.size.editorWidth : undefined;
 
+  // Render landing page if in landing view
+  if (view === "landing") {
+    return <LandingPage onTryIt={handleTryIt} />;
+  }
+
   return (
     <div
       style={{
@@ -206,6 +266,7 @@ export const App: React.FC = () => {
         editorVisible={editorVisible}
         hasGenerated={hasGenerated}
         videoData={videoData}
+        onBackToLanding={handleBackToLanding}
       />
 
       {/* Main Content Area */}
