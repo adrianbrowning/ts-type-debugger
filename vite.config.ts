@@ -4,7 +4,9 @@ import { resolve } from 'node:path';
 
 export default defineConfig({
   base: '/',
-  plugins: [react()],
+  plugins: [react({
+    exclude: /lib-bundle\.ts$/
+  })],
   server: {
     port: 5173,
     open: true,
