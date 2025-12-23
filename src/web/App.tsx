@@ -102,7 +102,8 @@ export const App: React.FC = () => {
 
       if (isInitialCodeRedirect) {
         window.history.replaceState({}, "", `${targetPath}${search}`);
-      } else {
+      }
+      else {
         window.history.pushState({}, "", `${targetPath}${search}`);
       }
     }
