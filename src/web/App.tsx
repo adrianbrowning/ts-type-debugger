@@ -80,8 +80,7 @@ export const App: React.FC = () => {
     else {
       showToast("Failed to load shared code", "error");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount
+  }, [ showToast ]); // Only run on mount - showToast is stable
 
   // Sync URL with view changes
   useEffect(() => {
@@ -244,6 +243,31 @@ export const App: React.FC = () => {
     />
   ), [ theme.border.subtle, handleSashMouseEnter, handleSashMouseLeave ]);
 
+  // Noop handler for disabled state
+  const handlePaneSizeNoOp = useCallback(() => {
+    // Do nothing when editor is collapsed
+  }, []);
+
+  // Sash render callback
+  const handleSashRender = useCallback((index: number) => {
+    // Hide first sash when editor is collapsed
+    if (index === 0 && editorCollapsed) {
+      return <div style={{ width: 0 }} />;
+    }
+    return renderSash();
+  }, [ editorCollapsed, renderSash ]);
+
+  // Expand button hover handlers
+  const handleExpandMouseOver = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.backgroundColor = theme.bg.hover;
+    e.currentTarget.style.color = theme.text.primary;
+  }, [ theme.bg.hover, theme.text.primary ]);
+
+  const handleExpandMouseOut = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.backgroundColor = theme.bg.secondary;
+    e.currentTarget.style.color = theme.text.secondary;
+  }, [ theme.bg.secondary, theme.text.secondary ]);
+
   const handleGenerateAsync = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -348,11 +372,8 @@ export const App: React.FC = () => {
       <SplitPane
         split="vertical"
         sizes={paneSizes}
-        onChange={editorCollapsed ? () => {} : setPaneSizes}
-        sashRender={index =>
-          // Hide first sash when editor is collapsed
-          index === 0 && editorCollapsed ? <div style={{ width: 0 }} /> : renderSash()
-        }
+        onChange={editorCollapsed ? handlePaneSizeNoOp : setPaneSizes}
+        sashRender={handleSashRender}
       >
         {/* Editor Panel - Collapsible */}
         <Pane minSize={editorCollapsed ? COLLAPSED_EDITOR_WIDTH : 250} maxSize={editorCollapsed ? COLLAPSED_EDITOR_WIDTH : "60%"}>
@@ -385,14 +406,8 @@ export const App: React.FC = () => {
                   fontSize: "20px",
                   transition: "background-color 0.15s, color 0.15s",
                 }}
-                onMouseOver={e => {
-                  e.currentTarget.style.backgroundColor = theme.bg.hover;
-                  e.currentTarget.style.color = theme.text.primary;
-                }}
-                onMouseOut={e => {
-                  e.currentTarget.style.backgroundColor = theme.bg.secondary;
-                  e.currentTarget.style.color = theme.text.secondary;
-                }}
+                onMouseOver={handleExpandMouseOver}
+                onMouseOut={handleExpandMouseOut}
                 title="Expand Editor"
               >
                 {"›"}

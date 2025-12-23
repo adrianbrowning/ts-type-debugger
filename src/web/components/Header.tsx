@@ -50,6 +50,14 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
     e.currentTarget.style.color = theme.text.secondary;
   }, [ theme.text.secondary ]);
 
+  const handleGitHubMouseOver = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.currentTarget.style.color = theme.text.primary;
+  }, [ theme.text.primary ]);
+
+  const handleGitHubMouseOut = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.currentTarget.style.color = theme.text.secondary;
+  }, [ theme.text.secondary ]);
+
   return (
     <header
       style={{
@@ -117,12 +125,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
             color: theme.text.secondary,
             transition: "color 0.2s ease",
           }}
-          onMouseOver={e => {
-            e.currentTarget.style.color = theme.text.primary;
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.color = theme.text.secondary;
-          }}
+          onMouseOver={handleGitHubMouseOver}
+          onMouseOut={handleGitHubMouseOut}
           title="View on GitHub"
         >
           <svg

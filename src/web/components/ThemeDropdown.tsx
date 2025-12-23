@@ -61,6 +61,11 @@ export const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ className = "" }) 
     setIsOpen(false);
   }, [ setMode ]);
 
+  const handleOptionClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const newMode = e.currentTarget.dataset.mode as ThemeMode;
+    selectMode(newMode);
+  }, [ selectMode ]);
+
   const currentIcon = getIconForMode(mode, isDark);
 
   return (
@@ -84,7 +89,8 @@ export const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ className = "" }) 
             <button
               key={option.mode}
               type="button"
-              onClick={() => selectMode(option.mode)}
+              data-mode={option.mode}
+              onClick={handleOptionClick}
               className={`landing-theme-option ${mode === option.mode ? "selected" : ""}`}
             >
               <span className="text-base" aria-hidden="true">{option.icon}</span>
