@@ -767,17 +767,16 @@ input[type='range']::-moz-range-progress {
 }
 
 .landing-video-overlay {
-  position: absolute;
-  inset: 0;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg);
+  background: var(--bg-highlight);
   cursor: pointer;
   border: none;
-  z-index: 1;
   aspect-ratio: 16 / 9;
   width: 100%;
+  border-radius: 0.5rem;
 }
 
 .landing-video {
