@@ -764,25 +764,27 @@ input[type='range']::-moz-range-progress {
   border-radius: 0.75rem;
   overflow: hidden;
   margin-top: var(--spacing-md);
+  aspect-ratio: 16 / 9;
 }
 
 .landing-video-overlay {
-  position: relative;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--bg-highlight);
   cursor: pointer;
   border: none;
-  aspect-ratio: 16 / 9;
-  width: 100%;
-  border-radius: 0.5rem;
+  z-index: 1;
 }
 
 .landing-video {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Video placeholder (legacy) */
