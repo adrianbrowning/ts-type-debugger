@@ -334,7 +334,7 @@ export const App: React.FC = () => {
         split="vertical"
         sizes={paneSizes}
         onChange={editorCollapsed ? () => {} : setPaneSizes}
-        sashRender={(index) =>
+        sashRender={index =>
           // Hide first sash when editor is collapsed
           index === 0 && editorCollapsed ? <div style={{ width: 0 }} /> : renderSash()
         }
@@ -370,11 +370,11 @@ export const App: React.FC = () => {
                   fontSize: "20px",
                   transition: "background-color 0.15s, color 0.15s",
                 }}
-                onMouseOver={(e) => {
+                onMouseOver={e => {
                   e.currentTarget.style.backgroundColor = theme.bg.hover;
                   e.currentTarget.style.color = theme.text.primary;
                 }}
-                onMouseOut={(e) => {
+                onMouseOut={e => {
                   e.currentTarget.style.backgroundColor = theme.bg.secondary;
                   e.currentTarget.style.color = theme.text.secondary;
                 }}

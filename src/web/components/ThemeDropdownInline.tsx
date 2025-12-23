@@ -3,7 +3,7 @@ import type { ThemeMode } from "../hooks/ThemeContext.ts";
 import { useTheme } from "../hooks/useThemeHook.ts";
 import { GLOBAL_THEME } from "../theme.ts";
 
-const THEME_OPTIONS: Array<{ mode: ThemeMode; label: string; icon: string }> = [
+const THEME_OPTIONS: Array<{ mode: ThemeMode; label: string; icon: string; }> = [
   { mode: "system", label: "Auto", icon: "💻" },
   { mode: "light", label: "Light", icon: "☀️" },
   { mode: "dark", label: "Dark", icon: "🌙" },
@@ -119,7 +119,7 @@ export const ThemeDropdownInline: React.FC = () => {
 };
 
 type ThemeOptionProps = {
-  option: { mode: ThemeMode; label: string; icon: string };
+  option: { mode: ThemeMode; label: string; icon: string; };
   isSelected: boolean;
   onSelect: (mode: ThemeMode) => void;
 };
