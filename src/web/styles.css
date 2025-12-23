@@ -773,7 +773,7 @@ input[type='range']::-moz-range-progress {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-highlight);
+  background: var(--bg-highlight) url('/ts-debugger-poster.jpg') center/contain no-repeat;
   cursor: pointer;
   border: none;
   z-index: 1;
