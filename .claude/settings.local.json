@@ -53,7 +53,8 @@
       "Bash(pnpm eslint:*)",
       "Bash(pnpm lint:s:*)",
       "Bash(pnpm lint:*)",
-      "Bash(pnpm exec eslint:*)"
+      "Bash(pnpm exec eslint:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
