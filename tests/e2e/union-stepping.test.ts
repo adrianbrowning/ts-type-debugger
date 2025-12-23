@@ -22,7 +22,7 @@ const TYPE_INPUT_SELECTOR = "input[placeholder*=\"_result\"]";
 
 test.describe("Union Stepping E2E", () => {
   test("Loop2 shows 3 union member steps", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Enter Loop2 code
     await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
@@ -38,7 +38,7 @@ test.describe("Union Stepping E2E", () => {
   });
 
   test("right panel displays currentUnionMember", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     await fillMonacoEditor(page, `type Test<T> = T extends "a" ? 1 : 2;`);
 
@@ -53,7 +53,7 @@ test.describe("Union Stepping E2E", () => {
   });
 
   test("right panel displays currentUnionResults accumulation", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     await fillMonacoEditor(page, `type Test<T> = T extends any ? T[] : never;`);
 
@@ -66,7 +66,7 @@ test.describe("Union Stepping E2E", () => {
   });
 
   test("final result shows union reduced (never removed)", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     await fillMonacoEditor(page, `type Loop2<str> = str extends "a" ? 1 : str extends "b" ? 2 : never;`);
 
@@ -80,7 +80,7 @@ test.describe("Union Stepping E2E", () => {
   });
 
   test("play/pause and scrub timeline", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Just use the type input for this test
     await page.fill(TYPE_INPUT_SELECTOR, "string");

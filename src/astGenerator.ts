@@ -6,7 +6,7 @@ import { checkTypeCondition, evalTypeString, extractInferredBindings } from "./e
  */
 export interface TraceEntry {
   step: number;
-  type: "type_alias_start" | "type_alias_result" | "generic_call" | "generic_def" | "generic_result" | "condition" | "conditional_evaluate_left" | "conditional_evaluate_right" | "conditional_comparison" | "conditional_evaluation" | "branch_true" | "branch_false" | "result_assignment" | "template_literal" | "template_literal_start" | "template_union_distribute" | "template_union_member" | "template_union_member_result" | "template_span_eval" | "template_result" | "alias_reference" | "substitution" | "mapped_type_start" | "mapped_type_constraint" | "mapped_type_constraint_result" | "map_iteration" | "mapped_type_result" | "mapped_type_end" | "indexed_access" | "indexed_access_result" | "conditional_union_distribute" | "conditional_union_member" | "union_reduce" | "infer_pattern_start" | "infer_pattern_match" | "infer_binding" | "infer_pattern_result";
+  type: "type_alias_start" | "type_alias_result" | "generic_call" | "generic_def" | "generic_result" | "condition" | "conditional_evaluate_left" | "conditional_evaluate_right" | "conditional_comparison" | "conditional_evaluation" | "branch_true" | "branch_false" | "result_assignment" | "template_literal" | "template_literal_start" | "template_union_distribute" | "template_union_member" | "template_union_member_result" | "template_span_eval" | "template_result" | "alias_reference" | "substitution" | "mapped_type_start" | "mapped_type_constraint" | "mapped_type_constraint_result" | "map_iteration" | "mapped_type_result" | "mapped_type_end" | "indexed_access" | "indexed_access_result" | "conditional_union_distribute" | "conditional_union_member" | "union_reduce" | "infer_pattern_start" | "infer_pattern_match" | "infer_binding" | "infer_pattern_result" | "intrinsic_type_start" | "intrinsic_union_distribute" | "intrinsic_union_member" | "intrinsic_result";
   expression: string;
   parameters?: Record<string, string>;
   args?: Record<string, string>;
@@ -320,6 +320,125 @@ function extractGenericParams(
 }
 
 /**
+ * Intrinsic type names that TypeScript handles natively
+ */
+const INTRINSIC_TYPES = new Set([ "Uppercase", "Lowercase", "Capitalize", "Uncapitalize" ]);
+
+/**
+ * Evaluates intrinsic string transformation types (Uppercase, Lowercase, etc.)
+ * @param typeName Name of the intrinsic type
+ * @param typeArgs Evaluated type arguments
+ * @param context Evaluation context
+ * @param position Source position for tracing
+ * @returns Evaluated result or null if not an intrinsic type
+ */
+function evaluateIntrinsicType(
+  typeName: string,
+  typeArgs: Array<string>,
+  context: EvalContext,
+  position?: TraceEntry["position"]
+): string | null {
+  if (!INTRINSIC_TYPES.has(typeName)) return null;
+  if (typeArgs.length !== 1) return null;
+
+  const arg = typeArgs[0]!; // Safe: checked length above
+  const expr = `${typeName}<${arg}>`;
+
+  // Check if argument is a union - need to distribute
+  const unionMembers = parseUnionMembers(arg);
+
+  if (unionMembers.length > 1) {
+    // Union distribution: Uppercase<"a" | "b"> => "A" | "B"
+    addTrace(context, "intrinsic_union_distribute", expr, {
+      args: { input: arg },
+      position,
+    });
+
+    const results: Array<string> = [];
+    for (const member of unionMembers) {
+      // Track current union member for visualization
+      context.currentUnionMember = member;
+      context.currentUnionResults = results.length > 0 ? results.join(" | ") : undefined;
+
+      addTrace(context, "intrinsic_union_member", `${typeName}<${member}>`, {
+        args: { member },
+        position,
+        currentUnionMember: member,
+        currentUnionResults: context.currentUnionResults,
+      });
+
+      // Evaluate single member
+      const memberResult = evalTypeString(`${typeName}<${member}>`);
+      results.push(memberResult);
+    }
+
+    // Clear union tracking
+    context.currentUnionMember = undefined;
+    context.currentUnionResults = undefined;
+
+    // Reduce and return
+    const finalResult = evalTypeString(results.join(" | "));
+    addTrace(context, "intrinsic_result", `${typeName}<${arg}> => ${finalResult}`, {
+      result: finalResult,
+      position,
+    });
+
+    return finalResult;
+  }
+
+  // Single value - direct evaluation
+  addTrace(context, "intrinsic_type_start", expr, {
+    args: { input: arg },
+    position,
+  });
+
+  const result = evalTypeString(expr);
+
+  addTrace(context, "intrinsic_result", `${expr} => ${result}`, {
+    result,
+    position,
+  });
+
+  return result;
+}
+
+/**
+ * Parses a union type string into its members
+ * e.g. '"a" | "b" | "c"' => ['"a"', '"b"', '"c"']
+ */
+function parseUnionMembers(typeStr: string): Array<string> {
+  // Simple parsing - split on | but be careful with nested types
+  const members: Array<string> = [];
+  let current = "";
+  let depth = 0;
+
+  for (let i = 0; i < typeStr.length; i++) {
+    const char = typeStr[i];
+    if (char === "<" || char === "(" || char === "[" || char === "{") {
+      depth++;
+      current += char;
+    }
+    else if (char === ">" || char === ")" || char === "]" || char === "}") {
+      depth--;
+      current += char;
+    }
+    else if (char === "|" && depth === 0) {
+      const trimmed = current.trim();
+      if (trimmed) members.push(trimmed);
+      current = "";
+    }
+    else {
+      current += char;
+    }
+  }
+
+  const trimmed = current.trim();
+  if (trimmed) members.push(trimmed);
+
+  return members;
+}
+
+/**
  * Evaluates a generic type instantiation and records trace steps
  * @param typeRef The generic type reference with arguments
  * @param context Evaluation context
@@ -345,6 +464,18 @@ function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: EvalContext
 
   // Evaluate type arguments - this traces nested generics
   const substitutedArgs = evaluateTypeArguments(typeRef, context);
+
+  // Check for intrinsic types (Uppercase, Lowercase, etc.) FIRST
+  const intrinsicResult = evaluateIntrinsicType(
+    typeName,
+    substitutedArgs,
+    context,
+    getNodePosition(typeRef, context.sourceFile)
+  );
+  if (intrinsicResult !== null) {
+    context.depth--;
+    return intrinsicResult;
+  }
 
   // Log generic call
   addTrace(context, "generic_call", `${typeName}<${substitutedArgs.join(", ")}>`, {

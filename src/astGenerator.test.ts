@@ -342,3 +342,81 @@ describe("Edge Cases", () => {
     expect(findTraceByType(trace, "conditional_union_distribute")).toBeDefined();
   });
 });
+
+describe("Intrinsic Types", () => {
+  it("evaluates Uppercase<\"hello\"> to \"HELLO\"", () => {
+    const code = "type Test = Uppercase<\"hello\">;";
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, "Test");
+
+    expect(findTraceByType(trace, "intrinsic_type_start")).toBeDefined();
+    expect(findTraceByType(trace, "intrinsic_result")).toBeDefined();
+
+    const result = findTraceByType(trace, "intrinsic_result");
+    expect(result?.result).toBe("\"HELLO\"");
+  });
+
+  it("evaluates Lowercase<\"HELLO\"> to \"hello\"", () => {
+    const code = "type Test = Lowercase<\"HELLO\">;";
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, "Test");
+
+    const result = findTraceByType(trace, "intrinsic_result");
+    expect(result?.result).toBe("\"hello\"");
+  });
+
+  it("evaluates Capitalize<\"hello\"> to \"Hello\"", () => {
+    const code = "type Test = Capitalize<\"hello\">;";
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, "Test");
+
+    const result = findTraceByType(trace, "intrinsic_result");
+    expect(result?.result).toBe("\"Hello\"");
+  });
+
+  it("evaluates Uncapitalize<\"Hello\"> to \"hello\"", () => {
+    const code = "type Test = Uncapitalize<\"Hello\">;";
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, "Test");
+
+    const result = findTraceByType(trace, "intrinsic_result");
+    expect(result?.result).toBe("\"hello\"");
+  });
+
+  it("distributes Uppercase over union", () => {
+    const code = "type Test = Uppercase<\"a\" | \"b\">;";
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, "Test");
+
+    expect(findTraceByType(trace, "intrinsic_union_distribute")).toBeDefined();
+    expect(countTraceType(trace, "intrinsic_union_member")).toBe(2);
+
+    const result = findTraceByType(trace, "intrinsic_result");
+    expect(result?.result).toBe("\"A\" | \"B\"");
+  });
+
+  it("evaluates intrinsic type through generic", () => {
+    const code = `
+      type ToUpper<T extends string> = Uppercase<T>;
+      type Test = ToUpper<"hello">;
+    `;
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, "Test");
+
+    const result = findTraceByType(trace, "intrinsic_result");
+    expect(result?.result).toBe("\"HELLO\"");
+  });
+
+  it("evaluates intrinsic in conditional true branch", () => {
+    const code = `
+      type Foo<T> = T extends string ? Uppercase<T> : never;
+      type Test = Foo<"hello">;
+    `;
+    const ast = generateAST(code);
+    const trace = traceTypeResolution(ast, "Test");
+
+    expect(findTraceByType(trace, "branch_true")).toBeDefined();
+    const result = findTraceByType(trace, "intrinsic_result");
+    expect(result?.result).toBe("\"HELLO\"");
+  });
+});

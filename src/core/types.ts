@@ -105,4 +105,8 @@ export const TRACE_TYPE_COLORS: Record<TraceEntry["type"], string> = {
   infer_pattern_match: "#22C55E", // green-500 (match)
   infer_binding: "#0EA5E9", // sky-500 (binding)
   infer_pattern_result: "#10B981", // green (result)
+  intrinsic_type_start: "#F59E0B", // amber (intrinsic operation)
+  intrinsic_union_distribute: "#A855F7", // violet (union distribution)
+  intrinsic_union_member: "#06B6D4", // cyan (member evaluation)
+  intrinsic_result: "#10B981", // green (result)
 };
