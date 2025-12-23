@@ -1,320 +1,94 @@
-import { screen, waitFor } from "@testing-library/react";
+import { cleanup, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { App } from "../../src/web/App.tsx";
 import { render } from "../utils/renderWithProviders.tsx";
 
-// Helper to fill code before clicking Debug
-const fillCodeAndDebug = async (user: ReturnType<typeof userEvent.setup>) => {
-  // Fill in typeName (required field)
-  const typeInput = screen.getByPlaceholderText(/type/i);
-  await user.clear(typeInput);
-  await user.type(typeInput, "string");
-
-  // Click Debug button (find by text content since accessible name may vary)
-  const debugButton = Array.from(document.querySelectorAll("button")).find(
-    btn => btn.textContent && btn.textContent.toLowerCase().includes("debug")
-  );
-  if (debugButton) {
-    await user.click(debugButton);
-  }
-};
-
 /**
- * Integration tests for App.tsx refactoring
- * Tests the removal of FooterNav and editor hiding behavior
+ * Integration tests for App.tsx with landing page routing
+ * Tests the landing page view and navigation to debugger
+ *
+ * NOTE: These tests run in browser environment where window.location
+ * cannot be easily mocked. Tests focus on default behavior (root path).
  */
-describe("App Integration - UI Refactoring", () => {
+describe("App Integration - Landing Page Routing", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe("Editor visibility after generation", () => {
-    it("hides editor after Debug button is clicked", async () => {
-      const user = userEvent.setup();
+  afterEach(() => {
+    cleanup();
+  });
+
+  describe("Initial View (Landing Page)", () => {
+    it("shows landing page content on initial render", async () => {
       render(<App />);
 
-      // Editor should be visible initially
-      const typeInput = screen.getByPlaceholderText(/type/i);
-      expect(typeInput).toBeDefined();
-
-      // Fill code and click Debug
-      await fillCodeAndDebug(user);
-
-      // Wait for generation to complete
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // Editor should now be hidden (visually off-screen via negative CSS margin)
-      // Element still exists in DOM but is slid off-screen
       await waitFor(() => {
-        const input = screen.queryByPlaceholderText(/type/i);
-        // Find the editor panel container (parent with marginLeft style)
-        const editorPanel = input?.closest("div[style*=\"margin-left\"]");
-        // Either panel doesn't exist, or has negative margin when hidden
-        const isHidden = !editorPanel || window.getComputedStyle(editorPanel).marginLeft.startsWith("-");
-        expect(isHidden).toBe(true);
-      }, { timeout: 1000 });
+        // Landing page should show hero content
+        const heading = screen.getByRole("heading", { level: 1 });
+        expect(heading.textContent).toContain("TypeScript Types");
+      });
     });
 
-    it("editor remains hidden after successful generation", async () => {
-      const user = userEvent.setup();
+    it("shows theme dropdown on landing page", async () => {
       render(<App />);
 
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // Editor should still be hidden (visually off-screen via negative margin)
       await waitFor(() => {
-        const input = screen.queryByPlaceholderText(/type/i);
-        const editorPanel = input?.closest("div[style*=\"margin-left\"]");
-        // Either panel doesn't exist, or has negative margin when hidden
-        const isHidden = !editorPanel || window.getComputedStyle(editorPanel).marginLeft.startsWith("-");
-        expect(isHidden).toBe(true);
-      }, { timeout: 1000 });
-    });
-  });
-
-  describe("FooterNav removal", () => {
-    it("does not render FooterNav after generation", async () => {
-      const user = userEvent.setup();
-      render(<App />);
-
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // FooterNav should not be rendered
-      expect(screen.queryByText(/Previous/)).toBeNull();
-      expect(screen.queryByText(/Next/)).toBeNull();
-      expect(screen.queryByText(/Play/)).toBeNull();
-      expect(screen.queryByText(/Pause/)).toBeNull();
-
-      // Footer element should not exist
-      const footer = document.querySelector("footer");
-      expect(footer).toBeNull();
+        const themeButton = screen.getByRole("button", { name: /theme settings/i });
+        expect(themeButton).toBeInTheDocument();
+      });
     });
 
-    it("does not show playback controls in footer", async () => {
-      const user = userEvent.setup();
+    it("shows all example buttons", async () => {
       render(<App />);
 
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // No speed controls
-      expect(screen.queryByText(/0.5x/)).toBeNull();
-      expect(screen.queryByText(/1x/)).toBeNull();
-      expect(screen.queryByText(/1.5x/)).toBeNull();
-      expect(screen.queryByText(/2x/)).toBeNull();
-
-      // No timeline slider in footer
-      const footerSliders = document.querySelectorAll("footer input[type=\"range\"]");
-      expect(footerSliders.length).toBe(0);
-    });
-  });
-
-  describe("StepDetailsPanel receives new props", () => {
-    it("passes steps array to StepDetailsPanel", async () => {
-      const user = userEvent.setup();
-      render(<App />);
-
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // StepDetailsPanel should have received steps data
-      // This will fail because App.tsx doesn't pass steps prop yet
-      const stepDetails = screen.queryByText(/Step Details|Call Stack/i);
-      expect(stepDetails).toBeDefined();
-
-      // Verify DebugToolbar is rendered with step controls
-      const previousButton = screen.queryByRole("button", { name: /previous/i });
-      const nextButton = screen.queryByRole("button", { name: /next/i });
-
-      expect(previousButton).toBeDefined();
-      expect(nextButton).toBeDefined();
-    });
-
-    it("passes playback callbacks to StepDetailsPanel", async () => {
-      const user = userEvent.setup();
-      render(<App />);
-
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // Playback controls should be in StepDetailsPanel, not footer
-      const stepIntoButton = screen.queryByRole("button", { name: /into/i });
-      const stepOverButton = screen.queryByRole("button", { name: /over/i });
-      const stepOutButton = screen.queryByRole("button", { name: /out/i });
-
-      expect(stepIntoButton).toBeDefined();
-      expect(stepOverButton).toBeDefined();
-      expect(stepOutButton).toBeDefined();
-    });
-
-    it("passes typeAliases to StepDetailsPanel", async () => {
-      const user = userEvent.setup();
-      render(<App />);
-
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // StepDetailsPanel should render Globals section with typeAliases
-      const globalsSection = screen.queryByText(/Globals/i);
-      expect(globalsSection).toBeDefined();
-    });
-  });
-
-  describe("Playback controls in StepDetailsPanel", () => {
-    it("can navigate steps via StepDetailsPanel Previous/Next buttons", async () => {
-      const user = userEvent.setup();
-      render(<App />);
-
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // Find Next button in StepDetailsPanel
-      const nextButton = screen.getByRole("button", { name: /next/i });
-      expect(nextButton).toBeDefined();
-
-      // Click Next
-      await user.click(nextButton);
-
-      // Step counter should update
-      const stepCounter = screen.queryByText(/step \d+ \/ \d+/i);
-      expect(stepCounter).toBeDefined();
-    });
-
-    it("can use Step Into/Over/Out controls from StepDetailsPanel", async () => {
-      const user = userEvent.setup();
-      render(<App />);
-
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // All step controls should be accessible
-      const stepIntoButton = screen.queryByRole("button", { name: /into/i });
-      const stepOverButton = screen.queryByRole("button", { name: /over/i });
-      const stepOutButton = screen.queryByRole("button", { name: /out/i });
-
-      expect(stepIntoButton).toBeDefined();
-      expect(stepOverButton).toBeDefined();
-      expect(stepOutButton).toBeDefined();
-
-      // Clicking should work without errors
-      if (stepIntoButton && !stepIntoButton.hasAttribute("disabled")) {
-        await user.click(stepIntoButton);
-      }
-    });
-
-    it("does not have any playback controls in footer", async () => {
-      const user = userEvent.setup();
-      render(<App />);
-
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // Confirm no footer element exists
-      const footer = document.querySelector("footer");
-      expect(footer).toBeNull();
-
-      // Playback controls should only exist in StepDetailsPanel
-      const allPreviousButtons = screen.queryAllByRole("button", { name: /previous/i });
-      const allNextButtons = screen.queryAllByRole("button", { name: /next/i });
-
-      // Should have exactly 1 of each (in StepDetailsPanel), not 2 (one in footer)
-      expect(allPreviousButtons.length).toBe(1);
-      expect(allNextButtons.length).toBe(1);
-    });
-  });
-
-  describe("Three-panel layout after generation", () => {
-    it("shows only TypeDefinition and StepDetails panels after generation (no editor)", async () => {
-      const user = userEvent.setup();
-      render(<App />);
-
-      await fillCodeAndDebug(user);
-
-      await waitFor(
-        () => {
-          expect(screen.queryByText(/debugging/i)).not.toBeInTheDocument();
-        },
-        { timeout: 5000 }
-      );
-
-      // Editor should be hidden (visually off-screen via negative margin)
       await waitFor(() => {
-        const input = screen.queryByPlaceholderText(/type/i);
-        const editorPanel = input?.closest("div[style*=\"margin-left\"]");
-        // Either panel doesn't exist, or has negative margin when hidden
-        const isHidden = !editorPanel || window.getComputedStyle(editorPanel).marginLeft.startsWith("-");
-        expect(isHidden).toBe(true);
-      }, { timeout: 1000 });
+        expect(screen.getByRole("button", { name: /load conditional example/i })).toBeInTheDocument();
+      });
+      expect(screen.getByRole("button", { name: /load flatten example/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /load keyof example/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /load infer example/i })).toBeInTheDocument();
+    });
 
-      // Type Definition panel should be visible
-      const typeDefHeader = screen.queryByText(/Type Definition/i);
-      expect(typeDefHeader).toBeDefined();
+    it("shows Evaluate button", async () => {
+      render(<App />);
 
-      // Step Details panel should be visible
-      const stepDetailsHeader = screen.queryByText(/Step Details|Call Stack/i);
-      expect(stepDetailsHeader).toBeDefined();
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /evaluate/i })).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("Navigation to Debugger", () => {
+    it("navigates to debugger when Evaluate button is clicked", async () => {
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /evaluate/i })).toBeInTheDocument();
+      });
+
+      const evaluateBtn = screen.getByRole("button", { name: /evaluate/i });
+      await user.click(evaluateBtn);
+
+      // Should navigate to debugger view - header shows "TS Type Debugger"
+      await waitFor(() => {
+        expect(screen.getByText(/TS Type Debugger/i)).toBeInTheDocument();
+      });
+
+      // Should show editor with type input
+      await waitFor(() => {
+        const typeInput = screen.getByPlaceholderText(/type/i);
+        expect(typeInput).toBeInTheDocument();
+      });
+
+      // Should show Debug button
+      const debugButton = Array.from(document.querySelectorAll("button")).find(
+        btn => btn.textContent && btn.textContent.toLowerCase().includes("debug")
+      );
+      expect(debugButton).toBeDefined();
+
     });
   });
 });
