@@ -22,7 +22,7 @@ const TYPE_INPUT_SELECTOR = "input[placeholder*=\"_result\"]";
 
 test.describe("Full Type Resolution E2E", () => {
   test("user enters simple type and sees visualization", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Enter type expression in the type input
     await page.fill(TYPE_INPUT_SELECTOR, "string");
@@ -36,7 +36,7 @@ test.describe("Full Type Resolution E2E", () => {
   });
 
   test("user steps through conditional with union", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Enter conditional type in type input
     await page.fill(TYPE_INPUT_SELECTOR, "\"a\" extends string ? true : false");
@@ -50,7 +50,7 @@ test.describe("Full Type Resolution E2E", () => {
   });
 
   test("user steps through template literal", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Enter custom code in Monaco editor
     await fillMonacoEditor(page, "type Test<S> = `Prop ${S}`;");
@@ -66,7 +66,7 @@ test.describe("Full Type Resolution E2E", () => {
   });
 
   test("user steps through mapped type", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Enter mapped type in type input
     await page.fill(TYPE_INPUT_SELECTOR, "{ readonly [K in \"a\" | \"b\"]: string }");
@@ -78,7 +78,7 @@ test.describe("Full Type Resolution E2E", () => {
   });
 
   test("user navigates through all playback controls", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Enter simple type in type input
     await page.fill(TYPE_INPUT_SELECTOR, "string");

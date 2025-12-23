@@ -61,13 +61,18 @@ describe("App Integration - Landing Page Routing", () => {
   });
 
   describe("Navigation to Debugger", () => {
-    it("navigates to debugger when Evaluate button is clicked", async () => {
+    it("navigates to debugger when Evaluate clicked with modified input", async () => {
       const user = userEvent.setup();
       render(<App />);
 
       await waitFor(() => {
         expect(screen.getByRole("button", { name: /evaluate/i })).toBeInTheDocument();
       });
+
+      // Modify the type name to trigger onTryIt instead of link navigation
+      const typeNameInput = screen.getByLabelText(/type to evaluate/i);
+      await user.clear(typeNameInput);
+      await user.type(typeNameInput, "Foo<'test'>");
 
       const evaluateBtn = screen.getByRole("button", { name: /evaluate/i });
       await user.click(evaluateBtn);

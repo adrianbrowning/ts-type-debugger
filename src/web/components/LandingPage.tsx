@@ -1,5 +1,5 @@
 import { Editor } from "@monaco-editor/react";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { useTheme } from "../hooks/useThemeHook.ts";
 import { ThemeDropdown } from "./ThemeDropdown.tsx";
 
@@ -11,6 +11,7 @@ type Example = {
   label: string;
   code: string;
   typeName: string;
+  link: string;
 };
 
 type ExampleButtonProps = {
@@ -41,21 +42,25 @@ const EXAMPLES: Array<Example> = [
     label: "Conditional",
     code: `type Foo<T> = T extends string ? Uppercase<T> : never;`,
     typeName: "Foo<'hello'>",
+    link: "/debugger?code=IwHwYg9hA8DkAWBTANsisB8IAuBPADogASQwAqGRAvEWUYgB7aIB2AJgM5EfYBOAliwDmRAPxEAqvkK8AxgEMOiaBSIAuIi0QA3RLwDcQA",
   },
   {
     label: "Flatten",
     code: `type Flatten<T> = T extends any[] ? T[number] : T;`,
     typeName: "Flatten<number[][]>",
+    link: "/debugger?code=IwHwYgNghgLjCmA7APIgrgWwEbwE4G0BdIgPhBgE8AHeAAklgRQBUTaBeW52%2BADyYAmAZ1pREFIrQD8XfOmx5CtAFxcA3EA",
   },
   {
     label: "keyof",
     code: `type Keys<T> = keyof T;`,
     typeName: "Keys<{ a: number; b: string }>;",
+    link: "/debugger?code=IwHw0gpgngzgPAbwAQEMBcSB2BXAtgIwgCcBuJfDGAFyIEtMBzJAXwD4SQqoAHCJSWHAAqrJAF4kAa2gB7AGZIhJIA",
   },
   {
     label: "infer",
     code: `type MyAwaited<T> = T extends Promise<infer U> ? U : T;`,
     typeName: "MyAwaited<Promise<string>>",
+    link: "/debugger?code=IwHwsgnggg7ghgSwC4FMAmAeACgJwPYC2CAzihsUjggHYDmAfPSEhAA4oAEksiqmAKvQ4BeDvw4oAHqmppiHXIRJkaAMxQ4OAVSEB%2BbRwBcYgNxA",
   },
 ];
 
@@ -69,6 +74,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
   const [ output, setOutput ] = useState<string>("");
   const [ selectedExample, setSelectedExample ] = useState(defaultExample);
 
+  // Video lazy-loading state
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [ videoLoaded, setVideoLoaded ] = useState(false);
+  const [ videoPlaying, setVideoPlaying ] = useState(false);
+
+  const handleHover = useCallback(() => {
+    if (!videoLoaded) {
+      setVideoLoaded(true);
+    }
+  }, [ videoLoaded ]);
+
+  const handlePlayVideo = useCallback(() => {
+    setVideoLoaded(true);
+    setVideoPlaying(true);
+    void videoRef.current?.play();
+  }, []);
+
   const loadExample = useCallback((example: Example) => {
     setInputCode(example.code);
     setTypeName(example.typeName);
@@ -77,8 +99,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
   }, []);
 
   const handleEvaluate = useCallback(() => {
-    onTryIt(inputCode, typeName);
-  }, [ inputCode, typeName, onTryIt ]);
+    // Use pre-computed link if example unchanged; otherwise generate dynamic URL
+    const isUnmodified =
+      inputCode === selectedExample.code &&
+      typeName === selectedExample.typeName;
+
+    if (isUnmodified) {
+      window.location.href = selectedExample.link;
+    }
+    else {
+      onTryIt(inputCode, typeName);
+    }
+  }, [ inputCode, typeName, selectedExample, onTryIt ]);
 
   const handleTypeNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setTypeName(e.target.value);
@@ -277,20 +309,36 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
                 </a>
               </div>
 
-              {/* Video / GIF Placeholder */}
-              <div className="landing-video-placeholder">
-                <div className="landing-video-inner">
-                  <div className="landing-video-gradient" />
-                  <div className="landing-video-content">
-                    <div className="landing-play-btn" aria-hidden="true">
+              {/* Demo Video */}
+              <div className="landing-video-container">
+                {!videoPlaying && (
+                  <button
+                    type="button"
+                    className="landing-video-overlay"
+                    onClick={handlePlayVideo}
+                    onMouseEnter={handleHover}
+                    onFocus={handleHover}
+                  >
+                    <div className="landing-play-btn">
                       <span>{"▶"}</span>
                     </div>
-                    <p className="landing-text">{"Walkthrough video / animated GIF placeholder"}</p>
-                    <p className="landing-text-muted">
-                      {"(Drop in a "}<code className="landing-code">{"<video>"}</code>{" or "}<code className="landing-code">{"<img>"}</code>{" here)"}
-                    </p>
-                  </div>
-                </div>
+                  </button>
+                )}
+                {videoLoaded && (
+                  <video
+                    ref={videoRef}
+                    muted
+                    loop
+                    playsInline
+                    controls={videoPlaying}
+                    className="landing-video"
+                    preload="auto"
+                  >
+                    <source src="/ts-debugger-view.webm" type="video/webm" />
+                    <source src="/ts-debugger-view.mp4" type="video/mp4" />
+                    {"Your browser does not support the video tag."}
+                  </video>
+                )}
               </div>
             </div>
           </div>

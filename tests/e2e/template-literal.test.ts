@@ -22,7 +22,7 @@ const TYPE_INPUT_SELECTOR = "input[placeholder*=\"_result\"]";
 
 test.describe("Template Literal E2E", () => {
   test("Prop union sees distribution", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     await fillMonacoEditor(page, "type Test<S> = `Prop ${S}`;");
     await page.fill(TYPE_INPUT_SELECTOR, "Test<\"a\" | \"b\">");
@@ -35,7 +35,7 @@ test.describe("Template Literal E2E", () => {
   });
 
   test("cartesian product multiple interpolations", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     await fillMonacoEditor(page, "type Grid<A, B> = `${A}-${B}`;");
     await page.fill(TYPE_INPUT_SELECTOR, "Grid<\"a\" | \"b\", 1 | 2>");
@@ -48,7 +48,7 @@ test.describe("Template Literal E2E", () => {
   });
 
   test("timeline shows intermediate steps", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Use type input for simple template literal
     await page.fill(TYPE_INPUT_SELECTOR, "`prefix_${\"value\"}`");
@@ -62,7 +62,7 @@ test.describe("Template Literal E2E", () => {
   });
 
   test("playback speed controls work", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Use type input for simple type
     await page.fill(TYPE_INPUT_SELECTOR, "string");
@@ -82,7 +82,7 @@ test.describe("Template Literal E2E", () => {
   });
 
   test("export functionality works", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/debugger");
 
     // Use type input for simple type
     await page.fill(TYPE_INPUT_SELECTOR, "string");
