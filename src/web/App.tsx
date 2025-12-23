@@ -28,13 +28,22 @@ const TYPE_KEYWORD_PATTERN = /^\s*type\s+\w+\s*=/i;
 
 type AppView = "landing" | "debugger";
 
-// Get initial view from URL path
+// Get initial view from URL path and query params
 const getInitialView = (): AppView => {
   const path = window.location.pathname;
+  const url = new URL(window.location.href);
+  const hasCodeParam = url.searchParams.has("code");
+
   // Check for /debugger path (with or without trailing slash)
   if (path === "/debugger" || path === "/debugger/") {
     return "debugger";
   }
+
+  // If at root with ?code= param, redirect to debugger
+  if (path === "/" && hasCodeParam) {
+    return "debugger";
+  }
+
   return "landing";
 };
 
@@ -67,16 +76,12 @@ export const App: React.FC = () => {
     if (sharedState) {
       setCode(sharedState.code);
       setTypeName(sharedState.typeName);
-      // Ensure we're on debugger view when loading shared code
-      if (view !== "debugger") {
-        setView("debugger");
-        window.history.replaceState({}, "", `/debugger${window.location.search}`);
-      }
     }
     else {
       showToast("Failed to load shared code", "error");
     }
-  }, [ showToast, view ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
 
   // Sync URL with view changes
   useEffect(() => {
@@ -90,7 +95,16 @@ export const App: React.FC = () => {
     if (isOnDebugger !== shouldBeOnDebugger) {
       // Preserve query params when switching views
       const search = window.location.search;
-      window.history.pushState({}, "", `${targetPath}${search}`);
+      // Use replaceState for initial ?code= redirect to avoid polluting history
+      const url = new URL(window.location.href);
+      const hasCodeParam = url.searchParams.has("code");
+      const isInitialCodeRedirect = currentPath === "/" && hasCodeParam && shouldBeOnDebugger;
+
+      if (isInitialCodeRedirect) {
+        window.history.replaceState({}, "", `${targetPath}${search}`);
+      } else {
+        window.history.pushState({}, "", `${targetPath}${search}`);
+      }
     }
   }, [ view ]);
 

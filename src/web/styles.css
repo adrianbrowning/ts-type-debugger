@@ -892,6 +892,12 @@ body.theme-light .landing-card {
   border-color: var(--accent-primary);
 }
 
+.landing-example-btn.selected {
+  background: var(--bg-active);
+  border-color: var(--accent-primary);
+  color: var(--accent-highlight);
+}
+
 /* Why list */
 .landing-why-list {
   list-style: none;

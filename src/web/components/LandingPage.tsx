@@ -16,9 +16,10 @@ type Example = {
 type ExampleButtonProps = {
   example: Example;
   onClick: (example: Example) => void;
+  isSelected: boolean;
 };
 
-const ExampleButton: React.FC<ExampleButtonProps> = ({ example, onClick }) => {
+const ExampleButton: React.FC<ExampleButtonProps> = ({ example, onClick, isSelected }) => {
   const handleClick = useCallback(() => {
     onClick(example);
   }, [ example, onClick ]);
@@ -27,7 +28,7 @@ const ExampleButton: React.FC<ExampleButtonProps> = ({ example, onClick }) => {
     <button
       type="button"
       onClick={handleClick}
-      className="landing-example-btn"
+      className={`landing-example-btn${isSelected ? " selected" : ""}`}
       aria-label={`Load ${example.label} example`}
     >
       {example.label}
@@ -66,11 +67,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
   const [ inputCode, setInputCode ] = useState(defaultExample.code);
   const [ typeName, setTypeName ] = useState(defaultExample.typeName);
   const [ output, setOutput ] = useState<string>("");
+  const [ selectedExample, setSelectedExample ] = useState(defaultExample);
 
   const loadExample = useCallback((example: Example) => {
     setInputCode(example.code);
     setTypeName(example.typeName);
     setOutput("");
+    setSelectedExample(example);
   }, []);
 
   const handleEvaluate = useCallback(() => {
@@ -205,6 +208,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
                           key={example.label}
                           example={example}
                           onClick={loadExample}
+                          isSelected={selectedExample.label === example.label}
                         />
                       ))}
                     </div>
