@@ -1,5 +1,5 @@
 import { Editor } from "@monaco-editor/react";
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useTheme } from "../hooks/useThemeHook.ts";
 import { ThemeDropdown } from "./ThemeDropdown.tsx";
 
@@ -118,6 +118,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
 
   const handleEditorChange = useCallback((value: string | undefined) => {
     setInputCode(value ?? "");
+  }, []);
+
+  // Scroll-to-top button visibility
+  const [ showScrollTop, setShowScrollTop ] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 200);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTry = useCallback(() => {
+    document.getElementById("try")?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   return (
@@ -292,9 +307,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
                     {"A quick walkthrough showing how a complex type turns into a clear, step-by-step explanation."}
                   </p>
                 </div>
-                <a href="#try" className="landing-link">
-                  {"Back to Try It"}
-                </a>
               </div>
 
               {/* Demo Video */}
@@ -407,6 +419,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
           </a>
         </div>
       </footer>
+
+      {/* Scroll to Try It button */}
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={scrollToTry}
+          className="landing-scroll-top"
+          aria-label="Scroll to Try It section"
+        >
+          <svg
+            className="landing-icon-md"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="18 15 12 9 6 15" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 };

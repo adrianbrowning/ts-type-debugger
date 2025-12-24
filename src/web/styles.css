@@ -446,6 +446,7 @@ input[type='range']::-moz-range-progress {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-sm);
+  margin-left: auto;
 }
 
 .landing-input-row {
@@ -645,7 +646,7 @@ input[type='range']::-moz-range-progress {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-xxl);
   background: transparent;
   color: #f1f5f9; /* slate-100 */
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -935,12 +936,37 @@ body.theme-light .landing-card {
 /* Why list */
 .landing-why-list {
   list-style: disc;
-  padding-left: 1.25rem;
+  padding-left: 1.75rem;
   margin-top: var(--spacing-md);
 }
 
 .landing-why-list li {
   margin-top: var(--spacing-sm);
+}
+
+/* Scroll to top button */
+.landing-scroll-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.9); /* indigo-500/90 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: var(--z-fixed);
+}
+
+.landing-scroll-top:hover {
+  background: #818cf8; /* indigo-400 */
+  transform: translateY(-2px);
 }
 
 /* GitHub link for landing page */
