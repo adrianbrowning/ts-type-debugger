@@ -594,8 +594,7 @@ input[type='range']::-moz-range-progress {
 /* Links */
 .landing-link {
   color: #c7d2fe; /* indigo-200 */
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  text-decoration: none;
 }
 
 .landing-link:hover {
