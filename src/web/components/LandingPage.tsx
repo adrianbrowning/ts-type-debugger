@@ -144,7 +144,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
           <ThemeDropdown />
           <span className="landing-footer-divider" />
           <a
-            href="https://github.com/AdrianMayron/ts-type-debugger"
+            href="https://github.com/adrianbrowning/ts-type-debugger"
             target="_blank"
             rel="noopener noreferrer"
             className="landing-github-link"
@@ -402,7 +402,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
           <span>{"Made for TypeScript developers & learners."}</span>
           <span className="landing-footer-divider" aria-hidden="true" />
           <a
-            href="https://github.com/AdrianMayron/ts-type-debugger"
+            href="https://github.com/adrianbrowning/ts-type-debugger"
             className="landing-link landing-footer-link"
             target="_blank"
             rel="noopener noreferrer"
