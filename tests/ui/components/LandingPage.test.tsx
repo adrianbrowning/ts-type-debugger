@@ -52,7 +52,7 @@ describe("LandingPage Component", () => {
       await waitFor(() => {
         const githubLinks = screen.getAllByRole("link", { name: /github/i });
         expect(githubLinks.length).toBeGreaterThanOrEqual(1);
-        expect(githubLinks[0]).toHaveAttribute("href", "https://github.com/AdrianMayron/ts-type-debugger");
+        expect(githubLinks[0]).toHaveAttribute("href", "https://github.com/adrianbrowning/ts-type-debugger");
       });
     });
   });

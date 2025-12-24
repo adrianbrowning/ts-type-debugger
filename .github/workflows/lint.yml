@@ -25,13 +25,13 @@ jobs:
         if: github.actor == 'github-actions[bot]'
         run: echo "Commit made by bot. Exiting workflow." && exit 0
 
-      # 1. Checkout the repository with credentials persisted for push
+      # 1. Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       # 2. Set up pnpm
       - uses: pnpm/action-setup@v4
@@ -79,11 +79,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Commit and push fixes if any changes were made
+          # Commit and push fixes if any changes were made (only for internal PRs, not forks)
           if [[ `git status --porcelain` ]]; then
             git add .
             git commit -m "chore: Apply ESLint fixes [skip ci]" --no-verify
-            git push origin HEAD:${{ github.head_ref }}
+            # Only push if this is not a fork PR (fork PRs have different head repo)
+            if [[ "${{ github.event.pull_request.head.repo.full_name }}" == "${{ github.repository }}" ]] || [[ -z "${{ github.event.pull_request.head.repo.full_name }}" ]]; then
+              git push origin HEAD:${{ github.head_ref }}
+            else
+              echo "::warning::ESLint auto-fix cannot push to forked PRs. Please run 'pnpm lint:fix' locally and commit the changes."
+            fi
           fi
 
           if [ $FIX_EXIT_CODE -ne 0 ]; then

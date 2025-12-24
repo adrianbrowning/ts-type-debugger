@@ -115,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
           }}
         />
         <a
-          href="https://github.com/AdrianMayron/ts-type-debugger"
+          href="https://github.com/adrianbrowning/ts-type-debugger"
           target="_blank"
           rel="noopener noreferrer"
           style={{
