@@ -263,24 +263,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryIt }) => {
                     </p>
 
                     <ul className="landing-text landing-why-list">
+                      <li>{"See how types actually evaluate, step by step"}</li>
                       <li>
-                        <span aria-hidden="true">{"🔍"}</span>
-                        <span>{"See how types actually evaluate, step by step"}</span>
+                        {"Understand "}<code className="landing-code">{"extends"}</code>{", "}<code className="landing-code">{"infer"}</code>{", and mapped types visually"}
                       </li>
-                      <li>
-                        <span aria-hidden="true">{"🧠"}</span>
-                        <span>
-                          {"Understand "}<code className="landing-code">{"extends"}</code>{", "}<code className="landing-code">{"infer"}</code>{", and mapped types visually"}
-                        </span>
-                      </li>
-                      <li>
-                        <span aria-hidden="true">{"🐞"}</span>
-                        <span>{"Debug type errors without trial-and-error"}</span>
-                      </li>
-                      <li>
-                        <span aria-hidden="true">{"📚"}</span>
-                        <span>{"Learn advanced TypeScript faster"}</span>
-                      </li>
+                      <li>{"Debug type errors without trial-and-error"}</li>
+                      <li>{"Learn advanced TypeScript faster"}</li>
                     </ul>
 
                     <p className="landing-text-muted">

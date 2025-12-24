@@ -606,7 +606,7 @@ input[type='range']::-moz-range-progress {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-xxl);
   background: #6366f1; /* indigo-500 */
   color: #ffffff;
   border: none;
@@ -934,14 +934,13 @@ body.theme-light .landing-card {
 
 /* Why list */
 .landing-why-list {
-  list-style: none;
-  padding-left: 0;
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin-top: var(--spacing-md);
 }
 
 .landing-why-list li {
-  display: flex;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-md);
+  margin-top: var(--spacing-sm);
 }
 
 /* GitHub link for landing page */
