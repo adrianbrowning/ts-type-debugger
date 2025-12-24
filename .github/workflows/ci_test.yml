@@ -24,13 +24,13 @@ jobs:
         if: github.actor == 'github-actions[bot]'
         run: echo "Commit made by bot. Exiting workflow." && exit 0
 
-      # 1. Checkout the repository with credentials persisted for push
+      # 1. Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       # 2. Set up pnpm
       - uses: pnpm/action-setup@v4

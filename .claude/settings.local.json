@@ -49,7 +49,11 @@
       "Bash(pnpm exec eslint:*)",
       "Bash(git checkout:*)",
       "mcp__chrome-devtools__*",
-      "Bash(ffprobe:*)"
+      "Bash(ffprobe:*)",
+      "mcp__plugin_beads_beads__set_context",
+      "mcp__plugin_beads_beads__create",
+      "mcp__plugin_beads_beads__update",
+      "mcp__plugin_beads_beads__close"
     ],
     "deny": [],
     "ask": []
