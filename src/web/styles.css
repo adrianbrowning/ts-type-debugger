@@ -615,6 +615,7 @@ input[type='range']::-moz-range-progress {
   font-size: var(--font-size-md);
   cursor: pointer;
   transition: var(--transition-fast);
+  text-decoration: none;
 }
 
 .landing-btn-primary:hover {
@@ -633,6 +634,7 @@ input[type='range']::-moz-range-progress {
   font-size: var(--font-size-md);
   cursor: pointer;
   transition: var(--transition-fast);
+  text-decoration: none;
 }
 
 .landing-btn-secondary:hover {
@@ -651,6 +653,7 @@ input[type='range']::-moz-range-progress {
   font-size: var(--font-size-md);
   cursor: pointer;
   transition: var(--transition-fast);
+  text-decoration: none;
 }
 
 .landing-btn-outline:hover {
