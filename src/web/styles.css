@@ -139,9 +139,20 @@
   --transition-fast: all 0.15s ease;
   --transition-normal: all 0.3s ease;
 
+  /* Shadow colors */
+  --shadow-color-light: rgba(0, 0, 0, 0.2);
+  --shadow-color-medium: rgba(0, 0, 0, 0.3);
+  --shadow-subtle-light: rgba(255, 255, 255, 0.04);
+
+  /* Glass overlays */
+  --glass-overlay-dark: rgba(30, 41, 59, 0.8);     /* slate-800/80 */
+  --glass-accent-90: rgba(99, 102, 241, 0.9);      /* indigo-500/90 */
+
   /* Shadows - dark theme uses minimal shadows */
   --shadow-sm: none;
   --shadow-md: none;
+  --shadow-dropdown: 0 4px 12px var(--shadow-color-medium);
+  --shadow-thumb: 0 2px 4px var(--shadow-color-light);
   --shadow-glow-green: 0 0 8px var(--green);
   --shadow-glow-purple: 0 0 8px var(--purple);
 
@@ -314,7 +325,7 @@ input[type='range']::-webkit-slider-thumb {
   border-radius: 50%;
   background: var(--accent-highlight);
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-thumb);
   margin-top: -5px;
 }
 
@@ -325,7 +336,7 @@ input[type='range']::-moz-range-thumb {
   background: var(--accent-highlight);
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-thumb);
   margin-top: -5px;
 }
 
@@ -711,7 +722,7 @@ input[type='range']::-moz-range-progress {
   border: 1px solid var(--border);
   border-radius: 1rem;
   padding: var(--spacing-xxl);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 0 1px var(--shadow-subtle-light);
 }
 
 .landing-card-alt {
@@ -821,7 +832,7 @@ input[type='range']::-moz-range-progress {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(30, 41, 59, 0.8) url('/ts-debugger-poster.jpg') center/contain no-repeat;
+  background: var(--glass-overlay-dark) url('/ts-debugger-poster.jpg') center/contain no-repeat;
   cursor: pointer;
   border: none;
   z-index: 1;
@@ -923,7 +934,7 @@ body.theme-light .landing-card {
   z-index: var(--z-dropdown);
   background: var(--glass-menu);
   border: 1px solid var(--border);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-dropdown);
 }
 
 .landing-theme-option {
@@ -999,12 +1010,12 @@ body.theme-light .landing-card {
   width: 3rem;
   height: 3rem;
   border-radius: 9999px;
-  background: rgba(99, 102, 241, 0.9);
+  background: var(--glass-accent-90);
   border: 1px solid var(--border-medium);
   color: var(--text-white);
   cursor: pointer;
   transition: var(--transition-fast);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-dropdown);
   z-index: var(--z-fixed);
 }
 
