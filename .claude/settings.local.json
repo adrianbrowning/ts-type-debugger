@@ -53,7 +53,10 @@
       "mcp__plugin_beads_beads__set_context",
       "mcp__plugin_beads_beads__create",
       "mcp__plugin_beads_beads__update",
-      "mcp__plugin_beads_beads__close"
+      "mcp__plugin_beads_beads__close",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh api:*)"
     ],
     "deny": [],
     "ask": []
