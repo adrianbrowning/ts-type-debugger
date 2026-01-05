@@ -113,7 +113,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
             width: "1px",
             height: "20px",
             backgroundColor: theme.border.medium,
-            marginLeft: theme.spacing.sm,
           }}
         />
         <a
