@@ -5,17 +5,18 @@ import { exportJSON } from "../utils/exportData.ts";
 import { ThemeDropdownInline } from "./ThemeDropdownInline.tsx";
 
 type HeaderProps = {
-  onToggleEditor: () => void;
-  editorVisible: boolean;
-  hasGenerated: boolean;
-  videoData: VideoData | null;
+  onToggleEditor?: () => void;
+  editorVisible?: boolean;
+  hasGenerated?: boolean;
+  videoData?: VideoData | null;
   onBackToLanding?: () => void;
+  onLaunchDebugger?: () => void;
 };
 
 /**
  * Header with title and Hide/Show Editor button
  */
-export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, hasGenerated, videoData, onBackToLanding }) => {
+export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, hasGenerated, videoData, onBackToLanding, onLaunchDebugger }) => {
   const theme = GLOBAL_THEME;
 
   const handleExport = useCallback(() => {
@@ -24,39 +25,40 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
     }
   }, [ videoData ]);
 
-  const handleExportMouseOver = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    (e.currentTarget as HTMLButtonElement).style.backgroundColor = theme.bg.hover;
-  }, [ theme.bg.hover ]);
+  // Reusable hover handler factory
+  const createHoverHandlers = useCallback((hoverStyles: React.CSSProperties, defaultStyles: React.CSSProperties) => ({
+    onMouseOver: (e: React.MouseEvent<HTMLElement>) => {
+      Object.assign(e.currentTarget.style, hoverStyles);
+    },
+    onMouseOut: (e: React.MouseEvent<HTMLElement>) => {
+      Object.assign(e.currentTarget.style, defaultStyles);
+    },
+  }), []);
 
-  const handleExportMouseOut = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    (e.currentTarget as HTMLButtonElement).style.backgroundColor = theme.bg.secondary;
-  }, [ theme.bg.secondary ]);
+  const exportHover = createHoverHandlers(
+    { backgroundColor: theme.bg.hover },
+    { backgroundColor: theme.bg.secondary }
+  );
 
-  const handleToggleMouseOver = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    (e.currentTarget as HTMLButtonElement).style.backgroundColor = theme.bg.hover;
-  }, [ theme.bg.hover ]);
+  const toggleHover = createHoverHandlers(
+    { backgroundColor: theme.bg.hover },
+    { backgroundColor: theme.bg.secondary }
+  );
 
-  const handleToggleMouseOut = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    (e.currentTarget as HTMLButtonElement).style.backgroundColor = theme.bg.secondary;
-  }, [ theme.bg.secondary ]);
+  const backHover = createHoverHandlers(
+    { backgroundColor: theme.bg.hover, color: theme.text.primary },
+    { backgroundColor: "transparent", color: theme.text.secondary }
+  );
 
-  const handleBackMouseOver = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.backgroundColor = theme.bg.hover;
-    e.currentTarget.style.color = theme.text.primary;
-  }, [ theme.bg.hover, theme.text.primary ]);
+  const githubHover = createHoverHandlers(
+    { color: theme.text.primary },
+    { color: theme.text.secondary }
+  );
 
-  const handleBackMouseOut = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.backgroundColor = "transparent";
-    e.currentTarget.style.color = theme.text.secondary;
-  }, [ theme.text.secondary ]);
-
-  const handleGitHubMouseOver = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = theme.text.primary;
-  }, [ theme.text.primary ]);
-
-  const handleGitHubMouseOut = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = theme.text.secondary;
-  }, [ theme.text.secondary ]);
+  const launchDebuggerHover = createHoverHandlers(
+    { backgroundColor: theme.accent.primaryAlt },
+    { backgroundColor: theme.accent.primary }
+  );
 
   return (
     <header
@@ -89,8 +91,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
               alignItems: "center",
               gap: theme.spacing.xs,
             }}
-            onMouseOver={handleBackMouseOver}
-            onMouseOut={handleBackMouseOut}
+            onMouseOver={backHover.onMouseOver}
+            onMouseOut={backHover.onMouseOut}
           >
             {"← Back"}
           </button>
@@ -125,8 +127,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
             color: theme.text.secondary,
             transition: "color 0.2s ease",
           }}
-          onMouseOver={handleGitHubMouseOver}
-          onMouseOut={handleGitHubMouseOut}
+          onMouseOver={githubHover.onMouseOver}
+          onMouseOut={githubHover.onMouseOut}
           title="View on GitHub"
         >
           <svg
@@ -144,6 +146,28 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
       <div style={{ display: "flex", gap: theme.spacing.md, alignItems: "center" }}>
         <ThemeDropdownInline />
 
+        {!onBackToLanding && onLaunchDebugger && (
+          <button
+            type="button"
+            onClick={onLaunchDebugger}
+            style={{
+              padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+              backgroundColor: theme.accent.primary,
+              color: theme.accent.btnText,
+              border: "none",
+              borderRadius: theme.radius.md,
+              fontSize: theme.fontSize.md,
+              fontWeight: theme.fontWeight.semibold,
+              cursor: "pointer",
+              transition: "background-color 0.2s ease",
+            }}
+            onMouseOver={launchDebuggerHover.onMouseOver}
+            onMouseOut={launchDebuggerHover.onMouseOut}
+          >
+            {"Launch Debugger"}
+          </button>
+        )}
+
         {hasGenerated && (
           <>
             <button
@@ -160,8 +184,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
                 cursor: "pointer",
                 transition: "background-color 0.2s ease",
               }}
-              onMouseOver={handleExportMouseOver}
-              onMouseOut={handleExportMouseOut}
+              onMouseOver={exportHover.onMouseOver}
+              onMouseOut={exportHover.onMouseOut}
             >
               {"Export JSON"}
             </button>
@@ -179,8 +203,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleEditor, editorVisible, h
                 cursor: "pointer",
                 transition: "background-color 0.2s ease",
               }}
-              onMouseOver={handleToggleMouseOver}
-              onMouseOut={handleToggleMouseOut}
+              onMouseOver={toggleHover.onMouseOver}
+              onMouseOut={toggleHover.onMouseOut}
             >
               {editorVisible ? "Hide Editor" : "Show Editor"}
             </button>

@@ -313,9 +313,28 @@ export const App: React.FC = () => {
     void handleGenerateAsync();
   }, [ handleGenerateAsync ]);
 
+  // Navigate to debugger (empty state)
+  const handleLaunchDebugger = useCallback(() => {
+    setView("debugger");
+    // Update URL without code params
+    window.history.pushState({}, "", "/debugger");
+  }, []);
+
   // Render landing page if in landing view
   if (view === "landing") {
-    return <LandingPage onTryIt={handleTryIt} />;
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+          backgroundColor: theme.bg.primary,
+        }}
+      >
+        <Header onLaunchDebugger={handleLaunchDebugger} />
+        <LandingPage onTryIt={handleTryIt} />
+      </div>
+    );
   }
 
   // Disabled overlay style for debug panes (no data yet)

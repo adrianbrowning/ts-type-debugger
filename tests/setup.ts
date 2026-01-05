@@ -1,4 +1,5 @@
 import { beforeEach, afterEach } from "vitest";
+import "@testing-library/jest-dom/vitest";
 
 // Track pending RAF callbacks for cleanup
 const pendingRafs = new Set<number>();
