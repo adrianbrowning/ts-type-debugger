@@ -421,11 +421,11 @@ exports[`Mapped Type Resolution Integration > resolves mapped type with keyof 1`
     "endFrame": 360,
     "highlightLines": {
       "chars": {
-        "end": 55,
-        "start": 0,
+        "end": 45,
+        "start": 22,
       },
-      "end": 1,
-      "start": 1,
+      "end": 0,
+      "start": 0,
     },
     "isHighlight": true,
     "original": {
@@ -438,12 +438,12 @@ exports[`Mapped Type Resolution Integration > resolves mapped type with keyof 1`
       },
       "position": {
         "end": {
-          "character": 55,
-          "line": 2,
+          "character": 45,
+          "line": 1,
         },
         "start": {
-          "character": 0,
-          "line": 2,
+          "character": 22,
+          "line": 1,
         },
       },
       "result": "string",

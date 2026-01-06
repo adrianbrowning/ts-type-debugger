@@ -1844,11 +1844,11 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "endFrame": 1350,
     "highlightLines": {
       "chars": {
-        "end": 76,
-        "start": 4,
+        "end": 31,
+        "start": 23,
       },
-      "end": 6,
-      "start": 6,
+      "end": 19,
+      "start": 19,
     },
     "isHighlight": true,
     "original": {
@@ -1864,12 +1864,12 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       },
       "position": {
         "end": {
-          "character": 76,
-          "line": 7,
+          "character": 31,
+          "line": 20,
         },
         "start": {
-          "character": 4,
-          "line": 7,
+          "character": 23,
+          "line": 20,
         },
       },
       "result": ""User" | "Post"",
@@ -2011,8 +2011,12 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "duration": 30,
     "endFrame": 1470,
     "highlightLines": {
-      "end": 23,
-      "start": 14,
+      "chars": {
+        "end": 82,
+        "start": 52,
+      },
+      "end": 24,
+      "start": 24,
     },
     "isHighlight": true,
     "original": {
@@ -2030,12 +2034,12 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       },
       "position": {
         "end": {
-          "character": 18,
-          "line": 24,
+          "character": 82,
+          "line": 25,
         },
         "start": {
-          "character": 4,
-          "line": 15,
+          "character": 52,
+          "line": 25,
         },
       },
       "result": "never",
@@ -3784,11 +3788,11 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "endFrame": 2730,
     "highlightLines": {
       "chars": {
-        "end": 76,
-        "start": 4,
+        "end": 31,
+        "start": 23,
       },
-      "end": 6,
-      "start": 6,
+      "end": 19,
+      "start": 19,
     },
     "isHighlight": true,
     "original": {
@@ -3804,12 +3808,12 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       },
       "position": {
         "end": {
-          "character": 76,
-          "line": 7,
+          "character": 31,
+          "line": 20,
         },
         "start": {
-          "character": 4,
-          "line": 7,
+          "character": 23,
+          "line": 20,
         },
       },
       "result": ""User" | "Post"",
@@ -3951,8 +3955,12 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "duration": 30,
     "endFrame": 2850,
     "highlightLines": {
-      "end": 23,
-      "start": 14,
+      "chars": {
+        "end": 38,
+        "start": 8,
+      },
+      "end": 26,
+      "start": 26,
     },
     "isHighlight": true,
     "original": {
@@ -3970,12 +3978,12 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       },
       "position": {
         "end": {
-          "character": 18,
-          "line": 24,
+          "character": 38,
+          "line": 27,
         },
         "start": {
-          "character": 4,
-          "line": 15,
+          "character": 8,
+          "line": 27,
         },
       },
       "result": "never",
@@ -3990,8 +3998,12 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
     "duration": 30,
     "endFrame": 2880,
     "highlightLines": {
-      "end": 26,
-      "start": 24,
+      "chars": {
+        "end": 32,
+        "start": 22,
+      },
+      "end": 0,
+      "start": 0,
     },
     "isHighlight": true,
     "original": {
@@ -4004,12 +4016,12 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       },
       "position": {
         "end": {
-          "character": 39,
-          "line": 27,
+          "character": 32,
+          "line": 1,
         },
         "start": {
-          "character": 4,
-          "line": 25,
+          "character": 22,
+          "line": 1,
         },
       },
       "result": "never",

@@ -525,11 +525,11 @@ function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: EvalContext
   const result = evaluateTypeNode(aliasDecl.type, context);
   context.level--;
 
-  // Log the result of this generic call
+  // Log the result of this generic call - position is the call site, not the definition
   addTrace(context, "generic_result", `${typeName} => ${result}`, {
     result: result,
     parameters: Object.keys(genericParams).length > 0 ? genericParams : undefined,
-    position: getNodePosition(aliasDecl, context.sourceFile),
+    position: getNodePosition(typeRef, context.sourceFile),
   });
 
   // Restore old parameters

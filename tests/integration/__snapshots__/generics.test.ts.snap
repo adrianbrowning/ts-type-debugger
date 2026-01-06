@@ -118,11 +118,11 @@ exports[`Generic Type Resolution Integration > resolves simple identity generic 
     "endFrame": 120,
     "highlightLines": {
       "chars": {
-        "end": 21,
-        "start": 0,
+        "end": 38,
+        "start": 22,
       },
-      "end": 1,
-      "start": 1,
+      "end": 0,
+      "start": 0,
     },
     "isHighlight": true,
     "original": {
@@ -135,12 +135,12 @@ exports[`Generic Type Resolution Integration > resolves simple identity generic 
       },
       "position": {
         "end": {
-          "character": 21,
-          "line": 2,
+          "character": 38,
+          "line": 1,
         },
         "start": {
-          "character": 0,
-          "line": 2,
+          "character": 22,
+          "line": 1,
         },
       },
       "result": "string",

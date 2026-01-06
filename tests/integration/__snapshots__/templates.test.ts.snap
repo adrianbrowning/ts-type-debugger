@@ -773,11 +773,11 @@ exports[`Template Literal Resolution Integration > resolves template with multip
     "endFrame": 630,
     "highlightLines": {
       "chars": {
-        "end": 34,
-        "start": 4,
+        "end": 44,
+        "start": 22,
       },
-      "end": 2,
-      "start": 2,
+      "end": 0,
+      "start": 0,
     },
     "isHighlight": true,
     "original": {
@@ -791,12 +791,12 @@ exports[`Template Literal Resolution Integration > resolves template with multip
       },
       "position": {
         "end": {
-          "character": 34,
-          "line": 3,
+          "character": 44,
+          "line": 1,
         },
         "start": {
-          "character": 4,
-          "line": 3,
+          "character": 22,
+          "line": 1,
         },
       },
       "result": ""a-1" | "a-2" | "b-1" | "b-2"",
