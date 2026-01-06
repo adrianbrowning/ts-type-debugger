@@ -19,7 +19,6 @@ type StepDetailsPanelProps = {
   onPrevious: () => void;
   onNext: () => void;
   onStepInto: () => void;
-  onStepOver: () => void;
   onStepOut: () => void;
   onSeekToStep: (index: number) => void;
 };
@@ -59,7 +58,6 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
   onPrevious,
   onNext,
   onStepInto,
-  onStepOver,
   onStepOut,
   onSeekToStep,
 }) => {
@@ -138,7 +136,6 @@ export const StepDetailsPanel: React.FC<StepDetailsPanelProps> = ({
         onPrevious={onPrevious}
         onNext={onNext}
         onStepInto={onStepInto}
-        onStepOver={onStepOver}
         onStepOut={onStepOut}
         canStepOut={canStepOut}
       />

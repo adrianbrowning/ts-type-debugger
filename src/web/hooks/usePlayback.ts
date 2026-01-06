@@ -49,8 +49,8 @@ export function usePlayback(videoData: VideoData | null) {
     setState(prev => ({ ...prev, isPlaying: !prev.isPlaying }));
   }, []);
 
-  // Handle next/previous
-  const nextStep = useCallback(() => {
+  // Handle next/previous - simple index increment (used by stepInto)
+  const incrementStep = useCallback(() => {
     setState(prev => {
       if (!videoData) return prev;
       return {
@@ -176,8 +176,8 @@ export function usePlayback(videoData: VideoData | null) {
     [ videoData, currentStep, state.currentStepIndex ]
   );
 
-  // Step over: move to next step at same or lower level (parent or sibling)
-  const stepOver = useCallback(() => {
+  // Next step: move to next step at same or lower level (skip into generics)
+  const nextStep = useCallback(() => {
     findNextStepByLevel((stepLevel, currentLevel) => stepLevel <= currentLevel);
   }, [ findNextStepByLevel ]);
 
@@ -186,10 +186,10 @@ export function usePlayback(videoData: VideoData | null) {
     findNextStepByLevel((stepLevel, currentLevel) => stepLevel < currentLevel);
   }, [ findNextStepByLevel ]);
 
-  // Step into: just go to next step (alias for nextStep)
+  // Step into: go to immediate next step (simple increment)
   const stepInto = useCallback(() => {
-    nextStep();
-  }, [ nextStep ]);
+    incrementStep();
+  }, [ incrementStep ]);
 
   // Jump to start: go to first step
   const jumpToStart = useCallback(() => {
@@ -209,7 +209,6 @@ export function usePlayback(videoData: VideoData | null) {
     setSpeed,
     seekToStep,
     jumpToStart,
-    stepOver,
     stepOut,
     stepInto,
   };

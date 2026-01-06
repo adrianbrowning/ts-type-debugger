@@ -497,7 +497,6 @@ export const App: React.FC = () => {
                       onPrevious={playback.previousStep}
                       onNext={playback.nextStep}
                       onStepInto={playback.stepInto}
-                      onStepOver={playback.stepOver}
                       onStepOut={playback.stepOut}
                       onSeekToStep={playback.seekToStep}
                     />

@@ -10,7 +10,6 @@ type DebugToolbarProps = {
   onPrevious: () => void;
   onNext: () => void;
   onStepInto: () => void;
-  onStepOver: () => void;
   onStepOut: () => void;
   canStepOut: boolean;
 };
@@ -66,7 +65,6 @@ export function DebugToolbar({
   onPrevious,
   onNext,
   onStepInto,
-  onStepOver,
   onStepOut,
   canStepOut,
 }: Readonly<DebugToolbarProps>) {
@@ -123,14 +121,6 @@ export function DebugToolbar({
         theme={theme}
       >
         {"⬇ Into"}
-      </ToolbarButton>
-      <Separator theme={theme} />
-      <ToolbarButton
-        label="Step Over"
-        onClick={onStepOver}
-        theme={theme}
-      >
-        {"↷ Over"}
       </ToolbarButton>
       <Separator theme={theme} />
       <ToolbarButton

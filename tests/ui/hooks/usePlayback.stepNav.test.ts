@@ -5,8 +5,8 @@ import { usePlayback } from "../../../src/web/hooks/usePlayback.ts";
 import { createMockVideoData, createMockStep } from "../../fixtures/mockVideoData.ts";
 
 describe("usePlayback - step navigation", () => {
-  describe("stepOver", () => {
-    it("moves to next step at same level", () => {
+  describe("nextStep (step over behavior)", () => {
+    it("moves to next step at same level (skips deeper)", () => {
       const videoData: VideoData = createMockVideoData({
         steps: [
           createMockStep({
@@ -37,9 +37,9 @@ describe("usePlayback - step navigation", () => {
       // Start at step 0 (level 0)
       expect(result.current.currentStepIndex).toBe(0);
 
-      // stepOver should skip to next step at level 0 (step 4)
+      // nextStep should skip to next step at level 0 (step 4)
       act(() => {
-        result.current.stepOver();
+        result.current.nextStep();
       });
 
       expect(result.current.currentStepIndex).toBe(4);
@@ -69,7 +69,7 @@ describe("usePlayback - step navigation", () => {
       expect(result.current.currentStepIndex).toBe(0);
 
       act(() => {
-        result.current.stepOver();
+        result.current.nextStep();
       });
 
       expect(result.current.currentStepIndex).toBe(1);
@@ -94,7 +94,7 @@ describe("usePlayback - step navigation", () => {
       expect(result.current.currentStepIndex).toBe(0);
 
       act(() => {
-        result.current.stepOver();
+        result.current.nextStep();
       });
 
       // Should stay at last step
@@ -119,7 +119,7 @@ describe("usePlayback - step navigation", () => {
       expect(result.current.isPlaying).toBe(true);
 
       act(() => {
-        result.current.stepOver();
+        result.current.nextStep();
       });
 
       expect(result.current.isPlaying).toBe(false);
@@ -381,7 +381,7 @@ describe("usePlayback - step navigation", () => {
       expect(result.current.currentStep?.original.expression).toContain("Validate");
     });
 
-    it("stepOver skips nested generic in extends clause", () => {
+    it("nextStep skips nested generic in extends clause", () => {
       const videoData: VideoData = createMockVideoData({
         steps: [
           createMockStep({
@@ -409,9 +409,9 @@ describe("usePlayback - step navigation", () => {
 
       const { result } = renderHook(() => usePlayback(videoData));
 
-      // At step 0 (level 1), stepOver should skip the nested generic and go to step 4 (level 1)
+      // At step 0 (level 1), nextStep should skip the nested generic and go to step 4 (level 1)
       act(() => {
-        result.current.stepOver();
+        result.current.nextStep();
       });
 
       expect(result.current.currentStepIndex).toBe(4);

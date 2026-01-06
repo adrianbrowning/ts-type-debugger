@@ -32,7 +32,6 @@ describe("StepDetailsPanel Integration (Refactored)", () => {
     onPrevious: vi.fn(),
     onNext: vi.fn(),
     onStepInto: vi.fn(),
-    onStepOver: vi.fn(),
     onStepOut: vi.fn(),
     onSeekToStep: vi.fn(),
   };
@@ -88,7 +87,6 @@ describe("StepDetailsPanel Integration (Refactored)", () => {
       expect(screen.getByRole("button", { name: /previous/i })).toBeDefined();
       expect(screen.getByRole("button", { name: /next/i })).toBeDefined();
       expect(screen.getByRole("button", { name: /into/i })).toBeDefined();
-      expect(screen.getByRole("button", { name: /over/i })).toBeDefined();
       expect(screen.getByRole("button", { name: /out/i })).toBeDefined();
     });
 
@@ -412,29 +410,6 @@ describe("StepDetailsPanel Integration (Refactored)", () => {
       await user.click(stepIntoButton);
 
       expect(onStepInto).toHaveBeenCalledOnce();
-    });
-
-    it("calls onStepOver when Step Over button clicked", async () => {
-      const user = userEvent.setup();
-      const onStepOver = vi.fn();
-
-      const steps: Array<VideoTraceStep> = [ createMockStep({ stepIndex: 0 }) ];
-
-      render(
-        <StepDetailsPanel
-          {...defaultProps}
-          currentStep={steps[0] ?? null}
-          steps={steps}
-          currentStepIndex={0}
-          totalSteps={1}
-          onStepOver={onStepOver}
-        />
-      );
-
-      const stepOverButton = screen.getByRole("button", { name: /over/i });
-      await user.click(stepOverButton);
-
-      expect(onStepOver).toHaveBeenCalledOnce();
     });
 
     it("calls onStepOut when Step Out button clicked", async () => {

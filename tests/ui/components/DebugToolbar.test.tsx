@@ -12,7 +12,6 @@ describe("DebugToolbar Component", () => {
     onPrevious: vi.fn(),
     onNext: vi.fn(),
     onStepInto: vi.fn(),
-    onStepOver: vi.fn(),
     onStepOut: vi.fn(),
     canStepOut: true,
   };
@@ -24,7 +23,6 @@ describe("DebugToolbar Component", () => {
     expect(screen.getByRole("button", { name: /previous/i })).toBeDefined();
     expect(screen.getByRole("button", { name: /next/i })).toBeDefined();
     expect(screen.getByRole("button", { name: /into/i })).toBeDefined();
-    expect(screen.getByRole("button", { name: /over/i })).toBeDefined();
     expect(screen.getByRole("button", { name: /out/i })).toBeDefined();
   });
 
@@ -80,18 +78,6 @@ describe("DebugToolbar Component", () => {
     await user.click(stepIntoButton);
 
     expect(onStepInto).toHaveBeenCalledOnce();
-  });
-
-  it("calls onStepOver when step over button clicked", async () => {
-    const user = userEvent.setup();
-    const onStepOver = vi.fn();
-
-    render(<DebugToolbar {...defaultProps} onStepOver={onStepOver} />);
-
-    const stepOverButton = screen.getByRole("button", { name: /over/i });
-    await user.click(stepOverButton);
-
-    expect(onStepOver).toHaveBeenCalledOnce();
   });
 
   it("calls onStepOut when step out button clicked", async () => {
