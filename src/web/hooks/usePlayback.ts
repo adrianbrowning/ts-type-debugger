@@ -61,13 +61,33 @@ export function usePlayback(videoData: VideoData | null) {
     });
   }, [ videoData ]);
 
+  // Helper: find previous step matching level condition
+  const findPreviousStepByLevel = useCallback(
+    (levelCheck: (stepLevel: number, currentLevel: number) => boolean) => {
+      if (!videoData) return;
+
+      const currentStep = videoData.steps[state.currentStepIndex];
+      if (!currentStep) return;
+
+      const currentLevel = currentStep.original.level;
+
+      // Search backward for matching step
+      for (let i = state.currentStepIndex - 1; i >= 0; i--) {
+        if (levelCheck(videoData.steps[i]?.original.level ?? 0, currentLevel)) {
+          setState(prev => ({ ...prev, currentStepIndex: i, isPlaying: false }));
+          return;
+        }
+      }
+
+      // No match found, go to first step
+      setState(prev => ({ ...prev, currentStepIndex: 0, isPlaying: false }));
+    },
+    [ videoData, state.currentStepIndex ]
+  );
+
   const previousStep = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      currentStepIndex: Math.max(prev.currentStepIndex - 1, 0),
-      isPlaying: false,
-    }));
-  }, []);
+    findPreviousStepByLevel((stepLevel, currentLevel) => stepLevel <= currentLevel);
+  }, [ findPreviousStepByLevel ]);
 
   // Handle speed change
   const setSpeed = useCallback((speed: number) => {
