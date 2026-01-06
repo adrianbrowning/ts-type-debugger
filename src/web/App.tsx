@@ -17,8 +17,8 @@ import { buildShareUrl, getShareStateFromUrl } from "./utils/urlSharing.ts";
 // Collapsed editor width for chevron button
 const COLLAPSED_EDITOR_WIDTH = 40;
 
-// Default panel sizes: [editor, evalTarget, callStack]
-const DEFAULT_PANEL_SIZES: Array<string | number> = [ "33%", "33%", "34%" ];
+// Debug panel sizes: [evalTarget, callStack]
+const DEFAULT_DEBUG_PANEL_SIZES: Array<string | number> = [ "50%", "50%" ];
 
 /**
  * Main app component with 3-panel layout
@@ -61,8 +61,7 @@ export const App: React.FC = () => {
   const [ hasGenerated, setHasGenerated ] = useState(false);
   const [ debugPanesEnabled, setDebugPanesEnabled ] = useState(false);
   const [ debugPanesStale, setDebugPanesStale ] = useState(false);
-  const [ paneSizes, setPaneSizes ] = useState<Array<string | number>>(DEFAULT_PANEL_SIZES);
-  const [ savedEditorSize, setSavedEditorSize ] = useState<string | number>("33%");
+  const [ debugPaneSizes, setDebugPaneSizes ] = useState<Array<string | number>>(DEFAULT_DEBUG_PANEL_SIZES);
 
   const playback = usePlayback(videoData);
 
@@ -165,33 +164,25 @@ export const App: React.FC = () => {
     return (activeTypeMap)[playback.currentStepIndex] || null;
   }, [ videoData, playback.currentStepIndex, playback.currentStep ]);
 
-  // Toggle editor collapse
+  // Toggle editor collapse (mode toggle between editor and debug view)
   const handleToggleEditor = useCallback(() => {
     const newCollapsed = !editorCollapsed;
     setEditorCollapsed(newCollapsed);
 
     if (newCollapsed) {
-      // Save current editor size before collapsing
-      const editorSize = paneSizes[0];
-      if (editorSize !== undefined) {
-        setSavedEditorSize(editorSize);
-      }
-      setPaneSizes([ COLLAPSED_EDITOR_WIDTH, "50%", "50%" ]);
-      // Enable debug panes if we have generated data
+      // Switching to debug mode
       if (hasGenerated) {
         setDebugPanesEnabled(true);
         setDebugPanesStale(false);
       }
     }
     else {
-      // Restore saved editor size
-      setPaneSizes([ savedEditorSize, "33%", "34%" ]);
-      // Mark debug panes as stale (dimmed) but keep content visible
+      // Switching to editor mode - mark debug panes as stale
       if (hasGenerated) {
         setDebugPanesStale(true);
       }
     }
-  }, [ editorCollapsed, hasGenerated, paneSizes, savedEditorSize ]);
+  }, [ editorCollapsed, hasGenerated ]);
 
   const handleTypeNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -243,20 +234,6 @@ export const App: React.FC = () => {
     />
   ), [ theme.border.subtle, handleSashMouseEnter, handleSashMouseLeave ]);
 
-  // Noop handler for disabled state
-  const handlePaneSizeNoOp = useCallback(() => {
-    // Do nothing when editor is collapsed
-  }, []);
-
-  // Sash render callback
-  const handleSashRender = useCallback((index: number) => {
-    // Hide first sash when editor is collapsed
-    if (index === 0 && editorCollapsed) {
-      return <div style={{ width: 0 }} />;
-    }
-    return renderSash();
-  }, [ editorCollapsed, renderSash ]);
-
   // Expand button hover handlers
   const handleExpandMouseOver = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.currentTarget.style.backgroundColor = theme.bg.hover;
@@ -286,17 +263,10 @@ export const App: React.FC = () => {
 
       setVideoData(data);
       setHasGenerated(true);
-      // Collapse editor after successful debug
-      if (!editorCollapsed) {
-        const editorSize = paneSizes[0];
-        if (editorSize !== undefined) {
-          setSavedEditorSize(editorSize);
-        }
-        setPaneSizes([ COLLAPSED_EDITOR_WIDTH, "50%", "50%" ]);
-      }
+      // Switch to debug mode after successful debug
       setEditorCollapsed(true);
       setDebugPanesEnabled(true);
-      setDebugPanesStale(false); // Fresh data, not stale
+      setDebugPanesStale(false);
       setError(null);
     }
     catch (err) {
@@ -307,7 +277,7 @@ export const App: React.FC = () => {
     finally {
       setIsLoading(false);
     }
-  }, [ code, typeName, editorCollapsed, paneSizes ]);
+  }, [ code, typeName ]);
 
   const handleGenerate = useCallback(() => {
     void handleGenerateAsync();
@@ -387,227 +357,235 @@ export const App: React.FC = () => {
         onBackToLanding={handleBackToLanding}
       />
 
-      {/* Main Content Area - 3 Panel Layout */}
-      <SplitPane
-        split="vertical"
-        sizes={paneSizes}
-        onChange={editorCollapsed ? handlePaneSizeNoOp : setPaneSizes}
-        sashRender={handleSashRender}
-      >
-        {/* Editor Panel - Collapsible */}
-        <Pane minSize={editorCollapsed ? COLLAPSED_EDITOR_WIDTH : 250} maxSize={editorCollapsed ? COLLAPSED_EDITOR_WIDTH : "60%"}>
+      {/* Main Content Area - Mode Toggle Layout */}
+      {editorCollapsed ? (
+        /* Debug Mode: Chevron + 2-panel split */
+        <div style={{ display: "flex", flex: 1, minHeight: 0 }}>
+          {/* Chevron expand button */}
           <div
             style={{
+              width: COLLAPSED_EDITOR_WIDTH,
               height: "100%",
-              display: "flex",
-              flexDirection: "column",
               borderRight: `1px solid ${theme.border.subtle}`,
-              overflow: "hidden",
-              position: "relative",
               backgroundColor: theme.bg.secondary,
             }}
           >
-            {editorCollapsed ? (
-              /* Collapsed state - show expand chevron */
-              <button
-                type="button"
-                onClick={handleToggleEditor}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: theme.bg.secondary,
-                  border: "none",
-                  cursor: "pointer",
-                  color: theme.text.secondary,
-                  fontSize: "20px",
-                  transition: "background-color 0.15s, color 0.15s",
-                }}
-                onMouseOver={handleExpandMouseOver}
-                onMouseOut={handleExpandMouseOut}
-                title="Expand Editor"
-              >
-                {"›"}
-              </button>
-            ) : (
-              /* Expanded state - show editor */
-              <>
-                <InputSection
-                  typeName={typeName}
-                  onTypeNameChange={handleTypeNameChange}
-                  typeNameError={typeNameError}
-                  isLoading={isLoading}
-                  onGenerate={handleGenerate}
-                  error={error}
-                  onButtonMouseOver={handleButtonMouseOver}
-                  onButtonMouseOut={handleButtonMouseOut}
-                />
-                <MonacoCodeEditor
-                  code={code}
-                  onChange={setCode}
-                  isLoading={isLoading}
-                />
-              </>
-            )}
+            <button
+              type="button"
+              onClick={handleToggleEditor}
+              style={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: theme.bg.secondary,
+                border: "none",
+                cursor: "pointer",
+                color: theme.text.secondary,
+                fontSize: "20px",
+                transition: "background-color 0.15s, color 0.15s",
+              }}
+              onMouseOver={handleExpandMouseOver}
+              onMouseOut={handleExpandMouseOut}
+              title="Expand Editor"
+            >
+              {"›"}
+            </button>
           </div>
-        </Pane>
 
-        {/* Eval Target Panel (Type Definition) */}
-        <Pane minSize={200}>
-          <div
-            style={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              minWidth: 0,
-              borderRight: `1px solid ${theme.border.subtle}`,
-              position: "relative",
-            }}
-          >
-            {videoData ? (
-              <CodePanel
-                currentStep={playback.currentStep}
-                activeType={activeType}
-                sourceCode={videoData.sourceCode}
-              />
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
-                  backgroundColor: theme.bg.secondary,
-                }}
-              >
+          {/* Debug panels */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <SplitPane
+              split="vertical"
+              sizes={debugPaneSizes}
+              onChange={setDebugPaneSizes}
+              sashRender={renderSash}
+            >
+              {/* Eval Target Panel */}
+              <Pane minSize={200}>
                 <div
                   style={{
-                    padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
-                    borderBottom: `1px solid ${theme.border.subtle}`,
-                    backgroundColor: theme.bg.primary,
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: 0,
-                      color: theme.text.primary,
-                      fontSize: theme.fontSize.xl,
-                      fontWeight: theme.fontWeight.semibold,
-                    }}
-                  >
-                    {"Eval Target"}
-                  </h3>
-                </div>
-                <div
-                  style={{
-                    flex: 1,
+                    height: "100%",
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: theme.text.tertiary,
+                    flexDirection: "column",
+                    minWidth: 0,
+                    borderRight: `1px solid ${theme.border.subtle}`,
+                    position: "relative",
                   }}
                 >
-                  {"Click Debug to evaluate"}
+                  {videoData ? (
+                    <CodePanel
+                      currentStep={playback.currentStep}
+                      activeType={activeType}
+                      sourceCode={videoData.sourceCode}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "100%",
+                        backgroundColor: theme.bg.secondary,
+                      }}
+                    >
+                      <div
+                        style={{
+                          padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+                          borderBottom: `1px solid ${theme.border.subtle}`,
+                          backgroundColor: theme.bg.primary,
+                        }}
+                      >
+                        <h3
+                          style={{
+                            margin: 0,
+                            color: theme.text.primary,
+                            fontSize: theme.fontSize.xl,
+                            fontWeight: theme.fontWeight.semibold,
+                          }}
+                        >
+                          {"Eval Target"}
+                        </h3>
+                      </div>
+                      <div
+                        style={{
+                          flex: 1,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: theme.text.tertiary,
+                        }}
+                      >
+                        {"Click Debug to evaluate"}
+                      </div>
+                    </div>
+                  )}
+                  {/* Disabled overlay - no data yet */}
+                  {!debugPanesEnabled && !videoData && (
+                    <div style={disabledOverlayStyle}>
+                      <span>{"Click Debug to enable"}</span>
+                    </div>
+                  )}
+                  {/* Stale overlay - data exists but editor expanded */}
+                  {debugPanesStale && videoData && (
+                    <div style={staleOverlayStyle}>
+                      <span>{"Stale - click Debug to refresh"}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-            {/* Disabled overlay - no data yet */}
-            {!debugPanesEnabled && !videoData && (
-              <div style={disabledOverlayStyle}>
-                <span>{"Click Debug to enable"}</span>
-              </div>
-            )}
-            {/* Stale overlay - data exists but editor expanded */}
-            {debugPanesStale && videoData && (
-              <div style={staleOverlayStyle}>
-                <span>{"Stale - click Debug to refresh"}</span>
-              </div>
-            )}
-          </div>
-        </Pane>
+              </Pane>
 
-        {/* Call Stack Panel */}
-        <Pane minSize={200}>
-          <div
-            style={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              minWidth: 0,
-              position: "relative",
-            }}
-          >
-            {videoData ? (
-              <StepDetailsPanel
-                currentStep={playback.currentStep}
-                steps={videoData.steps}
-                currentStepIndex={playback.currentStepIndex}
-                totalSteps={videoData.steps.length}
-                typeAliases={videoData.typeAliases}
-                onJumpToStart={playback.jumpToStart}
-                onPrevious={playback.previousStep}
-                onNext={playback.nextStep}
-                onStepInto={playback.stepInto}
-                onStepOver={playback.stepOver}
-                onStepOut={playback.stepOut}
-                onSeekToStep={playback.seekToStep}
-              />
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
-                  backgroundColor: theme.bg.secondary,
-                }}
-              >
+              {/* Call Stack Panel */}
+              <Pane minSize={200}>
                 <div
                   style={{
-                    padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
-                    borderBottom: `1px solid ${theme.border.subtle}`,
-                    backgroundColor: theme.bg.primary,
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: 0,
-                      color: theme.text.primary,
-                      fontSize: theme.fontSize.xl,
-                      fontWeight: theme.fontWeight.semibold,
-                    }}
-                  >
-                    {"Call Stack"}
-                  </h3>
-                </div>
-                <div
-                  style={{
-                    flex: 1,
+                    height: "100%",
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: theme.text.tertiary,
+                    flexDirection: "column",
+                    minWidth: 0,
+                    position: "relative",
                   }}
                 >
-                  {"Click Debug to evaluate"}
+                  {videoData ? (
+                    <StepDetailsPanel
+                      currentStep={playback.currentStep}
+                      steps={videoData.steps}
+                      currentStepIndex={playback.currentStepIndex}
+                      totalSteps={videoData.steps.length}
+                      typeAliases={videoData.typeAliases}
+                      onJumpToStart={playback.jumpToStart}
+                      onPrevious={playback.previousStep}
+                      onNext={playback.nextStep}
+                      onStepInto={playback.stepInto}
+                      onStepOver={playback.stepOver}
+                      onStepOut={playback.stepOut}
+                      onSeekToStep={playback.seekToStep}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "100%",
+                        backgroundColor: theme.bg.secondary,
+                      }}
+                    >
+                      <div
+                        style={{
+                          padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+                          borderBottom: `1px solid ${theme.border.subtle}`,
+                          backgroundColor: theme.bg.primary,
+                        }}
+                      >
+                        <h3
+                          style={{
+                            margin: 0,
+                            color: theme.text.primary,
+                            fontSize: theme.fontSize.xl,
+                            fontWeight: theme.fontWeight.semibold,
+                          }}
+                        >
+                          {"Call Stack"}
+                        </h3>
+                      </div>
+                      <div
+                        style={{
+                          flex: 1,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: theme.text.tertiary,
+                        }}
+                      >
+                        {"Click Debug to evaluate"}
+                      </div>
+                    </div>
+                  )}
+                  {/* Disabled overlay - no data yet */}
+                  {!debugPanesEnabled && !videoData && (
+                    <div style={disabledOverlayStyle}>
+                      <span>{"Click Debug to enable"}</span>
+                    </div>
+                  )}
+                  {/* Stale overlay - data exists but editor expanded */}
+                  {debugPanesStale && videoData && (
+                    <div style={staleOverlayStyle}>
+                      <span>{"Stale - click Debug to refresh"}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-            {/* Disabled overlay - no data yet */}
-            {!debugPanesEnabled && !videoData && (
-              <div style={disabledOverlayStyle}>
-                <span>{"Click Debug to enable"}</span>
-              </div>
-            )}
-            {/* Stale overlay - data exists but editor expanded */}
-            {debugPanesStale && videoData && (
-              <div style={staleOverlayStyle}>
-                <span>{"Stale - click Debug to refresh"}</span>
-              </div>
-            )}
+              </Pane>
+            </SplitPane>
           </div>
-        </Pane>
-      </SplitPane>
+        </div>
+      ) : (
+        /* Editor Mode: Full-width editor */
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            backgroundColor: theme.bg.secondary,
+          }}
+        >
+          <InputSection
+            typeName={typeName}
+            onTypeNameChange={handleTypeNameChange}
+            typeNameError={typeNameError}
+            isLoading={isLoading}
+            onGenerate={handleGenerate}
+            error={error}
+            onButtonMouseOver={handleButtonMouseOver}
+            onButtonMouseOut={handleButtonMouseOut}
+          />
+          <MonacoCodeEditor
+            code={code}
+            onChange={setCode}
+            isLoading={isLoading}
+          />
+        </div>
+      )}
     </div>
   );
 };
