@@ -92,7 +92,7 @@ exports[`Mapped Type Resolution Integration > resolves mapped type with keyof 1`
       "currentUnionMember": undefined,
       "currentUnionResults": undefined,
       "expression": "type MyReadonly<T> = { readonly [K in keyof T]: T[K] };",
-      "level": 0,
+      "level": 1,
       "parameters": {
         "T": "{a: string}",
       },

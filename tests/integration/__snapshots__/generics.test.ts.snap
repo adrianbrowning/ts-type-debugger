@@ -92,7 +92,7 @@ exports[`Generic Type Resolution Integration > resolves simple identity generic 
       "currentUnionMember": undefined,
       "currentUnionResults": undefined,
       "expression": "type Identity<T> = T;",
-      "level": 0,
+      "level": 1,
       "parameters": {
         "T": "string",
       },

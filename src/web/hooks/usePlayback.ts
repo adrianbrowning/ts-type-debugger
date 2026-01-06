@@ -145,12 +145,14 @@ export function usePlayback(videoData: VideoData | null) {
     };
   }, [ state.currentStepIndex, state.isPlaying, videoData ]);
 
-  const currentStep = videoData?.steps[state.currentStepIndex] || null;
-
   // Helper: find next step matching level condition
   const findNextStepByLevel = useCallback(
     (levelCheck: (stepLevel: number, currentLevel: number) => boolean) => {
-      if (!videoData || !currentStep) return;
+      if (!videoData) return;
+
+      // Read current step inside callback to avoid stale closure
+      const currentStep = videoData.steps[state.currentStepIndex];
+      if (!currentStep) return;
 
       const currentLevel = currentStep.original.level;
 
@@ -173,8 +175,11 @@ export function usePlayback(videoData: VideoData | null) {
         isPlaying: false,
       }));
     },
-    [ videoData, currentStep, state.currentStepIndex ]
+    [ videoData, state.currentStepIndex ]
   );
+
+  // Computed current step for component use
+  const currentStep = videoData?.steps[state.currentStepIndex] || null;
 
   // Next step: move to next step at same or lower level (skip into generics)
   const nextStep = useCallback(() => {

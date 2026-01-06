@@ -90,7 +90,7 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       "expression": "type getter<path extends string> = path extends validateLeafPath<tables, path>
       ? path
       : validateLeafPath<tables, path>;",
-      "level": 0,
+      "level": 1,
       "parameters": {
         "path": """",
       },
@@ -360,7 +360,7 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
             ? \`\${prefix}\${path}\`
             : never
           : never;",
-      "level": 2,
+      "level": 3,
       "parameters": {
         "o": "{
       User: { id: number; name: string };
@@ -913,7 +913,7 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       "currentUnionMember": undefined,
       "currentUnionResults": undefined,
       "expression": "type keyOf<o> = {[k in keyof o]: k extends string ? k : never}[keyof o];",
-      "level": 5,
+      "level": 6,
       "parameters": {
         "o": "{
       User: { id: number; name: string };
@@ -2300,7 +2300,7 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
             ? \`\${prefix}\${path}\`
             : never
           : never;",
-      "level": 2,
+      "level": 3,
       "parameters": {
         "o": "{
       User: { id: number; name: string };
@@ -2853,7 +2853,7 @@ exports[`Complex Type Workflows Integration > resolves getter<""> from base.ts 1
       "currentUnionMember": undefined,
       "currentUnionResults": undefined,
       "expression": "type keyOf<o> = {[k in keyof o]: k extends string ? k : never}[keyof o];",
-      "level": 5,
+      "level": 6,
       "parameters": {
         "o": "{
       User: { id: number; name: string };

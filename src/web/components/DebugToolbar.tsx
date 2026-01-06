@@ -132,7 +132,7 @@ export function DebugToolbar({
         {"⬆ Out"}
       </ToolbarButton>
       <span style={stepCounterStyle}>
-        {"Step "}{currentStepIndex}{" / "}{totalSteps}
+        {"Step "}{currentStepIndex + 1}{" / "}{totalSteps}
       </span>
     </div>
   );

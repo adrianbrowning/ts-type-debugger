@@ -93,7 +93,7 @@ exports[`Template Literal Resolution Integration > resolves template with multip
       "currentUnionMember": undefined,
       "currentUnionResults": undefined,
       "expression": "type Grid<A, B> = \`\${A}-\${B}\`;",
-      "level": 0,
+      "level": 1,
       "parameters": {
         "A": ""a" | "b"",
         "B": "1 | 2",
