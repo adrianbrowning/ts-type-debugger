@@ -513,13 +513,15 @@ function evaluateGenericCall(typeRef: ts.TypeReferenceNode, context: EvalContext
   // For generic_def, only show the parameters defined by THIS generic, not all in-scope params
   const genericParams = extractGenericParams(aliasDecl, context);
 
+  // Enter the generic definition at a higher level (so step-over skips it)
+  context.level++;
+
   addTrace(context, "generic_def", aliasDecl.getText(context.sourceFile), {
     position: getNodePosition(aliasDecl, context.sourceFile),
     parameters: Object.keys(genericParams).length > 0 ? genericParams : undefined,
   });
 
-  // Evaluate the type expression
-  context.level++;
+  // Evaluate the type expression (already at higher level)
   const result = evaluateTypeNode(aliasDecl.type, context);
   context.level--;
 
