@@ -26,10 +26,11 @@ describe("DebugToolbar Component", () => {
     expect(screen.getByRole("button", { name: /out/i })).toBeDefined();
   });
 
-  it("displays step counter correctly", () => {
+  it("displays step counter correctly (1-indexed)", () => {
     render(<DebugToolbar {...defaultProps} />);
 
-    expect(screen.getByText(/step 5 \/ 23/i)).toBeDefined();
+    // currentStepIndex=5 displays as Step 6 (1-indexed for humans)
+    expect(screen.getByText(/step 6 \/ 23/i)).toBeDefined();
   });
 
   it("calls onJumpToStart when jump to start button clicked", async () => {
@@ -156,10 +157,11 @@ describe("DebugToolbar Component", () => {
     expect(nextButton.getAttribute("disabled")).toBeNull();
   });
 
-  it("updates step counter when props change", () => {
+  it("updates step counter when props change (1-indexed)", () => {
     const { rerender } = render(<DebugToolbar {...defaultProps} />);
 
-    expect(screen.getByText(/step 5 \/ 23/i)).toBeDefined();
+    // currentStepIndex=5 → "Step 6 / 23"
+    expect(screen.getByText(/step 6 \/ 23/i)).toBeDefined();
 
     rerender(<DebugToolbar
       {...defaultProps}
@@ -167,6 +169,7 @@ describe("DebugToolbar Component", () => {
       totalSteps={30}
     />);
 
-    expect(screen.getByText(/step 10 \/ 30/i)).toBeDefined();
+    // currentStepIndex=10 → "Step 11 / 30"
+    expect(screen.getByText(/step 11 \/ 30/i)).toBeDefined();
   });
 });

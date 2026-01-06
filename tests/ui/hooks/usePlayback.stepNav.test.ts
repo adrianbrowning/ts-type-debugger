@@ -124,6 +124,89 @@ describe("usePlayback - step navigation", () => {
 
       expect(result.current.isPlaying).toBe(false);
     });
+
+    it("nextStep from generic_call skips generic_def (REAL trace levels)", () => {
+      const videoData: VideoData = createMockVideoData({
+        steps: [
+          createMockStep({
+            stepIndex: 0,
+            original: { step: 0, type: "type_alias_start", expression: "__EvalTarget__", level: 0 },
+          }),
+          createMockStep({
+            stepIndex: 1,
+            original: { step: 1, type: "generic_call", expression: "Foo<'hello'>", level: 0 },
+          }),
+          createMockStep({
+            stepIndex: 2,
+            original: { step: 2, type: "generic_def", expression: "type Foo<T>...", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 3,
+            original: { step: 3, type: "template_literal_start", expression: "`${T}`", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 4,
+            original: { step: 4, type: "template_span_eval", expression: "T", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 5,
+            original: { step: 5, type: "indexed_access", expression: "T", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 6,
+            original: { step: 6, type: "indexed_access_result", expression: "'hello'", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 7,
+            original: { step: 7, type: "template_result", expression: "'hello'", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 8,
+            original: { step: 8, type: "mapped_type_start", expression: "{ [K in keyof T]: ... }", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 9,
+            original: { step: 9, type: "mapped_type_constraint", expression: "keyof T", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 10,
+            original: { step: 10, type: "conditional_union_distribute", expression: "'a' | 'b'", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 11,
+            original: { step: 11, type: "conditional_union_member", expression: "'a'", level: 1 },
+          }),
+          createMockStep({
+            stepIndex: 12,
+            original: { step: 12, type: "generic_result", expression: "Foo => HELLO", level: 0 },
+          }),
+          createMockStep({
+            stepIndex: 13,
+            original: { step: 13, type: "type_alias_result", expression: "__EvalTarget__ = HELLO", level: 0 },
+          }),
+        ],
+      });
+
+      const { result } = renderHook(() => usePlayback(videoData));
+
+      // Position at generic_call (step 1, level 0)
+      act(() => {
+        result.current.seekToStep(1);
+      });
+
+      expect(result.current.currentStepIndex).toBe(1);
+      expect(result.current.currentStep?.original.level).toBe(0);
+      expect(result.current.currentStep?.original.type).toBe("generic_call");
+
+      // nextStep should skip all level >= 1 steps and land on generic_result (step 12, level 0)
+      act(() => {
+        result.current.nextStep();
+      });
+
+      expect(result.current.currentStepIndex).toBe(12);
+      expect(result.current.currentStep?.original.type).toBe("generic_result");
+      expect(result.current.currentStep?.original.level).toBe(0);
+    });
   });
 
   describe("stepOut", () => {

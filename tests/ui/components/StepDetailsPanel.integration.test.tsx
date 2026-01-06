@@ -498,8 +498,8 @@ describe("StepDetailsPanel Integration (Refactored)", () => {
         />
       );
 
-      // DebugToolbar should display step counter
-      expect(screen.getByText(/step 1 \/ 3/i)).toBeDefined();
+      // DebugToolbar should display step counter (1-indexed: currentStepIndex=1 → "Step 2")
+      expect(screen.getByText(/step 2 \/ 3/i)).toBeDefined();
     });
 
     it("passes all steps to CallStackSection", () => {

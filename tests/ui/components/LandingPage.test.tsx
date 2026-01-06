@@ -25,15 +25,7 @@ describe("LandingPage Component", () => {
       });
     });
 
-    it("renders theme dropdown", async () => {
-      render(<LandingPage onTryIt={mockOnTryIt} />);
-
-      // ThemeDropdown renders a button with aria-label="Theme settings"
-      await waitFor(() => {
-        const themeButton = screen.getByRole("button", { name: /theme settings/i });
-        expect(themeButton).toBeInTheDocument();
-      });
-    });
+    // Note: ThemeDropdown is in Header, not LandingPage
 
     it("renders navigation links", async () => {
       render(<LandingPage onTryIt={mockOnTryIt} />);
